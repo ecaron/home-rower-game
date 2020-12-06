@@ -1,5 +1,4 @@
 const util = require('util')
-
 const bleno = require('bleno')
 
 const Characteristic = bleno.Characteristic

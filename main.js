@@ -1,3 +1,5 @@
+require('dotenv').config()
+const debug = require('debug')('main')
 const S4 = require('./s4')
 const peripheral = require('./bluetooth-peripheral')
 const network = require('./network')
@@ -18,34 +20,31 @@ const mainBle = function (testMode) {
 const mainUsb = async function (callback, testMode) {
   const rower = new S4()
   if (testMode) {
-    rower.fakeRower(callback())
-  } else {
-    rower.findPort().then(function () {
-      rower.startRower(callback())()
-    }, function () {
-      // wait till we get the right serial
-      console.log('[Init] Awaiting WaterRower S4.2 to be connected to USB port')
-
-      // monitor USB attach and detach events
-      const usbPeripheral = new usb.UsbPeripheral()
-      usbPeripheral.monitorWr(function () {
-        rower.startRower(callback())
-      }, rower.stopRower(rower))
-    })
+    return rower.fakeRower(callback)
   }
+  const rowerPort = await rower.findPort()
+  if (rowerPort !== false) {
+    return rower.startRower(callback)
+  }
+  // wait till we get the right serial
+  debug('[Init] Awaiting WaterRower S4.2 to be connected to USB port')
+
+  // monitor USB attach and detach events
+  const usbPeripheral = new usb.UsbPeripheral()
+  usbPeripheral.monitorWr(function () {
+    rower.startRower(callback)
+  }, rower.stopRower(rower))
 }
 
 const main = function (args) {
-  const runMode = args[2]
-  const testMode = args[3] === '--test'
+  const runMode = args[2] || process.env.RUN_MODE
+  const testMode = args[3] === '--test' || process.env.TEST_MODE
   if (runMode === 'usb') {
     const broadcasterNotify = function () {
       const broadcaster = new network.MessageBroadcaster()
       broadcaster.start()
-
       return broadcaster.send
     }
-
     mainUsb(broadcasterNotify, testMode)
   } else if (runMode === 'ble') {
     mainBle(testMode)
@@ -98,7 +97,7 @@ const main = function (args) {
       }
     }
 
-    mainUsb(listener, runMode === '--test')
+    mainUsb(listener, runMode === '--test' || process.env.TEST_MODE)
   }
 }
 

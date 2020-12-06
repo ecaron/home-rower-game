@@ -1,4 +1,5 @@
 const usb = require('usb')
+const debug = require('debug')('usb')
 
 const UsbPeripheral = function () {
   this.monitorWr = function (startRower, stopRower) {
@@ -7,7 +8,7 @@ const UsbPeripheral = function () {
         return false
       }
 
-      console.log('[USB] Device, ' +
+      debug('[USB] Device, ' +
                   'Vendor id: ' + device.deviceDescriptor.idVendor +
                   ', Product id: ', device.deviceDescriptor.idProduct)
       if (device.deviceDescriptor.idVendor === 0x04d8 &&
@@ -20,14 +21,14 @@ const UsbPeripheral = function () {
 
     usb.on('attach', function (device) {
       if (wrUsbEvent(device)) {
-        console.log('[Init] WaterRower-S4.2 Connected to USB hub controller')
+        debug('[Init] WaterRower-S4.2 Connected to USB hub controller')
         startRower()
       }
     })
 
     usb.on('detach', function (device) {
       if (wrUsbEvent(device)) {
-        console.log('[End] WaterRower-S4.2 Disconnected from USB hub controller')
+        debug('[End] WaterRower-S4.2 Disconnected from USB hub controller')
         stopRower()
       }
     })

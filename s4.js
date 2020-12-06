@@ -1,5 +1,5 @@
 const com = require('serialport')
-const DEBUG = false
+const debug = require('debug')('S4')
 
 // MESSAGE FLOW
 //
@@ -45,15 +45,15 @@ function S4 () {
     const string = self.pending.shift()
     if (self.port) {
       const buffer = Buffer.from(string + EOL)
-      if (DEBUG) console.log('[OUT]: ' + buffer)
+      debug('[OUT]: ' + buffer)
       self.port.write(buffer)
     } else {
-      console.log('Communication port is not open - not sending data: ' + string)
+      debug('Communication port is not open - not sending data: ' + string)
     }
   }
 
   this.readAndDispatch = function (string) {
-    if (DEBUG) console.log('[IN]: ' + string)
+    debug('[IN]: ' + string)
     const c = string.charAt(0)
     switch (c) {
       case '_':
@@ -80,7 +80,7 @@ function S4 () {
 
   // handlers start
   this.unknownHandler = function (string) {
-    console.log('Unrecognized packet: ' + string)
+    debug('Unrecognized packet: ' + string)
   }
 
   this.wrHandler = function (string) {
@@ -163,9 +163,9 @@ function S4 () {
     const version = 'S' + model + ' ' + fwRevMajor + '.' + fwRevMinor
     // only log error, ignore version mismatch
     if (version !== 'S4 02.10') {
-      console.log('WaterRower monitor version mismatch - expected S4 02.10 but got ' + version)
+      debug('WaterRower monitor version mismatch - expected S4 02.10 but got ' + version)
     } else {
-      console.log('WaterRower ' + version)
+      debug('WaterRower ' + version)
     }
     this.state = 1 // ResetWaitingPing
     this.write('RESET')
@@ -214,7 +214,7 @@ S4.prototype.findPort = async function () {
       throw err
     }
 
-    let port
+    let port = false
     ports.forEach(function (p) {
       // https://usb-ids.gowdy.us/read/UD/04d8/000a
       if (p.vendorId === '0x04d8' && p.productId === '0x000a') {
@@ -225,7 +225,8 @@ S4.prototype.findPort = async function () {
     if (port) {
       return port.comName
     } else {
-      throw Error('Prolific USB CDC RS-232 Serial Emulation port not found')
+      debug('Prolific USB CDC RS-232 Serial Emulation port not found')
+      return false
     }
   })
 }
@@ -269,17 +270,17 @@ S4.prototype.startRower = async function (callback) {
   try {
     comName = await rower.findPort()
   } catch (e) {
-    console.log('[Init] error: ' + e)
+    debug('[Init] error: ' + e)
   }
-  console.log('[Init] Found WaterRower S4 on com port: ' + comName)
+  debug('[Init] Found WaterRower S4 on com port: ' + comName)
   let strokeCount = 0
   let watts = 0
   rower.open(comName).then(function () {
-    console.log('[Start] Start broadcasing WR data')
+    debug('[Start] Start broadcasing WR data')
     rower.start().then(function (string) {
-      console.log('[End] Workout ended successfully ...' + string)
+      debug('[End] Workout ended successfully ...' + string)
     }, function (string) {
-      console.log('[End] Workout failed ...' + string)
+      debug('[End] Workout failed ...' + string)
     }, function (event) {
       if ('stroke_rate' in event) {
         // No action necessary
@@ -307,7 +308,7 @@ S4.prototype.stopRower = function () {
 }
 
 S4.prototype.fakeRower = function (callback) {
-  console.log('[Init] Faking test data')
+  debug('[Init] Faking test data')
   let strokeCount = 0
   const test = function () {
     const watts = Math.floor(Math.random() * 10 + 120)

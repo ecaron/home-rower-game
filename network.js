@@ -13,7 +13,7 @@ MessageListener.prototype.start = function () {
 
   self.client.on('listening', function () {
     const address = self.client.address()
-    console.log('UDP Client listening on ' + address.address + ':' + address.port)
+    debug('UDP Client listening on ' + address.address + ':' + address.port)
     self.client.setBroadcast(true)
     self.client.setMulticastTTL(128)
     self.client.addMembership('224.0.0.1')

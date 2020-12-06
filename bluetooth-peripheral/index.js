@@ -9,7 +9,7 @@ const BluetoothPeripheral = function (name) {
   const self = this
 
   bleno.on('stateChange', function (state) {
-    console.log('BLE state change: ' + state)
+    debug('BLE state change: ' + state)
 
     if (state === 'poweredOn') {
       bleno.startAdvertising(process.env.BLENO_DEVICE_NAME,

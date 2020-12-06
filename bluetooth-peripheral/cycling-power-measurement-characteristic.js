@@ -1,6 +1,5 @@
 const util = require('util')
 const debug = require('debug')('pm')
-
 const bleno = require('bleno')
 
 const Descriptor = bleno.Descriptor
@@ -33,12 +32,12 @@ const CyclingPowerMeasurementCharacteristic = function () {
 util.inherits(CyclingPowerMeasurementCharacteristic, Characteristic)
 
 CyclingPowerMeasurementCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {
-  console.log('[BLE] client subscribed to PM')
+  debug('[BLE] client subscribed to PM')
   this._updateValueCallback = updateValueCallback
 }
 
 CyclingPowerMeasurementCharacteristic.prototype.onUnsubscribe = function () {
-  console.log('[BLE] client unsubscribed from PM')
+  debug('[BLE] client unsubscribed from PM')
   this._updateValueCallback = null
 }
 

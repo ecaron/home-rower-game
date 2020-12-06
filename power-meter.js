@@ -1,4 +1,5 @@
 const Ant = require('ant-plus')
+const debug = require('debug')('PM')
 
 const PowerMeter = function () {
   let stick = new Ant.GarminStick3()
@@ -8,8 +9,7 @@ const PowerMeter = function () {
   }
 
   stick.on('startup', function () {
-    console.log('startup')
-    console.log('Max channels:', stick.maxChannels)
+    debug('Max channels:', stick.maxChannels)
     // 0xCAFFEDOOD
     const deviceId = 0xBEEF
     stick.write(Ant.Messages.assignChannel(channel, 'transmit'))
@@ -26,13 +26,13 @@ const PowerMeter = function () {
     // (approximately 4.00 Hz). This channel period shall be used by default.
     stick.write(Ant.Messages.setPeriod(channel, 8182))
     stick.write(Ant.Messages.openChannel(channel))
-    console.log('cycling power meter initialized')
+    debug('cycling power meter initialized')
   })
 
-  stick.on('shutdown', function () { console.log('ANT+ shutdown') })
+  stick.on('shutdown', function () { debug('ANT+ shutdown') })
 
   if (!stick.open()) {
-    console.log('ANT+ USB stick not found!')
+    debug('ANT+ USB stick not found!')
   }
 
   this.stick = stick
@@ -56,7 +56,7 @@ PowerMeter.prototype.broadcast = function (power, cadence) {
   data.push(cadence) // cadence
   this.power_accumulated += power
   this.power_accumulated = this.power_accumulated % 65536
-  console.log('Event: %s \t Power: %sw \t Cadence: %srpm', this.power_event_count, power, cadence)
+  debug('Event: %s \t Power: %sw \t Cadence: %srpm', this.power_event_count, power, cadence)
 
   data = data.concat(Ant.Messages.intToLEHexArray(this.power_accumulated, 2))
   data = data.concat(Ant.Messages.intToLEHexArray(power, 2))
