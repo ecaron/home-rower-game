@@ -1,38 +1,37 @@
-var usb = require('usb');
+const usb = require('usb')
 
-var UsbPeripheral = function() {
-  this.monitorWr = function(startRower, stopRower) {
-    var wrUsbEvent = function(device) {
+const UsbPeripheral = function () {
+  this.monitorWr = function (startRower, stopRower) {
+    const wrUsbEvent = function (device) {
       if (!device) {
-        return false;
+        return false
       }
 
       console.log('[USB] Device, ' +
                   'Vendor id: ' + device.deviceDescriptor.idVendor +
-                  ', Product id: ', device.deviceDescriptor.idProduct);
-      var idProduct = device.deviceDescriptor.idProduct;
-      if (device.deviceDescriptor.idVendor  === 0x04d8 &&
+                  ', Product id: ', device.deviceDescriptor.idProduct)
+      if (device.deviceDescriptor.idVendor === 0x04d8 &&
           device.deviceDescriptor.idProduct === 0x000a) {
-        return true;
+        return true
       }
 
-      return false;
-    };
+      return false
+    }
 
-    usb.on('attach', function(device) {
+    usb.on('attach', function (device) {
       if (wrUsbEvent(device)) {
-        console.log('[Init] WaterRower-S4.2 Connected to USB hub controller');
-        startRower();
+        console.log('[Init] WaterRower-S4.2 Connected to USB hub controller')
+        startRower()
       }
-    });
+    })
 
-    usb.on('detach', function(device) {
+    usb.on('detach', function (device) {
       if (wrUsbEvent(device)) {
-        console.log('[End] WaterRower-S4.2 Disconnected from USB hub controller');
-        stopRower();
+        console.log('[End] WaterRower-S4.2 Disconnected from USB hub controller')
+        stopRower()
       }
-    });
-  };
-};
+    })
+  }
+}
 
-module.exports.UsbPeripheral = UsbPeripheral;
+module.exports.UsbPeripheral = UsbPeripheral

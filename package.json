@@ -1,12 +1,12 @@
 {
   "name": "waterrower-ble",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A Cycling Power Bluetooth LE Service for the WaterRower S4",
   "main": "main.js",
   "license": "MIT",
   "repository": "olympum/waterrower-ble",
   "engines": {
-    "node": ">=0.10"
+    "node": ">=12"
   },
   "os": [
     "darwin",
@@ -17,11 +17,10 @@
     "url": "https://github.com/olympum"
   },
   "dependencies": {
-    "ant-cycling-power": "olympum/ant-cycling-power",
-    "ble-cycling-power": "olympum/ble-cycling-power",
-    "debug": "^2.2.0",
-    "q": "^1.4.1",
-    "serialport": "3.1.2",
-    "usb": "^1.2.0"
+    "ant-plus": "0.1.25",
+    "bleno": "0.1.25",
+    "debug": "^4.3",
+    "serialport": "^9.0",
+    "usb": "^1.6"
   }
 }

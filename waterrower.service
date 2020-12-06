@@ -1,12 +1,11 @@
 [Service]
-ExecStart=/usr/local/bin/node main.js usb
+ExecStartPre=/bin/hciconfig hci0 piscan
+ExecStart=node main.js usb
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=waterrower
-User=pi
-Group=pi
-WorkingDirectory=/home/pi/waterrower-ble
+WorkingDirectory=/opt/waterrower-ble
 
 [Install]
 WantedBy=multi-user.target
