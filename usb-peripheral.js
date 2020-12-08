@@ -35,4 +35,4 @@ const UsbPeripheral = function () {
   }
 }
 
-module.exports.UsbPeripheral = UsbPeripheral
+module.exports = UsbPeripheral

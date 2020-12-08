@@ -11,7 +11,7 @@ const CyclingSensorLocationCharacteristic = function () {
   CyclingSensorLocationCharacteristic.super_.call(this, {
     uuid: '2A5D',
     properties: ['read'],
-    value: Buffer.alloc([13])
+    value: Buffer.alloc(13)
   })
 }
 
@@ -19,7 +19,7 @@ util.inherits(CyclingSensorLocationCharacteristic, Characteristic)
 
 CyclingSensorLocationCharacteristic.prototype.onReadRequest = function (offset, callback) {
   // return hardcoded value
-  callback(this.RESULT_SUCCESS, Buffer.alloc([13]))
+  callback(this.RESULT_SUCCESS, Buffer.alloc(13))
 }
 
 module.exports = CyclingSensorLocationCharacteristic

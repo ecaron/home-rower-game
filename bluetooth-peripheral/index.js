@@ -57,4 +57,4 @@ const BluetoothPeripheral = function (name) {
   ping()
 }
 
-module.exports.BluetoothPeripheral = BluetoothPeripheral
+module.exports = BluetoothPeripheral

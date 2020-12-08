@@ -1,4 +1,7 @@
-const com = require('serialport')
+/* eslint quote-props: ["error", "consistent-as-needed"] */
+const { EventEmitter } = require('events')
+const SerialPort = require('serialport')
+const Readline = require('@serialport/parser-readline')
 const debug = require('debug')('S4')
 
 // MESSAGE FLOW
@@ -14,12 +17,9 @@ const debug = require('debug')('S4')
 // send IRS/IRD/IRT for all required memory addresses
 // receive IDS/IDD/IDT with memory address value
 // re-send corresponding IRS/IRD/IRT
-// this.event is a promise:
-//      resolve  -> completed successfully (string)
-//      reject   -> not completed / failed (string)
-//      notify   -> update for each event (memory address) (event object literal)
 function S4 () {
   const self = this
+  self.event = new EventEmitter()
   self.port = null
   self.pending = []
   self.writer = null
@@ -45,7 +45,7 @@ function S4 () {
     const string = self.pending.shift()
     if (self.port) {
       const buffer = Buffer.from(string + EOL)
-      debug('[OUT]: ' + buffer)
+      // debug('[OUT]: ' + buffer)
       self.port.write(buffer)
     } else {
       debug('Communication port is not open - not sending data: ' + string)
@@ -53,7 +53,7 @@ function S4 () {
   }
 
   this.readAndDispatch = function (string) {
-    debug('[IN]: ' + string)
+    // debug('[IN]: ' + string)
     const c = string.charAt(0)
     switch (c) {
       case '_':
@@ -134,7 +134,7 @@ function S4 () {
 
   const memoryMap = {
     '1A9': ['stroke_rate', 'S'],
-    140: ['stroke_count', 'D'],
+    '140': ['stroke_count', 'D'],
     '088': ['watts', 'D']
   }
 
@@ -194,9 +194,8 @@ function S4 () {
     const label = memoryMap[address][0]
     const e = {}
     e[label] = value
-    if (self.event) {
-      self.event.notify(e)
-    }
+    console.log(e)
+    this.event.emit('update', e)
     if (this.state === 3) { // WorkoutStarted
       this.readMemoryAddress(address, size)
     }
@@ -205,43 +204,39 @@ function S4 () {
 }
 
 S4.prototype.toString = function () {
-  return this.port.comName
+  return this.port.path
 }
 
 S4.prototype.findPort = async function () {
-  com.list(function (err, ports) {
-    if (err) {
-      throw err
-    }
-
-    let port = false
-    ports.forEach(function (p) {
-      // https://usb-ids.gowdy.us/read/UD/04d8/000a
-      if (p.vendorId === '0x04d8' && p.productId === '0x000a') {
-        // port is an object literal with string values
-        port = p
-      }
-    })
-    if (port) {
-      return port.comName
-    } else {
-      debug('Prolific USB CDC RS-232 Serial Emulation port not found')
-      return false
+  let port
+  const ports = await SerialPort.list()
+  ports.forEach(function (p) {
+    // https://usb-ids.gowdy.us/read/UD/04d8/000a
+    if (p.vendorId === '04d8' && p.productId === '000a') {
+      // port is an object literal with string values
+      port = p
     }
   })
+  if (port) {
+    return port.path
+  } else {
+    debug('Prolific USB CDC RS-232 Serial Emulation port not found')
+    return false
+  }
 }
 
 S4.prototype.open = async function (comName) {
   const self = this
-  const port = new com.SerialPort(comName, {
-    baudrate: 115200,
-    parser: com.parsers.readline('\r\n')
-  }, false)
-  port.open(function () {
+  const port = new SerialPort(comName, { baudRate: 115200, autoOpen: false, lock: false })
+  port.open(function (err) {
+    if (err) {
+      process.exit(err)
+    }
     self.port = port
-    port.on('data', self.readAndDispatch)
+    const parser = port.pipe(new Readline({ delimiter: '\r\n' }))
+    parser.on('data', self.readAndDispatch)
     // we can only write one message every 25ms
-    self.writer = setInterval(self.flushNext, 25)
+    self.writer = setInterval(self.flushNext, 1000)
     return true
   })
 }
@@ -252,14 +247,12 @@ S4.prototype.start = async function () {
 
 S4.prototype.exit = function () {
   if (this.state !== 5) { // WorkoutExited
+    this.event.emit('stopped')
     this.state = 5
     this.write('EXIT')
     this.pending = []
     if (this.writer) {
       clearInterval(this.writer)
-    }
-    if (this.event) {
-      this.event.resolve('EXITED')
     }
   }
 }
@@ -275,28 +268,30 @@ S4.prototype.startRower = async function (callback) {
   debug('[Init] Found WaterRower S4 on com port: ' + comName)
   let strokeCount = 0
   let watts = 0
-  rower.open(comName).then(function () {
-    debug('[Start] Start broadcasing WR data')
-    rower.start().then(function (string) {
-      debug('[End] Workout ended successfully ...' + string)
-    }, function (string) {
-      debug('[End] Workout failed ...' + string)
-    }, function (event) {
-      if ('stroke_rate' in event) {
-        // No action necessary
-      } else if ('stroke_count' in event && event.stroke_count > strokeCount) {
-        strokeCount = event.stroke_count
-        const e = {
-          watts: watts,
-          rev_count: strokeCount
-        }
-        callback(e)
-      } else if ('watts' in event) {
-        if (event.watts > 0) {
-          watts = event.watts
-        }
+  await rower.open(comName)
+  await rower.start()
+  debug('[Start] Start broadcasting WR data')
+
+  rower.event.on('stopped', function () {
+    debug('[End] Workout ended successfully ...')
+  })
+
+  rower.event.on('update', function (event) {
+    if ('stroke_rate' in event) {
+      console.log(event)
+      // No action necessary
+    } else if ('stroke_count' in event && event.stroke_count > strokeCount) {
+      strokeCount = event.stroke_count
+      const e = {
+        watts: watts,
+        rev_count: strokeCount
       }
-    })
+      callback(e)
+    } else if ('watts' in event) {
+      if (event.watts > 0) {
+        watts = event.watts
+      }
+    }
   })
 }
 
