@@ -1,7 +1,7 @@
 const BluetoothPeripheral = function (name) {
   const bleno = require('bleno')
   const CyclingPowerService = require('./cycling-power-service')
-  const debug = require('debug')('ble')
+  const debug = require('debug')('waterrower-ble:ble')
   process.env.BLENO_DEVICE_NAME = name
   this.primaryService = new CyclingPowerService()
   this.last_timestamp = 0

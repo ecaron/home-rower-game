@@ -1,5 +1,5 @@
 const usb = require('usb')
-const debug = require('debug')('usb')
+const debug = require('debug')('waterrower-ble:usb')
 
 const UsbPeripheral = function () {
   this.monitorWr = function (startRower, stopRower) {

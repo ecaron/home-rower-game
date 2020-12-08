@@ -2,7 +2,7 @@
 const { EventEmitter } = require('events')
 const SerialPort = require('serialport')
 const Readline = require('@serialport/parser-readline')
-const debug = require('debug')('S4')
+const debug = require('debug')('waterrower-ble:S4')
 
 // MESSAGE FLOW
 //
@@ -68,7 +68,7 @@ function S4 () {
       case 'E':
         break
       case 'P':
-        self.pHandler(string)
+        self.pulseHandler(string)
         break
       case 'S':
         self.strokeHandler(string)
@@ -105,7 +105,7 @@ function S4 () {
     }
   }
 
-  this.pHandler = function (string) {
+  this.pulseHandler = function (string) {
     const c = string.charAt(1)
     switch (c) {
       case 'I':
@@ -227,7 +227,7 @@ S4.prototype.findPort = async function () {
 
 S4.prototype.open = async function (comName) {
   const self = this
-  const port = new SerialPort(comName, { baudRate: 115200, autoOpen: false, lock: false })
+  const port = new SerialPort(comName, { baudRate: 19200, autoOpen: false, lock: false })
   port.open(function (err) {
     if (err) {
       process.exit(err)
@@ -235,8 +235,8 @@ S4.prototype.open = async function (comName) {
     self.port = port
     const parser = port.pipe(new Readline({ delimiter: '\r\n' }))
     parser.on('data', self.readAndDispatch)
-    // we can only write one message every 25ms
-    self.writer = setInterval(self.flushNext, 1000)
+    // we can only write one message every .8s
+    self.writer = setInterval(self.flushNext, 800)
     return true
   })
 }

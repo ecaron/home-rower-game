@@ -1,5 +1,5 @@
 require('dotenv').config()
-const debug = require('debug')('main')
+const debug = require('debug')('waterrower-ble:main')
 const S4 = require('./s4')
 const BluetoothPeripheral = require('./bluetooth-peripheral')
 const UsbPeripheral = require('./usb-peripheral')

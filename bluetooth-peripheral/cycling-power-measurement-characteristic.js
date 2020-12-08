@@ -1,5 +1,5 @@
 const util = require('util')
-const debug = require('debug')('pm')
+const debug = require('debug')('waterrower-ble:ble:pm')
 const bleno = require('bleno')
 
 const Descriptor = bleno.Descriptor
