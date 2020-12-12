@@ -17,8 +17,9 @@ const debug = require('debug')('waterrower-ble:S4')
 // send IRS/IRD/IRT for all required memory addresses
 // receive IDS/IDD/IDT with memory address value
 // re-send corresponding IRS/IRD/IRT
-function S4 () {
+function S4 (memoryMap) {
   const self = this
+  self.memoryMap = memoryMap
   self.event = new EventEmitter()
   self.port = null
   self.pending = []
@@ -131,8 +132,6 @@ function S4 () {
         self.unknownHandler(string)
     }
   }
-
-  const memoryMap = require('./memory-map')
 
   this.strokeStartHandler = function () {
     if (this.state === 2) { // ResetPingReceived
