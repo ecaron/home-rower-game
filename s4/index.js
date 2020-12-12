@@ -132,20 +132,13 @@ function S4 () {
     }
   }
 
-  const memoryMap = {
-    '1A9': ['stroke_rate', 'S'],
-    '140': ['stroke_count', 'D'],
-    '088': ['watts', 'D']
-  }
+  const memoryMap = require('./memory-map')
 
   this.strokeStartHandler = function () {
     if (this.state === 2) { // ResetPingReceived
       this.state = 3 // WorkoutStarted+++
-      for (const address in memoryMap) {
-        if ({}.hasOwnProperty.call(memoryMap, address)) {
-          const element = memoryMap[address]
-          self.readMemoryAddress(address, element[1])
-        }
+      for (let i = 0; i < memoryMap.length; i++) {
+        self.readMemoryAddress(memoryMap[i].address, memoryMap[i].size)
       }
     }
   }
@@ -190,12 +183,13 @@ function S4 () {
         return
     }
     const end = 6 + 2 * l
-    const value = parseInt(string.substring(6, end), 16)
-    const label = memoryMap[address][0]
-    const e = {}
-    e[label] = value
-    console.log(e)
-    this.event.emit('update', e)
+    const dataPoint = memoryMap.find(element => element.address === address)
+    const value = parseInt(string.substring(6, end), dataPoint.base)
+    if (dataPoint.value !== value) {
+      debug(`${dataPoint.name} changed from ${dataPoint.value} to ${value}`)
+      dataPoint.value = value
+      this.event.emit('update', dataPoint)
+    }
     if (this.state === 3) { // WorkoutStarted
       this.readMemoryAddress(address, size)
     }
@@ -277,19 +271,18 @@ S4.prototype.startRower = async function (callback) {
   })
 
   rower.event.on('update', function (event) {
-    if ('stroke_rate' in event) {
-      console.log(event)
+    if (event.name === 'stroke_rate') {
       // No action necessary
-    } else if ('stroke_count' in event && event.stroke_count > strokeCount) {
-      strokeCount = event.stroke_count
+    } else if (event.name === 'stroke_count' && event.value > strokeCount) {
+      strokeCount = event.value
       const e = {
         watts: watts,
         rev_count: strokeCount
       }
       callback(e)
-    } else if ('watts' in event) {
-      if (event.watts > 0) {
-        watts = event.watts
+    } else if (event.name === 'kcal_watts') {
+      if (event.value > 0) {
+        watts = event.value
       }
     }
   })
