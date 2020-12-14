@@ -1,4 +1,5 @@
 [
+    {"name":"ms_distance_dec","address":"054","size":"S","desc":"0.1m count (only counts up from 0-9)"},
     {"name":"distance","address":"057","size":"D","base":16},
     {"name":"test_count","address":"059","size":"S","base":16},
     {"name":"clock_down_dec","address":"05A","size":"A","base":16},
@@ -20,4 +21,9 @@
     {"name":"display_min","address":"1E2","size":"S","base":10},
     {"name":"display_hr","address":"1E3","size":"S","base":10},
     {"name":"workout_limit","address":"1EE","size":"D","base":16}                    
+    {"name":"workout_stroke","address":"1EC","size":"D","desc":"total workout strokes"}
+    {"name":"workout_time","address":"1E8","size":"D","desc":"total workout time"},
+    {"name":"workout_ms","address":"1EA","size":"D","desc":"total workout m/s"},
+    {"name":"total_kcal","address":"08a","size":"D"},
+    {"name":"total_kcal_up","address":"08c","size":"S"},
 ]

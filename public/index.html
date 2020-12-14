@@ -8,10 +8,14 @@
     <script src="/chart/Chart.bundle.min.js"></script>
   </head>
   <body>
-  <section class="section">
+  <div class="container">
     <div id="toggles"></div>
-    <div class="container" id="container"></div>
-  </section>
+    <div class="columns">
+      <div class="column" id="column1"></div>
+      <div class="column" id="column2"></div>
+      <div class="column" id="column3"></div>
+    </div>
+  </div>
 </div>
 <script>
   var chartColors = {
@@ -25,7 +29,8 @@
   };
   var graphs = {}
   var toggleDiv = document.getElementById('toggles')
-  var containerDiv = document.getElementById('container')
+  var columns = [document.getElementById('column1'), document.getElementById('column2'), document.getElementById('column3')]
+  var columnSpot = 0
   function toggleBlock() {
     var attribute = this.getAttribute("data-canvas")
     var span = this.querySelectorAll('span')[0]
@@ -49,7 +54,10 @@
 
     var newCanvas = document.createElement('canvas')
     newCanvas.setAttribute('id', 'canvas-' + response.name)
-    containerDiv.appendChild(newCanvas)
+    columns[columnSpot].appendChild(newCanvas)
+    columnSpot++
+    if (columnSpot >= columns.length) columnSpot = 0
+    
     graphs[response.name] = {}
     graphs[response.name].lineChartData = {
       labels: [new Date()],

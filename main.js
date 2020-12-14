@@ -41,9 +41,11 @@ const main = function () {
   mainUsb(listener, process.env.TEST_MODE)
 
   app.get('/memory.json', function (req, res) {
-    memoryMap.forEach(response => {
-      response.value = response.value ? response.value++ : response.value = 1
-    })
+    if (process.env.DEV) {
+      memoryMap.forEach(response => {
+        response.value = response.value ? response.value++ : response.value = 1
+      })
+    }
     res.send(memoryMap)
   })
   app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js', 'dist')))

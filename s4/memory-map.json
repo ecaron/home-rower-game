@@ -1,15 +1,9 @@
 [
-    {"name":"ms_distance_dec","address":"054","size":"S","desc":"0.1m count (only counts up from 0-9)"},
     {"name":"ms_distance","address":"055","size":"D","desc":"distance in meters"},
     {"name":"kcal_watts","address":"088","size":"D"},
-    {"name":"total_kcal","address":"08a","size":"D"},
-    {"name":"total_kcal_up","address":"08c","size":"S"},
     {"name":"stroke_cnt","address":"140","size":"D"},
     {"name":"stroke_average","address":"142","size":"S","desc":"average time for a whole stroke"},
     {"name":"stroke_pull","address":"143","size":"S","desc":"average time for a pull (acc to dec)"},
     {"name":"m_s_total","address":"148","size":"D","desc":"total distance per second in cm"},
-    {"name":"m_s_average","address":"14A","size":"D","desc":"instant average distance in cm"},
-    {"name":"workout_time","address":"1E8","size":"D","desc":"total workout time"},
-    {"name":"workout_ms","address":"1EA","size":"D","desc":"total workout m/s"},
-    {"name":"workout_stroke","address":"1EC","size":"D","desc":"total workout strokes"}
+    {"name":"m_s_average","address":"14A","size":"D","desc":"instant average distance in cm"}
 ]
