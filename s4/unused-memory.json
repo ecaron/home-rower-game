@@ -1,0 +1,23 @@
+[
+    {"name":"distance","address":"057","size":"D","base":16},
+    {"name":"test_count","address":"059","size":"S","base":16},
+    {"name":"clock_down_dec","address":"05A","size":"A","base":16},
+    {"name":"clock_down","address":"05B","size":"D","base":16},
+    {"name":"total_dis_dec","address":"080","size":"S","base":16},
+    {"name":"total_dis","address":"081","size":"D","base":16},
+    {"name":"pins_per_xxcm","address":"083","size":"S","base":16},
+    {"name":"distance_xxcm","address":"084","size":"S","base":16},
+    {"name":"tank_volume","address":"0A9","size":"S","base":16},
+    {"name":"mph","address":"1A3","size":"D"},
+    {"name":"stroke_rate","address":"1A9","size":"S"},
+    {"name":"m_s_stored","address":"14C","size":"S","base":16},
+    {"name":"m_s_proj_avg","address":"14D","size":"D","base":16},
+    {"name":"screen_mode","address":"00D","size":"S","base":16},
+    {"name":"screen_sub_mode","address":"00E","size":"S","base":16},
+    {"name":"screen_interval","address":"00F","size":"S","base":16},
+    {"name":"display_sec_dec","address":"1E0","size":"S","base":10},
+    {"name":"display_sec","address":"1E1","size":"S","base":10},
+    {"name":"display_min","address":"1E2","size":"S","base":10},
+    {"name":"display_hr","address":"1E3","size":"S","base":10},
+    {"name":"workout_limit","address":"1EE","size":"D","base":16}                    
+]

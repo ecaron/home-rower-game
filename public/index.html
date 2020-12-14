@@ -14,7 +14,7 @@
   </section>
 </div>
 <script>
-  window.chartColors = {
+  var chartColors = {
     red: 'rgb(255, 99, 132)',
     orange: 'rgb(255, 159, 64)',
     yellow: 'rgb(255, 205, 86)',
@@ -55,8 +55,8 @@
       labels: [new Date()],
       datasets: [{
           label: response.name,
-          borderColor: window.chartColors.red,
-          backgroundColor: window.chartColors.red,
+          borderColor: chartColors.red,
+          backgroundColor: chartColors.red,
           fill: false,
           data: [{t: new Date(), y: response.value}]
       }]
@@ -73,7 +73,7 @@
         stacked: false,
         title: {
           display: true,
-          text: response.name
+          text: response.desc || response.name
         },
         scales: {
           xAxes: [{
