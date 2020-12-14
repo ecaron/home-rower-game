@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Water Rower Metric Measurements</title>
+    <link rel="stylesheet" href="/bulma/bulma.min.css">
+    <script src="/chart/Chart.min.js"></script>
+    <script src="/util.js"></script>
+  </head>
+  <body>
+  <section class="section">
+    <div id="toggles"></div>
+    <div class="container" id="container">
+      <canvas id="canvas"></canvas>
+    </div>
+  </section>
+</div>
+<script>
+  var graphs = false
+  function toggleBlock() {
+    var attribute = this.getAttribute("data-canvas")
+    var span = this.querySelectorAll('span')[0]
+    if (span.innerHTML === '-') {
+      span.innerHTML = '+'
+      document.getElementById('canvas-' + attribute).style.display = 'none'
+    } else {
+      span.innerHTML = '-'
+      document.getElementById('canvas-' + attribute).style.display = 'block'
+    }
+  }
+
+  function defineGraphs(responses) {
+    graphs = {}
+    var toggleDiv = document.getElementById('toggles')
+    var containerDiv = document.getElementById('container')
+    responses.forEach(response => {
+      var newToggle = document.createElement('div')
+      newToggle.style = "display:inline-block;margin:3px 5px"
+      newToggle.innerHTML = '<a href="#"><span>-</span> ' + response.name + '</a>'
+      newToggle.setAttribute('id', 'toggle-' + response.name)
+      newToggle.setAttribute('data-canvas', response.name)
+      newToggle.addEventListener('click', toggleBlock, false)
+      toggleDiv.appendChild(newToggle)
+
+      var newCanvas = document.createElement('canvas')
+      newCanvas.setAttribute('id', 'canvas-' + response.name)
+      containerDiv.appendChild(newCanvas)
+      graphs[response.name] = {}
+      graphs[response.name].lineChartData = {
+        labels: [],
+        datasets: [{
+            label: response.name,
+            borderColor: window.chartColors.red,
+            backgroundColor: window.chartColors.red,
+            fill: false,
+            data: [],
+            yAxisID: 'y-axis-1',
+        }]
+      }
+      var ctx = document.getElementById('canvas-' + response.name).getContext('2d')
+      graphs[response.name].chart = Chart.Line(ctx, {
+        data: graphs[response.name].lineChartData,
+        options: {
+          responsive: true,
+          hoverMode: 'index',
+          stacked: false,
+          title: {
+            display: true,
+            text: 'Chart.js Line Chart - Multi Axis'
+          },
+          scales: {
+            yAxes: [{
+              type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+              display: true,
+              position: 'left',
+              id: 'y-axis-1',
+            }]
+          }
+        }
+      })
+    })
+  }
+  function updateGraphs(){
+    fetch('/memory.json')
+    .then(response => response.json())
+    .then(graphResponses => {
+      if (graphs === false) {
+        defineGraphs(graphResponses)
+      } else {
+        graphResponses.forEach(function(response) {
+          if (response.value) {
+            graphs[response.name].lineChartData.labels.push(new Date())
+            graphs[response.name].lineChartData.datasets[0].data.push(response.value)
+            graphs[response.name].chart.update()
+          }
+        })
+      }
+      setTimeout(updateGraphs, 5000)
+    })
+  }
+  updateGraphs()
+</script>
+</body>
+</html>

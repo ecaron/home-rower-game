@@ -22,8 +22,11 @@
   },
   "dependencies": {
     "bleno": "abandonware/bleno",
+    "bulma": "^0.9.1",
+    "chart.js": "^2.9.4",
     "debug": "^4.3",
     "dotenv": "^8.2.0",
+    "express": "^4.17.1",
     "serialport": "^9.0",
     "usb": "^1.6"
   },

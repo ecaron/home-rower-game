@@ -1,10 +1,13 @@
 require('dotenv').config()
-const http = require('http')
 const debug = require('debug')('waterrower-ble:main')
+const express = require('express')
+const path = require('path')
 const S4 = require('./s4')
 const memoryMap = require('./s4/memory-map')
 const BluetoothPeripheral = require('./bluetooth-peripheral')
 const UsbPeripheral = require('./usb-peripheral')
+
+const app = express()
 
 const mainUsb = async function (callback, testMode) {
   const rower = new S4(memoryMap)
@@ -37,16 +40,13 @@ const main = function () {
   }
   mainUsb(listener, process.env.TEST_MODE)
 
-  const requestListener = function (req, res) {
-    res.setHeader('Content-Type', 'application/json')
-    res.writeHead(200)
-    res.end(JSON.stringify(memoryMap))
-  }
-
-  const server = http.createServer(requestListener)
-  server.listen(process.env.PORT || 8000, () => {
-    console.log(`Server is running on ${process.env.PORT || 8000}`)
+  app.get('/memory.json', function (req, res) {
+    res.send(memoryMap)
   })
+  app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js', 'dist')))
+  app.use('/bulma', express.static(path.join(__dirname, 'node_modules', 'bulma', 'css')))
+  app.use(express.static(path.join(__dirname, 'public')))
+  app.listen(process.env.PORT || 8000)
 }
 
 main()
