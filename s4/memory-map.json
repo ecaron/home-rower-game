@@ -1,9 +1,9 @@
 [
-    {"name":"ms_distance","address":"055","size":"D","desc":"distance in meters"},
-    {"name":"kcal_watts","address":"088","size":"D"},
-    {"name":"stroke_cnt","address":"140","size":"D"},
-    {"name":"stroke_average","address":"142","size":"S","desc":"average time for a whole stroke"},
-    {"name":"stroke_pull","address":"143","size":"S","desc":"average time for a pull (acc to dec)"},
-    {"name":"m_s_total","address":"148","size":"D","desc":"total distance per second in cm"},
-    {"name":"m_s_average","address":"14A","size":"D","desc":"instant average distance in cm"}
+    {"name":"ms_distance","address":"055","size":"D","desc":"Distance in meters","unit":"m"},
+    {"name":"kcal_watts","address":"088","size":"D","unit":"watts"},
+    {"name":"stroke_cnt","address":"140","size":"D","unit":"strokes"},
+    {"name":"stroke_average","address":"142","size":"S","desc":"Average time for a whole stroke","unit":"sec"},
+    {"name":"stroke_pull","address":"143","size":"S","desc":"Average time for a pull (acc to dec)","unit":"sec"},
+    {"name":"mph_total","address":"148","size":"D","desc":"Total distance in MPH","unit":"mph","multiple":0.22},
+    {"name":"mph_average","address":"14A","size":"D","desc":"Instant average in MPH","unit":"mph","multiple":0.22}
 ]

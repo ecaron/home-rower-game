@@ -4,130 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Water Rower Metric Measurements</title>
-    <link rel="stylesheet" href="/bulma/bulma.min.css">
+    <link rel="stylesheet" href="/normalize.css">
+    <link rel="stylesheet" href="/skeleton.css">
+    <link rel="stylesheet" href="/darkmode.css">
+    <link rel="stylesheet" href="/style.css">
     <script src="/chart/Chart.bundle.min.js"></script>
   </head>
   <body>
-  <div class="container">
     <div id="toggles"></div>
-    <div class="columns">
-      <div class="column" id="column1"></div>
-      <div class="column" id="column2"></div>
-      <div class="column" id="column3"></div>
-    </div>
-  </div>
-</div>
-<script>
-  var chartColors = {
-    red: 'rgb(255, 99, 132)',
-    orange: 'rgb(255, 159, 64)',
-    yellow: 'rgb(255, 205, 86)',
-    green: 'rgb(75, 192, 192)',
-    blue: 'rgb(54, 162, 235)',
-    purple: 'rgb(153, 102, 255)',
-    grey: 'rgb(201, 203, 207)'
-  };
-  var graphs = {}
-  var toggleDiv = document.getElementById('toggles')
-  var columns = [document.getElementById('column1'), document.getElementById('column2'), document.getElementById('column3')]
-  var columnSpot = 0
-  function toggleBlock() {
-    var attribute = this.getAttribute("data-canvas")
-    var span = this.querySelectorAll('span')[0]
-    if (span.innerHTML === '-') {
-      span.innerHTML = '+'
-      document.getElementById('canvas-' + attribute).style.display = 'none'
-    } else {
-      span.innerHTML = '-'
-      document.getElementById('canvas-' + attribute).style.display = 'block'
-    }
-  }
-
-  function defineGraph(response) {
-    var newToggle = document.createElement('div')
-    newToggle.style = "display:inline-block;margin:3px 5px"
-    newToggle.innerHTML = '<a href="#"><span>-</span> ' + response.name + '</a>'
-    newToggle.setAttribute('id', 'toggle-' + response.name)
-    newToggle.setAttribute('data-canvas', response.name)
-    newToggle.addEventListener('click', toggleBlock, false)
-    toggleDiv.appendChild(newToggle)
-
-    var newCanvas = document.createElement('canvas')
-    newCanvas.setAttribute('id', 'canvas-' + response.name)
-    columns[columnSpot].appendChild(newCanvas)
-    columnSpot++
-    if (columnSpot >= columns.length) columnSpot = 0
-    
-    graphs[response.name] = {}
-    graphs[response.name].lineChartData = {
-      labels: [new Date()],
-      datasets: [{
-          label: response.name,
-          borderColor: chartColors.red,
-          backgroundColor: chartColors.red,
-          fill: false,
-          data: [{t: new Date(), y: response.value}]
-      }]
-    }
-    var ctx = document.getElementById('canvas-' + response.name).getContext('2d')
-    graphs[response.name].chart = Chart.Line(ctx, {
-      data: graphs[response.name].lineChartData,
-      options: {
-        legend: {
-          display: false
-        },
-        responsive: true,
-        hoverMode: 'index',
-        stacked: false,
-        title: {
-          display: true,
-          text: response.desc || response.name
-        },
-        scales: {
-          xAxes: [{
-            type: 'time',
-            time: {
-              displayFormats: {
-                'millisecond': 'h:mm:ss a',
-                'second': 'h:mm:ss a',
-                'minute': 'h:mm a',
-                'hour': 'h:mm a',
-                'day': 'h:mm a',
-                'week': 'h:mm a',
-                'month': 'h:mm a',
-                'quarter': 'h:mm a',
-                'year': 'h:mm a'
-              }
-            }
-          }],
-          yAxes: [{
-            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-            display: true,
-            position: 'left',
-          }]
-        }
-      }
-    })
-  }
-  function updateGraphs(){
-    fetch('/memory.json')
-    .then(response => response.json())
-    .then(graphResponses => {
-      graphResponses.forEach(function(response) {
-        if (response.value) {
-          if (typeof graphs[response.name] === 'undefined') {
-            defineGraph(response)
-          } else {
-            graphs[response.name].lineChartData.labels.push(new Date())
-            graphs[response.name].lineChartData.datasets[0].data.push({t: new Date(), y: response.value})
-            graphs[response.name].chart.update()
-          }
-        }
-      })
-      setTimeout(updateGraphs, 5000)
-    })
-  }
-  updateGraphs()
-</script>
-</body>
+    <div id="graphs"></div>
+    <script src="main.js"></script>
+  </body>
 </html>

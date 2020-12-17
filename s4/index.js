@@ -184,6 +184,9 @@ function S4 (memoryMap) {
     const end = 6 + 2 * l
     const dataPoint = memoryMap.find(element => element.address === address)
     const value = parseInt(string.substring(6, end), 16)
+    if (dataPoint.multiple) {
+      value = value * dataPoint.multiple
+    }
     if (dataPoint.value !== value) {
       debug(`${dataPoint.name} changed from ${dataPoint.value} to ${value}`)
       dataPoint.value = value

@@ -43,7 +43,8 @@ const main = function () {
   app.get('/memory.json', function (req, res) {
     if (process.env.DEV) {
       memoryMap.forEach(response => {
-        response.value = response.value ? response.value++ : response.value = 1
+        if (typeof response.value === 'undefined') response.value = 1
+        else response.value++
       })
     }
     res.send(memoryMap)

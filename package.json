@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "bleno": "abandonware/bleno",
-    "bulma": "^0.9.1",
     "chart.js": "^2.9.4",
     "debug": "^4.3",
     "dotenv": "^8.2.0",
