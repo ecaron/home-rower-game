@@ -51,8 +51,6 @@ function resizeGraphs () {
     while (gridRows * divider < visibleGraphs) gridRows++
     const gridHeight = Math.floor((window.innerHeight - toggleDiv.offsetHeight - 30) / gridRows)
 
-    console.log('Cols ' + divider + ' - Rows ' + gridRows)
-
     Object.keys(graphs).forEach(function (graphName) {
       document.getElementById('wrapper-' + graphName).style.width = gridWidth + 'px'
       document.getElementById('wrapper-' + graphName).style.height = gridHeight + 'px'
@@ -82,7 +80,7 @@ function defineGraph (response) {
   currentValue.classList.add('counter')
   currentValue.classList.add('pre-animation')
   currentValue.style = 'top:25%;padding-left:10%;width:80%;text-align:center;position:absolute;font-size:64px;opacity:0.8;text-shadow:1px 1px black;line-height:48px'
-  currentValue.innerHTML = response.value + ' ' + response.unit
+  currentValue.innerHTML = (Math.round((response.value + Number.EPSILON) * 100) / 100) + ' ' + response.unit
   currentValue.setAttribute('id', 'currentval-' + response.name)
   newCanvasWrapper.appendChild(currentValue)
 
@@ -155,10 +153,11 @@ function updateGraphs () {
           if (typeof graphs[response.name] === 'undefined') {
             defineGraph(response)
           } else {
-            if (document.getElementById('currentval-' + response.name).innerHTML !== response.value + ' ' + response.unit) {
+            const overlayValue = (Math.round((response.value + Number.EPSILON) * 100) / 100) + ' ' + response.unit
+            if (document.getElementById('currentval-' + response.name).innerHTML !== overlayValue) {
               document.getElementById('currentval-' + response.name).style.opacity = 0
               setTimeout(function () {
-                document.getElementById('currentval-' + response.name).innerHTML = response.value + ' ' + response.unit
+                document.getElementById('currentval-' + response.name).innerHTML = overlayValue
                 document.getElementById('currentval-' + response.name).style.opacity = 1
               }, 800)
             }
@@ -169,6 +168,11 @@ function updateGraphs () {
           }
         }
       })
+      setTimeout(updateGraphs, 5000)
+    })
+    .catch((error) => {
+      console.error('Error:', error)
+      alert('Connection interrupted. Try again?')
       setTimeout(updateGraphs, 5000)
     })
 }

@@ -32,13 +32,12 @@ const main = function () {
   const listener = function () {
     const ble = new BluetoothPeripheral('WaterRower S4')
     return function (event) {
-      console.log(event)
-      if ('watts' in event) {
+      if (typeof event.watters !== 'undefined') {
         ble.notify(event)
       }
     }
   }
-  mainUsb(listener, process.env.TEST_MODE)
+  mainUsb(listener(), process.env.TEST_MODE)
 
   app.get('/memory.json', function (req, res) {
     if (process.env.DEV) {
@@ -57,7 +56,6 @@ const main = function () {
   })
 
   app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js', 'dist')))
-  app.use('/bulma', express.static(path.join(__dirname, 'node_modules', 'bulma', 'css')))
   app.use(express.static(path.join(__dirname, 'public')))
   app.listen(process.env.PORT || 8000)
 }

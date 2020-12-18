@@ -273,9 +273,7 @@ S4.prototype.startRower = async function (callback) {
   })
 
   rower.event.on('update', function (event) {
-    if (event.name === 'stroke_rate') {
-      // No action necessary
-    } else if (event.name === 'stroke_count' && event.value > strokeCount) {
+    if (event.name === 'stroke_cnt' && event.value > strokeCount) {
       strokeCount = event.value
       const e = {
         watts: watts,
