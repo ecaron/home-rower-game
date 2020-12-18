@@ -3,3 +3,18 @@
   -webkit-transition: opacity .5s ease-in-out;
   -moz-transition:opacity .5s ease-in-out;
 }
+
+#reset {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  color: #aaa;
+}
+#reset:hover {
+  color: blue;
+}
+@media (prefers-color-scheme: dark) {
+  #reset:hover {
+    color: #aaaaff;
+  }
+}  

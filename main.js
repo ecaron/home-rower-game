@@ -49,6 +49,13 @@ const main = function () {
     }
     res.send(memoryMap)
   })
+  app.get('/reset', function (req, res) {
+    memoryMap.forEach(response => {
+      response.value = 0
+    })
+    res.redirect('/')
+  })
+
   app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js', 'dist')))
   app.use('/bulma', express.static(path.join(__dirname, 'node_modules', 'bulma', 'css')))
   app.use(express.static(path.join(__dirname, 'public')))
