@@ -11,10 +11,7 @@ You can read the [blog
 post](http://www.olympum.com/sports/rowing-with-waterrower-in-zwift) for
 context.
 
-**B$ disclaimer: this code is just a quick Friday afternoon hack with a bunch
-of subsequent patches. Use at your own risk!**
-
-## Installation on the Raspberry Pi ##
+## Installation on the Raspberry Pi
 
 These instructions are specific to the Raspberry, although it should
 work in any Linux distro and on Mac with little modifications. I have

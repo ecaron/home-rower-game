@@ -1,6 +1,6 @@
 const util = require('util')
 const debug = require('debug')('waterrower-ble:ble:pm')
-const bleno = require('bleno')
+const bleno = require('@abandonware/bleno')
 
 const Descriptor = bleno.Descriptor
 const Characteristic = bleno.Characteristic
