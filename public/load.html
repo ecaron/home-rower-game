@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sample Site</title>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="avatar/avataaars.js"></script>
+</head>
+<body>
+    <div id="avatar"></div>
+    <form id="form">
+
+    </form>
+    <button id="generate">Generate</button>
+    <script>
+    var avatarGenerator = function(){
+        var options = {
+            width: 400,
+            height: 400
+        }
+        $inputs = $('#form select').each(function() {
+            if ($(this).val()) options[this.name] = $(this).val();
+        });
+        var svg = Avataaars.create(options);
+        $('#avatar').html(svg)
+    }
+    var formOption
+    Object.keys(Avataaars.paths).forEach(function(path){
+        var optionCount = 0
+        formOption = '<div><label for="' + path + '" style="float:left;display:block;width:100px;text-align:right;margin-right:5px">' + path + '</label><select name="' + path + '" id="' + path + '">'
+        if (path === 'accessories') {
+            formOption += '<option value="">None</option>'
+        }
+
+        if (path === 'skin') {
+            Object.keys(Avataaars.colors.skin).forEach(function(option){
+                optionCount++
+                formOption += '<option value="'+option+'">'+option+'</option>'
+            })
+        } else {
+            Object.keys(Avataaars.paths[path]).forEach(function(option){
+                optionCount++
+                formOption += '<option value="'+option+'">'+option+'</option>'
+            })
+        }
+        formOption += '</select></div>'
+        if (optionCount > 0) {
+            $('#form').append(formOption)
+        }
+    })
+    var colorOptions = ['hairColor', 'hatColor', 'accessoriesColor', 'facialHairColor', 'clothingColor']
+    colorOptions.forEach(function(colorType){
+        formOption = '<div><label for="' + colorType + '"style="float:left;display:block;width:100px;text-align:right;margin-right:5px">' + colorType + '</label><select name="' + colorType + '" id="' + colorType + '">'
+        if (colorType === 'hairColor' || colorType === 'facialHairColor') {
+            Object.keys(Avataaars.colors.hair).forEach(function(option){
+                formOption += '<option value="'+option+'">'+option+'</option>'
+            })
+        } else {
+            Object.keys(Avataaars.colors.palette).forEach(function(option){
+                formOption += '<option value="'+option+'">'+option+'</option>'
+            })
+        }
+        formOption += '</select></div>'
+        $('#form').append(formOption)
+    })
+
+    avatarGenerator()
+    $('#generate').on('click', avatarGenerator)
+    </script>
+</body>
+</html>

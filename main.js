@@ -1,22 +1,21 @@
 require('dotenv').config()
-const debug = require('debug')('waterrower-ble:main')
+const debug = require('debug')('waterrower-game:main')
 const express = require('express')
 const path = require('path')
 const S4 = require('./s4')
 const memoryMap = require('./s4/memory-map')
-const BluetoothPeripheral = require('./bluetooth-peripheral')
 const UsbPeripheral = require('./usb-peripheral')
 
 const app = express()
 
-const mainUsb = async function (callback, testMode) {
+const mainUsb = async function (testMode) {
   const rower = new S4(memoryMap)
   if (testMode) {
-    return rower.fakeRower(callback)
+    return rower.fakeRower()
   }
   const rowerPort = await rower.findPort()
   if (rowerPort !== false) {
-    return rower.startRower(callback)
+    return rower.startRower()
   }
   // wait till we get the right serial
   debug('[Init] Awaiting WaterRower S4.2 to be connected to USB port')
@@ -24,20 +23,12 @@ const mainUsb = async function (callback, testMode) {
   // monitor USB attach and detach events
   const usbPeripheral = new UsbPeripheral()
   usbPeripheral.monitorWr(function () {
-    rower.startRower(callback)
+    rower.startRower()
   }, rower.stopRower(rower))
 }
 
 const main = function () {
-  const listener = function () {
-    const ble = new BluetoothPeripheral('WaterRower S4')
-    return function (event) {
-      if (typeof event.watters !== 'undefined') {
-        ble.notify(event)
-      }
-    }
-  }
-  mainUsb(listener(), process.env.TEST_MODE)
+  mainUsb(process.env.TEST_MODE)
 
   app.get('/memory.json', function (req, res) {
     if (process.env.DEV) {

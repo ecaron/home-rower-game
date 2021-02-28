@@ -2,7 +2,7 @@
 const { EventEmitter } = require('events')
 const SerialPort = require('serialport')
 const Readline = require('@serialport/parser-readline')
-const debug = require('debug')('waterrower-ble:S4')
+const debug = require('debug')('waterrower-game:S4')
 
 // MESSAGE FLOW
 //
@@ -253,7 +253,7 @@ S4.prototype.exit = function () {
   }
 }
 
-S4.prototype.startRower = async function (callback) {
+S4.prototype.startRower = async function () {
   const rower = this
   let comName
   try {
@@ -279,7 +279,7 @@ S4.prototype.startRower = async function (callback) {
         watts: watts,
         rev_count: strokeCount
       }
-      callback(e)
+      //callback(e)
     } else if (event.name === 'kcal_watts') {
       if (event.value > 0) {
         watts = event.value
@@ -295,14 +295,14 @@ S4.prototype.stopRower = function () {
   }
 }
 
-S4.prototype.fakeRower = function (callback) {
+S4.prototype.fakeRower = function () {
   debug('[Init] Faking test data')
   let strokeCount = 0
   const test = function () {
     const watts = Math.floor(Math.random() * 10 + 120)
     const error = false
     strokeCount = strokeCount + 1
-    callback(error, { watts: watts, rev_count: strokeCount })
+    //callback(error, { watts: watts, rev_count: strokeCount })
     setTimeout(test, 666)
   }
   test()
