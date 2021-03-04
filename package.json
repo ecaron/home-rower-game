@@ -4,9 +4,10 @@
   "description": "A WaterRower webapp for friendly in-house competitions",
   "scripts": {
     "start": "node app",
-    "lint": "standard --fix"
+    "lint": "standard --fix",
+    "dev": "nodemon -e js,css,njk"
   },
-  "main": "main.js",
+  "main": "app.js",
   "license": "MIT",
   "repository": "ecaron/waterrower-game",
   "engines": {
@@ -22,6 +23,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "materialize-css": "^1.0.0-rc.2",
     "nedb": "^1.8.0",
     "nunjucks": "^3.2.3",
     "serialport": "^9.0",
@@ -29,6 +31,7 @@
     "ws": "^7.4.3"
   },
   "devDependencies": {
+    "nodemon": "^2.0.7",
     "standard": "^16.0.3"
   }
 }

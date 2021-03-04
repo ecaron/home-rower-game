@@ -47,8 +47,9 @@ app.get('/reset', function (req, res) {
 app.use(sessionParser)
 
 app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js', 'dist')))
+app.use('/materialize', express.static(path.join(__dirname, 'node_modules', 'materialize-css', 'dist')))
 
-app.use('/', function (req, res) {
+app.get('/', function (req, res) {
   if (req.session.userId) {
     res.render('index')
   } else {

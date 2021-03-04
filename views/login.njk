@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-      <meta charset="utf-8">
-      <title>Express session demo</title>
-  </head>
-  <body>
-    <h1>Choose an action.</h1>
+{% extends "template.njk" %}
+
+{% block content %}
+    <h1>Choose your rower.</h1>
+    <span class="material-icons">face</span>
     <button id="login" type="button" title="Simulate login">
       Simulate login
     </button>
@@ -20,5 +17,4 @@
     </button>
     <pre id="messages" style="height: 400px; overflow: scroll"></pre>
     <script src="login.js"></script>
-  </body>
-</html>
+{% endblock %}

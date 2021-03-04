@@ -7,3 +7,4 @@ Metrics tracked:
 
 Tools used:
 * https://github.com/HB0N0/AvataaarsJs
+* https://github.com/google/material-design-icons
