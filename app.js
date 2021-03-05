@@ -9,9 +9,10 @@ const path = require('path')
 const Datastore = require('nedb')
 
 const S4 = require('./s4')
-const memoryMap = require('./s4/memory-map')
 
-const db = new Datastore({ filename: path.join(__dirname, 'db', 'datafile'), autoload: true })
+const db = {
+  rowers: new Datastore({ filename: path.join(__dirname, 'db', 'rowers'), autoload: true })
+}
 
 const app = express()
 const map = new Map()
@@ -31,15 +32,15 @@ const sessionParser = session({
 
 app.get('/memory.json', function (req, res) {
   if (process.env.DEV) {
-    memoryMap.forEach(response => {
+    S4.memoryMap.forEach(response => {
       if (typeof response.value === 'undefined') response.value = 1
       else response.value++
     })
   }
-  res.send(memoryMap)
+  res.send(S4.memoryMap)
 })
 app.get('/reset', function (req, res) {
-  memoryMap.forEach(response => {
+  S4.memoryMap.forEach(response => {
     response.value = 0
   })
   res.redirect('/')
@@ -53,27 +54,40 @@ app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js'
 app.use('/materialize', express.static(path.join(__dirname, 'node_modules', 'materialize-css', 'dist')))
 
 app.get('/', function (req, res) {
-  if (req.session.userId) {
-    res.render('index')
-  } else {
-    res.render('login', {items: [{name: 'Eric'}, {name: 'Krystal'}]})
-  }
+  db.rowers.find({}, function (err, docs) {
+    if (err) debug(err)
+    if (req.session.userId) {
+      res.render('index', { rowers: docs })
+    } else {
+      res.render('login', { rowers: docs })
+    }
+  })
 })
 
 app.get('/register', function (req, res) {
   if (req.session.userId) {
+    debug('User tried to register, but was already logged in')
     res.redirect('/')
   } else {
     res.render('register')
   }
 })
 app.post('/register', function (req, res) {
-  res.send(req.body)
+  const doc = {
+    name: req.body.name,
+    avatar: req.body.avatar
+  }
+
+  db.rowers.insert(doc, function (err, newDoc) {
+    if (err) debug(err)
+    res.session.userId = req.body.name
+    res.redirect('/')
+  })
 })
 
 app.post('/login', function (req, res) {
-  req.session.userId = 'test' + new Date()
-  res.send({ result: 'OK', message: 'Session updated' })
+  req.session.userId = req.body.name
+  res.redirect('/')
 })
 
 app.delete('/logout', function (request, response) {
@@ -88,7 +102,6 @@ app.delete('/logout', function (request, response) {
 })
 
 app.use(express.static(path.join(__dirname, 'public')))
-
 
 //
 // Create an HTTP server.

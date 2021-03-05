@@ -1,0 +1,21 @@
+{% extends "template.njk" %}
+
+{% block content %}
+    <h1>Choose your competitor.</h1>
+    <div class="container">
+      <div class="row">
+        {% for rower in rowers %}
+          <div class="col s12 m5">
+            <form method="post" action="/compete">
+                <input type="hidden" name="name" value="{{ item.name }}">
+                <div class="card-panel teal">
+                  <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
+                  <button type="submit" class="btn white-text">{{ rower.name }}</button>
+                </div>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <button id="logout" type="button">Logout</button>
+{% endblock %}

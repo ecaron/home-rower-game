@@ -1,5 +1,7 @@
 const Rower = require('./rower')
 const UsbPeripheral = require('./usb-peripheral')
+const memoryMap = require('./memory-map')
+const debug = require('debug')('waterrower-game:S4')
 
 const mainUsb = async function (testMode) {
   const rower = new Rower(memoryMap)
@@ -20,4 +22,7 @@ const mainUsb = async function (testMode) {
   }, rower.stopRower(rower))
 }
 
-module.exports = mainUsb
+module.exports = {
+  usb: mainUsb,
+  memoryMap: memoryMap
+}

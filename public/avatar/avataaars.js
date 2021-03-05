@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const Avataaars = {
   defaultOptions: {
     style: 'circle'
@@ -60,8 +61,8 @@ const Avataaars = {
     `
     if (options.style === 'circle') {
       content = `
-      ${(options.svgBackground) ? `<path fill="${(options.svgBackground == true) ? '#fff' : options.svgBackground}" d="M0 0h280v280H0z"/>` : ''}
-      <path d="M260 160c0 66.274-53.726 120-120 120S20 226.274 20 160 73.726 40 140 40s120 53.726 120 120z" fill="${(_a = options.background) !== null && _a !== void 0 ? _a : this.colors.palette.blue01}"/>
+      ${(options.svgBackground) ? `<path fill="${(options.svgBackground === true) ? '#fff' : options.svgBackground}" d="M0 0h280v280H0z"/>` : ''}
+      <path d="M260 160c0 66.274-53.726 120-120 120S20 226.274 20 160 73.726 40 140 40s120 53.726 120 120z" fill="${(_a = options.background) !== null && _a !== undefined ? _a : this.colors.palette.blue01}"/>
       <mask id="a" maskUnits="userSpaceOnUse" x="8" y="0" width="264" height="280">
         <path fill-rule="evenodd" clip-rule="evenodd" d="M272 0H8v160h12c0 66.274 53.726 120 120 120s120-53.726 120-120h12V0z" fill="#fff"/>
       </mask>

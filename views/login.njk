@@ -4,11 +4,15 @@
     <h1>Choose your rower.</h1>
     <div class="container">
       <div class="row">
-        {% for item in items %}
+        {% for rower in rowers %}
           <div class="col s12 m5">
-            <div class="card-panel teal">
-              <span class="white-text">{{ item.name }}</span>
-            </div>
+            <form method="post" action="/login">
+                <input type="hidden" name="name" value="{{ rower.name }}">
+                <div class="card-panel teal">
+                  <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
+                  <button type="submit" class="btn white-text">{{ rower.name }}</button>
+                </div>
+            </form>
           </div>
         {% endfor %}
         <div class="col s12 m5">
@@ -34,5 +38,4 @@
     </button>
     <pre id="messages" style="height: 400px; overflow: scroll"></pre>
     -->
-    <script src="login.js"></script>
 {% endblock %}

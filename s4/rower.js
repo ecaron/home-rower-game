@@ -262,8 +262,8 @@ S4.prototype.startRower = async function () {
     debug('[Init] error: ' + e)
   }
   debug('[Init] Found WaterRower S4 on com port: ' + comName)
-  let strokeCount = 0
-  let watts = 0
+  // const strokeCount = 0
+  // const watts = 0
   await rower.open(comName)
   await rower.start()
   debug('[Start] Start broadcasting WR data')
@@ -273,18 +273,19 @@ S4.prototype.startRower = async function () {
   })
 
   rower.event.on('update', function (event) {
-    if (event.name === 'stroke_cnt' && event.value > strokeCount) {
-      strokeCount = event.value
-      const e = {
-        watts: watts,
-        rev_count: strokeCount
-      }
-      // callback(e)
-    } else if (event.name === 'kcal_watts') {
-      if (event.value > 0) {
-        watts = event.value
-      }
-    }
+    debug(event)
+    // if (event.name === 'stroke_cnt' && event.value > strokeCount) {
+    //   strokeCount = event.value
+    //   const e = {
+    //     watts: watts,
+    //     rev_count: strokeCount
+    //   }
+    //   callback(e)
+    // } else if (event.name === 'kcal_watts') {
+    //   if (event.value > 0) {
+    //     watts = event.value
+    //   }
+    // }
   })
 }
 
@@ -297,11 +298,11 @@ S4.prototype.stopRower = function () {
 
 S4.prototype.fakeRower = function () {
   debug('[Init] Faking test data')
-  let strokeCount = 0
+  // const strokeCount = 0
   const test = function () {
-    const watts = Math.floor(Math.random() * 10 + 120)
-    const error = false
-    strokeCount = strokeCount + 1
+    // const watts = Math.floor(Math.random() * 10 + 120)
+    // const error = false
+    // strokeCount = strokeCount + 1
     // callback(error, { watts: watts, rev_count: strokeCount })
     setTimeout(test, 666)
   }

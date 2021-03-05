@@ -5,7 +5,7 @@
       <div class="row" style="position:relative">
         <div id="avatar" class="col s6"></div>
         <div class="input-field col s6" style="position:absolute;bottom:0;right:0">
-          <input placeholder="Hank" id="name" type="text" class="validate">
+          <input placeholder="Hank" name="name" id="name" type="text" class="validate">
           <label for="name">Your Name</label>
         </div>
       </div> 
@@ -24,7 +24,7 @@
               height: 400
           }
           $inputs = $('#form select').each(function() {
-              if ($(this).val()) options[this.name] = $(this).val();
+              if ($(this).val()) options[this.id] = $(this).val();
           });
           var svg = Avataaars.create(options);
           $('#avatar').html(svg)
@@ -32,7 +32,7 @@
       var formOption
       Object.keys(Avataaars.paths).forEach(function(path){
           var optionCount = 0
-          formOption = '<div class="input-field col m4 s6"><select name="' + path + '" id="' + path + '">'
+          formOption = '<div class="input-field col m4 s6"><select name="avatar[' + path + ']" id="' + path + '">'
           if (path === 'accessories') {
               formOption += '<option value="">None</option>'
           }
@@ -55,7 +55,7 @@
       })
       var colorOptions = ['hairColor', 'hatColor', 'accessoriesColor', 'facialHairColor', 'clothingColor']
       colorOptions.forEach(function(colorType){
-          formOption = '<div class="input-field col m4 s6"><select name="' + colorType + '" id="' + colorType + '">'
+          formOption = '<div class="input-field col m4 s6"><select name="avatar[' + colorType + ']" id="' + colorType + '">'
           if (colorType === 'hairColor' || colorType === 'facialHairColor') {
               Object.keys(Avataaars.colors.hair).forEach(function(option){
                   formOption += '<option value="'+option+'">'+prettyText(option)+'</option>'
