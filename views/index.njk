@@ -1,21 +1,25 @@
 {% extends "template.njk" %}
 
 {% block content %}
-    <h1>Choose your competitor.</h1>
     <div class="container">
+      <h1>Choose your competitor.</h1>
       <div class="row">
         {% for rower in rowers %}
-          <div class="col s12 m5">
+          <div class="col s6 m3">
             <form method="post" action="/compete">
-                <input type="hidden" name="name" value="{{ item.name }}">
-                <div class="card-panel teal">
-                  <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
-                  <button type="submit" class="btn white-text">{{ rower.name }}</button>
+                <input type="hidden" name="name" value="{{ rower.name }}">
+                <div class="card-panel teal center-align" style="width:300px;height:400px">
+                  <div class="avatar" data-details="{{ rower.avatar | dump }}" onclick="$(this).closest('form').submit()"></div>
+                  <button type="submit" class="white-text btn-large" style="margin-top:20px">{{ rower.name }}</button>
                 </div>
             </form>
           </div>
         {% endfor %}
+        <div class="col s6 m3">
+          <div class="card-panel grey valign-wrapper" style="width:300px;height:400px">
+            <button id="logout" type="button" class="btn-large red lighten-2" style="margin:0 auto">Logout</button>
+          </div>
+        </div>
       </div>
     </div>
-    <button id="logout" type="button">Logout</button>
 {% endblock %}

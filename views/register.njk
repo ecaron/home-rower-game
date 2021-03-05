@@ -1,16 +1,19 @@
 {% extends "template.njk" %}
 {% block content %}
   <div class="container">
+    <h1>Register your rower.</h1>
     <form id="form" class="col s12" method="post">
       <div class="row" style="position:relative">
-        <div id="avatar" class="col s6"></div>
+        <div id="avatar" class="col s3"></div>
         <div class="input-field col s6" style="position:absolute;bottom:0;right:0">
-          <input placeholder="Hank" name="name" id="name" type="text" class="validate">
+          <input placeholder="Hank" name="name" id="name" type="text" class="validate" required="required">
           <label for="name">Your Name</label>
         </div>
+        <div class="col s3"></div>
       </div> 
       <div class="row" id="formInputs"></div>    
       <button id="generate" class="btn">Save</button>
+      <button id="generate" class="btn" onclick="window.location='/'">Cancel</button>
     </form>
   </div>
   <script>
@@ -20,8 +23,8 @@
   window.onload = function() {
       var avatarGenerator = function(){
           var options = {
-              width: 400,
-              height: 400
+              width: 200,
+              height: 200
           }
           $inputs = $('#form select').each(function() {
               if ($(this).val()) options[this.id] = $(this).val();
@@ -34,7 +37,8 @@
           var optionCount = 0
           formOption = '<div class="input-field col m4 s6"><select name="avatar[' + path + ']" id="' + path + '">'
           if (path === 'accessories') {
-              formOption += '<option value="">None</option>'
+            optionCount++
+            formOption += '<option value="">None</option>'
           }
 
           if (path === 'skin') {
@@ -49,7 +53,7 @@
               })
           }
           formOption += '</select><label for="' + path + '">' + prettyText(path) + '</label></div>'
-          if (optionCount > 0) {
+          if (optionCount > 1) {
               $('#formInputs').append(formOption)
           }
       })
@@ -72,6 +76,7 @@
 
       avatarGenerator()
       $('#form').on('change', avatarGenerator)
+      $('#name').focus()
   }
   </script>
 {% endblock %}

@@ -1,23 +1,23 @@
 {% extends "template.njk" %}
 
 {% block content %}
-    <h1>Choose your rower.</h1>
     <div class="container">
+      <h1>Choose your rower.</h1>
       <div class="row">
         {% for rower in rowers %}
-          <div class="col s12 m5">
+          <div class="col s6 m3">
             <form method="post" action="/login">
                 <input type="hidden" name="name" value="{{ rower.name }}">
-                <div class="card-panel teal">
-                  <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
-                  <button type="submit" class="btn white-text">{{ rower.name }}</button>
+                <div class="card-panel teal center-align" style="width:300px;height:400px">
+                  <div class="avatar" data-details="{{ rower.avatar | dump }}" onclick="$(this).closest('form').submit()"></div>
+                  <button type="submit" class="white-text btn-large" style="margin-top:20px">{{ rower.name }}</button>
                 </div>
             </form>
           </div>
         {% endfor %}
-        <div class="col s12 m5">
-          <div class="card-panel teal">
-            <span class="white-text"><a href="/register">Register New Rower</a></span>
+        <div class="col s6 m3">
+          <div class="card-panel teal center-align" style="width:300px;height:400px">
+            <h2><a href="/register" class="white-text"><i class="large material-icons">add_circle</i> Register New Rower</a></h2>
           </div>
         </div>
       </div>

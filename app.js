@@ -2,6 +2,7 @@ require('dotenv').config()
 const debug = require('debug')('waterrower-game:main')
 const express = require('express')
 const session = require('express-session')
+const NedbStore = require('express-nedb-session')(session)
 const nunjucks = require('nunjucks')
 const http = require('http')
 const WebSocket = require('ws')
@@ -27,7 +28,9 @@ app.set('view engine', 'njk')
 const sessionParser = session({
   saveUninitialized: false,
   secret: process.env.SESSION_SECRET || 'forgotToSetEnv',
-  resave: false
+  resave: false,
+  cookie: { path: '/', httpOnly: true, maxAge: 365 * 24 * 3600 * 1000 },
+  store: new NedbStore({ filename: path.join(__dirname, 'db', 'sessions') })
 })
 
 app.get('/memory.json', function (req, res) {
@@ -80,9 +83,23 @@ app.post('/register', function (req, res) {
 
   db.rowers.insert(doc, function (err, newDoc) {
     if (err) debug(err)
-    res.session.userId = req.body.name
+    req.session.userId = req.body.name
     res.redirect('/')
   })
+})
+app.post('/compete', function (req, res) {
+  req.session.competitor = req.body.name
+  res.redirect('/compete')
+})
+app.get('/compete', function (req, res) {
+  if (!req.session.userId || !req.session.competitor) {
+    return res.redirect('/')
+  }
+  const data = {
+    rower: req.session.userId,
+    competitor: req.session.competitor
+  }
+  res.render('compete', data)
 })
 
 app.post('/login', function (req, res) {
