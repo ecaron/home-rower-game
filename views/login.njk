@@ -2,6 +2,23 @@
 
 {% block content %}
     <h1>Choose your rower.</h1>
+    <div class="container">
+      <div class="row">
+        {% for item in items %}
+          <div class="col s12 m5">
+            <div class="card-panel teal">
+              <span class="white-text">{{ item.name }}</span>
+            </div>
+          </div>
+        {% endfor %}
+        <div class="col s12 m5">
+          <div class="card-panel teal">
+            <span class="white-text"><a href="/register">Register New Rower</a></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--
     <span class="material-icons">face</span>
     <button id="login" type="button" title="Simulate login">
       Simulate login
@@ -16,5 +33,6 @@
       Send WebSocket message
     </button>
     <pre id="messages" style="height: 400px; overflow: scroll"></pre>
+    -->
     <script src="login.js"></script>
 {% endblock %}

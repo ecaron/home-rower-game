@@ -1,0 +1,77 @@
+{% extends "template.njk" %}
+{% block content %}
+  <div class="container">
+    <form id="form" class="col s12" method="post">
+      <div class="row" style="position:relative">
+        <div id="avatar" class="col s6"></div>
+        <div class="input-field col s6" style="position:absolute;bottom:0;right:0">
+          <input placeholder="Hank" id="name" type="text" class="validate">
+          <label for="name">Your Name</label>
+        </div>
+      </div> 
+      <div class="row" id="formInputs"></div>    
+      <button id="generate" class="btn">Save</button>
+    </form>
+  </div>
+  <script>
+  function prettyText(input) {
+      return input.replace(/([A-Z])/g, ' $1').replace(/^./, function(str){ return str.toUpperCase(); })
+  }
+  window.onload = function() {
+      var avatarGenerator = function(){
+          var options = {
+              width: 400,
+              height: 400
+          }
+          $inputs = $('#form select').each(function() {
+              if ($(this).val()) options[this.name] = $(this).val();
+          });
+          var svg = Avataaars.create(options);
+          $('#avatar').html(svg)
+      }
+      var formOption
+      Object.keys(Avataaars.paths).forEach(function(path){
+          var optionCount = 0
+          formOption = '<div class="input-field col m4 s6"><select name="' + path + '" id="' + path + '">'
+          if (path === 'accessories') {
+              formOption += '<option value="">None</option>'
+          }
+
+          if (path === 'skin') {
+              Object.keys(Avataaars.colors.skin).forEach(function(option){
+                  optionCount++
+                  formOption += '<option value="'+option+'">'+prettyText(option)+'</option>'
+              })
+          } else {
+              Object.keys(Avataaars.paths[path]).forEach(function(option){
+                  optionCount++
+                  formOption += '<option value="'+option+'">'+prettyText(option)+'</option>'
+              })
+          }
+          formOption += '</select><label for="' + path + '">' + prettyText(path) + '</label></div>'
+          if (optionCount > 0) {
+              $('#formInputs').append(formOption)
+          }
+      })
+      var colorOptions = ['hairColor', 'hatColor', 'accessoriesColor', 'facialHairColor', 'clothingColor']
+      colorOptions.forEach(function(colorType){
+          formOption = '<div class="input-field col m4 s6"><select name="' + colorType + '" id="' + colorType + '">'
+          if (colorType === 'hairColor' || colorType === 'facialHairColor') {
+              Object.keys(Avataaars.colors.hair).forEach(function(option){
+                  formOption += '<option value="'+option+'">'+prettyText(option)+'</option>'
+              })
+          } else {
+              Object.keys(Avataaars.colors.palette).forEach(function(option){
+                  formOption += '<option value="'+option+'">'+prettyText(option)+'</option>'
+              })
+          }
+          formOption += '</select><label for="' + colorType + '">' + prettyText(colorType) + '</label></div>'
+          $('#formInputs').append(formOption)
+      })
+      $('select').formSelect()
+
+      avatarGenerator()
+      $('#form').on('change', avatarGenerator)
+  }
+  </script>
+{% endblock %}

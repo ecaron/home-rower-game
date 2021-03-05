@@ -45,6 +45,9 @@ app.get('/reset', function (req, res) {
   res.redirect('/')
 })
 app.use(sessionParser)
+app.use(express.urlencoded({
+  extended: true
+}))
 
 app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js', 'dist')))
 app.use('/materialize', express.static(path.join(__dirname, 'node_modules', 'materialize-css', 'dist')))
@@ -53,8 +56,19 @@ app.get('/', function (req, res) {
   if (req.session.userId) {
     res.render('index')
   } else {
-    res.render('login')
+    res.render('login', {items: [{name: 'Eric'}, {name: 'Krystal'}]})
   }
+})
+
+app.get('/register', function (req, res) {
+  if (req.session.userId) {
+    res.redirect('/')
+  } else {
+    res.render('register')
+  }
+})
+app.post('/register', function (req, res) {
+  res.send(req.body)
 })
 
 app.post('/login', function (req, res) {
