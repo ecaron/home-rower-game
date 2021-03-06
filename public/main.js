@@ -77,7 +77,13 @@
 
 $(document).ready(function () {
   $('.avatar').each(function () {
-    const options = $(this).data('details')
+    const avatar = $(this).data('details')
+    const options = {}
+    Object.keys(avatar).forEach(function (key) {
+      if (avatar[key]) {
+        options[key] = avatar[key]
+      }
+    })
     const svg = Avataaars.create(options)
     $(this).html(svg)
   })

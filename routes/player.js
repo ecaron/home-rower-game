@@ -1,6 +1,7 @@
 const debug = require('debug')('waterrower-game:main')
 const express = require('express')
 const registerRouter = express.Router()
+const modifyRouter = express.Router()
 const db = require('../lib/db')
 const websocket = require('../lib/websocket')
 
@@ -48,3 +49,23 @@ registerRouter.post('/', function (req, res) {
   })
 })
 exports.register = registerRouter
+
+modifyRouter.get('/:rower', function (req, res) {
+  db.rowers.findOne({ name: req.params.rower }, function (err, rower) {
+    if (err) debug(err)
+    res.render('edit-rower', { rower: rower })
+  })
+})
+modifyRouter.post('/:rower', function (req, res) {
+  const doc = {
+    name: req.body.name,
+    avatar: req.body.avatar
+  }
+
+  db.rowers.insert(doc, function (err, newDoc) {
+    if (err) debug(err)
+    req.session.userId = req.body.name
+    res.redirect('/')
+  })
+})
+exports.modify = modifyRouter

@@ -3,18 +3,23 @@
   -webkit-transition: opacity .5s ease-in-out;
   -moz-transition:opacity .5s ease-in-out;
 }
-
-#reset {
+#water {
+  overflow:hidden;
+}
+#water #starting-line {
   position: absolute;
-  right: 5px;
-  bottom: 5px;
-  color: #aaa;
+  bottom: 50px;
+  height: 10px;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, .5);
+  z-index: 1;
 }
-#reset:hover {
-  color: blue;
+#water .dropoff {
+  animation: dropoff 2.0s forwards;
 }
-@media (prefers-color-scheme: dark) {
-  #reset:hover {
-    color: #aaaaff;
+@keyframes dropoff {
+  to {
+    bottom: -100px;
   }
-}  
+}

@@ -1,20 +1,43 @@
 {% extends "template.njk" %}
 
-{% block header %}
-  <script src="/chart/Chart.bundle.min.js"></script>
+{% block content %}
+  <div class="row">
+    <div id="water" style="position:absolute;border:1px solid black;top:0;bottom:0;left:0;right:50%;background-image:url('/images/water2.gif')">
+      <div id="starting-line"></div>
+      <div id="rower"></div>
+      <div id="competitor"></div>
+    </div>
+    <div style="position:absolute;right:10px;bottom:10px">
+      <a href="#" id="logout" class="btn-small grey lighten-3 black-text">Logout</a>&nbsp;
+      <a id="reset" href="/reset" class="btn-small grey lighten-3 black-text hide">Reset</a>
+    </div>
+    <div class="col s6 offset-s6">
+      <div class="section">
+        <div class="row">
+          <div class="col s12">
+            <h2>{{ rower }} vs {{ competitor }}</h2>
+            <div class="divider"></div>
+            <blockquote><h4>
+              <strong>Race Date</strong>: March 12th, 9:15am<br>
+              <strong>Distance</strong> 400 meters<br>
+              <strong>Max Speed</strong> 72MPH
+            </h4></blockquote>
+          </div>
+          <div class="col s12">
+            <div id="toggles">
+              <button class="btn-large" id="startRace">START</button>
+              <button class="btn-large" style="display:none" id="speedUp">SPEED UP</button>
+              <button class="btn-large" style="display:none" id="speedDown">SPEED DOWN</button>
+            </div>
+            <div id="graphs"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
-{% block content %}
-  {{ rower }} vs {{ competitor }}
-  <div id="water" style="position:absolute;border:1px solid black;top:0;bottom:0;left:0;right:50%;background-image:url('/images/water2.gif')"></div>
-  <div id="toggles"></div>
-  <div id="graphs"></div>
-  <a id="reset" href="/reset">Reset</a>
-  <script>
-  var pos = 0;
-  setInterval(function(){
-    $('#water').css('background-position','0 '+pos+'px')
-    pos += 10
-  }, 200)
-  </script>
+{% block footer %}
+  <script src="/chart/Chart.bundle.min.js"></script>
+  <script src="/compete.js"></script>
 {% endblock %}

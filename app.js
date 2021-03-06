@@ -37,6 +37,7 @@ app.use('/materialize', express.static(path.join(__dirname, 'node_modules', 'mat
 
 app.use('/compete', routes.compete)
 app.get('/', routes.player.home)
+app.use('/rower/', routes.player.modify)
 app.use('/register/', routes.player.register)
 app.post('/login', routes.player.login)
 app.delete('/logout', routes.player.logout)

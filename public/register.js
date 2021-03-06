@@ -16,8 +16,9 @@ $(document).ready(function () {
   }
   let formOption, randomMatch, optionCount
   Object.keys(Avataaars.paths).forEach(function (path) {
+    if (path === 'eyebrows') path = 'eyebrow'
     optionCount = 0
-    formOption = '<div class="input-field col m4 s6"><select name="avatar[' + path + ']" id="' + path + '">'
+    formOption = '<div class="input-field col m4 s6"><div><label for="' + path + '">' + prettyText(path) + '</label></div><select class="browser-default" name="avatar[' + path + ']" id="' + path + '">'
     if (path === 'clothingGraphic') return
     if (path === 'accessories') {
       optionCount++
@@ -30,6 +31,12 @@ $(document).ready(function () {
         formOption += '<option value="' + option + '" ' + (optionCount === randomMatch ? 'selected' : '') + '>' + prettyText(option) + '</option>'
         optionCount++
       })
+    } else if (path === 'eyebrow') {
+      randomMatch = Math.floor(Math.random() * Object.keys(Avataaars.paths.eyebrows).length)
+      Object.keys(Avataaars.paths.eyebrows).forEach(function (option) {
+        formOption += '<option value="' + option + '" ' + (optionCount === randomMatch ? 'selected' : '') + '>' + prettyText(option) + '</option>'
+        optionCount++
+      })
     } else {
       randomMatch = Math.floor(Math.random() * Object.keys(Avataaars.paths[path]).length)
       Object.keys(Avataaars.paths[path]).forEach(function (option) {
@@ -37,7 +44,7 @@ $(document).ready(function () {
         optionCount++
       })
     }
-    formOption += '</select><label for="' + path + '">' + prettyText(path) + '</label></div>'
+    formOption += '</select></div>'
     if (optionCount > 1) {
       $('#formInputs').append(formOption)
     }
@@ -45,7 +52,7 @@ $(document).ready(function () {
   const colorOptions = ['hairColor', 'hatColor', 'accessoriesColor', 'facialHairColor', 'clothingColor']
   colorOptions.forEach(function (colorType) {
     optionCount = 0
-    formOption = '<div class="input-field col m4 s6"><select name="avatar[' + colorType + ']" id="' + colorType + '">'
+    formOption = '<div class="input-field col m4 s6"><div><label for="' + colorType + '">' + prettyText(colorType) + '</label></div><select class="browser-default" name="avatar[' + colorType + ']" id="' + colorType + '">'
     if (colorType === 'hairColor' || colorType === 'facialHairColor') {
       randomMatch = Math.floor(Math.random() * Object.keys(Avataaars.colors.hair).length)
       Object.keys(Avataaars.colors.hair).forEach(function (option) {
@@ -59,7 +66,7 @@ $(document).ready(function () {
         optionCount++
       })
     }
-    formOption += '</select><label for="' + colorType + '">' + prettyText(colorType) + '</label></div>'
+    formOption += '</select></div>'
     $('#formInputs').append(formOption)
   })
   $('select').formSelect()
