@@ -10,73 +10,13 @@
           <label for="name">Your Name</label>
         </div>
         <div class="col s3"></div>
-      </div> 
-      <div class="row" id="formInputs"></div>    
+      </div>
+      <div class="row" id="formInputs"></div>
       <button id="generate" class="btn">Save</button>
       <button id="generate" class="btn" onclick="window.location='/'">Cancel</button>
     </form>
   </div>
-  <script>
-  function prettyText(input) {
-      return input.replace(/([A-Z])/g, ' $1').replace(/^./, function(str){ return str.toUpperCase(); })
-  }
-  window.onload = function() {
-      var avatarGenerator = function(){
-          var options = {
-              width: 200,
-              height: 200
-          }
-          $inputs = $('#form select').each(function() {
-              if ($(this).val()) options[this.id] = $(this).val();
-          });
-          var svg = Avataaars.create(options);
-          $('#avatar').html(svg)
-      }
-      var formOption
-      Object.keys(Avataaars.paths).forEach(function(path){
-          var optionCount = 0
-          formOption = '<div class="input-field col m4 s6"><select name="avatar[' + path + ']" id="' + path + '">'
-          if (path === 'accessories') {
-            optionCount++
-            formOption += '<option value="">None</option>'
-          }
-
-          if (path === 'skin') {
-              Object.keys(Avataaars.colors.skin).forEach(function(option){
-                  optionCount++
-                  formOption += '<option value="'+option+'">'+prettyText(option)+'</option>'
-              })
-          } else {
-              Object.keys(Avataaars.paths[path]).forEach(function(option){
-                  optionCount++
-                  formOption += '<option value="'+option+'">'+prettyText(option)+'</option>'
-              })
-          }
-          formOption += '</select><label for="' + path + '">' + prettyText(path) + '</label></div>'
-          if (optionCount > 1) {
-              $('#formInputs').append(formOption)
-          }
-      })
-      var colorOptions = ['hairColor', 'hatColor', 'accessoriesColor', 'facialHairColor', 'clothingColor']
-      colorOptions.forEach(function(colorType){
-          formOption = '<div class="input-field col m4 s6"><select name="avatar[' + colorType + ']" id="' + colorType + '">'
-          if (colorType === 'hairColor' || colorType === 'facialHairColor') {
-              Object.keys(Avataaars.colors.hair).forEach(function(option){
-                  formOption += '<option value="'+option+'">'+prettyText(option)+'</option>'
-              })
-          } else {
-              Object.keys(Avataaars.colors.palette).forEach(function(option){
-                  formOption += '<option value="'+option+'">'+prettyText(option)+'</option>'
-              })
-          }
-          formOption += '</select><label for="' + colorType + '">' + prettyText(colorType) + '</label></div>'
-          $('#formInputs').append(formOption)
-      })
-      $('select').formSelect()
-
-      avatarGenerator()
-      $('#form').on('change', avatarGenerator)
-      $('#name').focus()
-  }
-  </script>
+{% endblock %}
+{% block footer %}
+<script src="/register.js"></script>
 {% endblock %}
