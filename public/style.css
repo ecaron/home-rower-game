@@ -23,3 +23,20 @@
     bottom: -100px;
   }
 }
+
+#water #rower {
+  position: absolute;
+  z-index: 2;
+  width: 100px;
+  height: 100px;
+  left: 50px;
+  bottom: 40px;
+}
+#water #competitor {
+  position: absolute;
+  z-index: 2;
+  width: 100px;
+  height: 100px;
+  right: 50px;
+  bottom: 40px;
+}

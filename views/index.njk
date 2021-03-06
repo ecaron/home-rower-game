@@ -7,7 +7,7 @@
         {% for rower in rowers %}
           <div class="col s6 m3">
             <form method="post" action="/compete">
-                <input type="hidden" name="name" value="{{ rower.name }}">
+                <input type="hidden" name="competitor" value="{{ rower._id }}">
                 <div class="card-panel teal center-align hoverable" style="width:100%;height:400px;cursor:pointer" onclick="$(this).closest('form').submit()">
                   <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
                   <button type="submit" class="white-text btn-large" style="font-size:150%;margin-top:20px">{{ rower.name }}</button>

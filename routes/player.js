@@ -6,12 +6,12 @@ const db = require('../lib/db')
 const websocket = require('../lib/websocket')
 
 exports.home = function (req, res) {
-  db.rowers.find({}, function (err, docs) {
+  db.rowers.find({}, function (err, rowers) {
     if (err) debug(err)
     if (req.session.userId) {
-      res.render('index', { rowers: docs })
+      res.render('index', { rowers: rowers })
     } else {
-      res.render('login', { rowers: docs })
+      res.render('login', { rowers: rowers })
     }
   })
 }
@@ -51,7 +51,7 @@ registerRouter.post('/', function (req, res) {
 exports.register = registerRouter
 
 modifyRouter.get('/:rower', function (req, res) {
-  db.rowers.findOne({ name: req.params.rower }, function (err, rower) {
+  db.rowers.findOne({ _id: req.params.rower }, function (err, rower) {
     if (err) debug(err)
     res.render('edit-rower', { rower: rower })
   })
@@ -62,9 +62,8 @@ modifyRouter.post('/:rower', function (req, res) {
     avatar: req.body.avatar
   }
 
-  db.rowers.insert(doc, function (err, newDoc) {
+  db.rowers.update({ _id: req.params.rower }, doc, function (err, newDoc) {
     if (err) debug(err)
-    req.session.userId = req.body.name
     res.redirect('/')
   })
 })

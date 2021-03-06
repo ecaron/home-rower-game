@@ -7,13 +7,13 @@
         {% for rower in rowers %}
           <div class="col s6 m3">
             <form method="post" action="/login">
-              <input type="hidden" name="name" value="{{ rower.name }}">
+              <input type="hidden" name="name" value="{{ rower._id }}">
               <div class="card-panel teal center-align hoverable" style="cursor:pointer;width:100%;height:400px" onclick="$(this).closest('form').submit()">
                 <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
                 <div class="section">
                   <button type="submit" class="white-text btn-large" style="font-size:150%">{{ rower.name }}</button>
                 </div>
-                <a href="/rower/{{rower.name}}" class="white-text teal lighten-2 btn edit-rower"><i class="left material-icons">edit</i>Edit</a>
+                <a href="/rower/{{rower._id}}" class="white-text teal lighten-2 btn edit-rower"><i class="left material-icons">edit</i>Edit</a>
               </div>
             </form>
           </div>

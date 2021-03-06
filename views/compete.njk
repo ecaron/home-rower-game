@@ -4,8 +4,8 @@
   <div class="row">
     <div id="water" style="position:absolute;border:1px solid black;top:0;bottom:0;left:0;right:50%;background-image:url('/images/water2.gif')">
       <div id="starting-line"></div>
-      <div id="rower"></div>
-      <div id="competitor"></div>
+      <div id="rower" data-avatar="{{ rower.avatar | dump }}"></div>
+      <div id="competitor" data-avatar="{{ competitor.avatar | dump }}"></div>
     </div>
     <div style="position:absolute;right:10px;bottom:10px">
       <a href="#" id="logout" class="btn-small grey lighten-3 black-text">Logout</a>&nbsp;
@@ -15,7 +15,7 @@
       <div class="section">
         <div class="row">
           <div class="col s12">
-            <h2>{{ rower }} vs {{ competitor }}</h2>
+            <h2>{{ rower.name }} vs {{ competitor.name }}</h2>
             <div class="divider"></div>
             <blockquote><h4>
               <strong>Race Date</strong>: March 12th, 9:15am<br>

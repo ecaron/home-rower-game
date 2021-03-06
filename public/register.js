@@ -14,10 +14,11 @@ $(document).ready(function () {
     const svg = Avataaars.create(options)
     $('#avatar').html(svg)
   }
-  let formOption, randomMatch, optionCount
+  let formOption; let randomMatch; let optionCount; let preset = false; let selected
+  if ($('#avatar').data('details')) preset = $('#avatar').data('details')
   Object.keys(Avataaars.paths).forEach(function (path) {
-    if (path === 'eyebrows') path = 'eyebrow'
     optionCount = 0
+    selected = false
     formOption = '<div class="input-field col m4 s6"><div><label for="' + path + '">' + prettyText(path) + '</label></div><select class="browser-default" name="avatar[' + path + ']" id="' + path + '">'
     if (path === 'clothingGraphic') return
     if (path === 'accessories') {
@@ -28,19 +29,26 @@ $(document).ready(function () {
     if (path === 'skin') {
       randomMatch = Math.floor(Math.random() * Object.keys(Avataaars.colors.skin).length)
       Object.keys(Avataaars.colors.skin).forEach(function (option) {
-        formOption += '<option value="' + option + '" ' + (optionCount === randomMatch ? 'selected' : '') + '>' + prettyText(option) + '</option>'
-        optionCount++
-      })
-    } else if (path === 'eyebrow') {
-      randomMatch = Math.floor(Math.random() * Object.keys(Avataaars.paths.eyebrows).length)
-      Object.keys(Avataaars.paths.eyebrows).forEach(function (option) {
-        formOption += '<option value="' + option + '" ' + (optionCount === randomMatch ? 'selected' : '') + '>' + prettyText(option) + '</option>'
+        selected = false
+        if (preset !== false) {
+          console.log(`Comparing ${option} to ${preset[path]}`)
+          if (option === preset[path]) selected = true
+        } else {
+          if (optionCount === randomMatch) selected = true
+        }
+        formOption += '<option value="' + option + '" ' + (selected ? 'selected' : '') + '>' + prettyText(option) + '</option>'
         optionCount++
       })
     } else {
       randomMatch = Math.floor(Math.random() * Object.keys(Avataaars.paths[path]).length)
       Object.keys(Avataaars.paths[path]).forEach(function (option) {
-        formOption += '<option value="' + option + '" ' + (optionCount === randomMatch ? 'selected' : '') + '>' + prettyText(option) + '</option>'
+        selected = false
+        if (preset !== false) {
+          if (option === preset[path]) selected = true
+        } else {
+          if (optionCount === randomMatch) selected = true
+        }
+        formOption += '<option value="' + option + '" ' + (selected ? 'selected' : '') + '>' + prettyText(option) + '</option>'
         optionCount++
       })
     }
@@ -56,13 +64,25 @@ $(document).ready(function () {
     if (colorType === 'hairColor' || colorType === 'facialHairColor') {
       randomMatch = Math.floor(Math.random() * Object.keys(Avataaars.colors.hair).length)
       Object.keys(Avataaars.colors.hair).forEach(function (option) {
-        formOption += '<option value="' + option + '" ' + (optionCount === randomMatch ? 'selected' : '') + '>' + prettyText(option) + '</option>'
+        selected = false
+        if (preset !== false) {
+          if (option === preset[colorType]) selected = true
+        } else {
+          if (optionCount === randomMatch) selected = true
+        }
+        formOption += '<option value="' + option + '" ' + (selected ? 'selected' : '') + '>' + prettyText(option) + '</option>'
         optionCount++
       })
     } else {
       randomMatch = Math.floor(Math.random() * Object.keys(Avataaars.colors.palette).length)
       Object.keys(Avataaars.colors.palette).forEach(function (option) {
-        formOption += '<option value="' + option + '" ' + (optionCount === randomMatch ? 'selected' : '') + '>' + prettyText(option) + '</option>'
+        selected = false
+        if (preset !== false) {
+          if (option === preset[colorType]) selected = true
+        } else {
+          if (optionCount === randomMatch) selected = true
+        }
+        formOption += '<option value="' + option + '" ' + (selected ? 'selected' : '') + '>' + prettyText(option) + '</option>'
         optionCount++
       })
     }
