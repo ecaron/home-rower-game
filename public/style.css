@@ -5,8 +5,9 @@
 }
 #water {
   overflow:hidden;
+  transition: background-position 1s linear;
 }
-#water #starting-line {
+#starting-line {
   position: absolute;
   bottom: 50px;
   height: 10px;
@@ -14,29 +15,42 @@
   right: 0;
   background: rgba(0, 0, 0, .5);
   z-index: 1;
+  transition: bottom 2.0s;
 }
-#water .dropoff {
-  animation: dropoff 2.0s forwards;
-}
-@keyframes dropoff {
-  to {
-    bottom: -100px;
-  }
+#starting-line.dropoff {
+  bottom: -100px;
 }
 
 #water #rower {
   position: absolute;
   z-index: 2;
-  width: 100px;
-  height: 100px;
+  width: 50%;
   left: 50px;
   bottom: 40px;
+  transition: bottom 2s ease-in-out;
 }
 #water #competitor {
   position: absolute;
   z-index: 2;
-  width: 100px;
-  height: 100px;
+  width: 50%;
   right: 50px;
   bottom: 40px;
+  text-align:right;
+  transition: bottom 2s ease-in-out;
+}
+#water #rower .avatar {
+  float: left;
+  width: 50%;
+}
+#water #competitor .avatar {
+  float: right;
+  width: 50%;
+}
+#water #rower .stats, #water #competitor .stats {
+  font-weight: bold;
+  text-shadow: 1px 1px 2px white, 0 0 1em white, 0 0 0.2em white;
+  color: black;
+  margin-top:15%;
+  font-size:32px;
+  line-height:32px;
 }

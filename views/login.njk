@@ -1,46 +1,30 @@
 {% extends "template.njk" %}
 
 {% block content %}
-    <div class="container">
-      <h1>Choose your rower.</h1>
-      <div class="row">
-        {% for rower in rowers %}
-          <div class="col s6 m3">
-            <form method="post" action="/login">
-              <input type="hidden" name="name" value="{{ rower._id }}">
-              <div class="card-panel teal center-align hoverable" style="cursor:pointer;width:100%;height:400px" onclick="$(this).closest('form').submit()">
-                <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
-                <div class="section">
-                  <button type="submit" class="white-text btn-large" style="font-size:150%">{{ rower.name }}</button>
-                </div>
-                <a href="/rower/{{rower._id}}" class="white-text teal lighten-2 btn edit-rower"><i class="left material-icons">edit</i>Edit</a>
-              </div>
-            </form>
-          </div>
-        {% endfor %}
+  <div class="container">
+    <h1>Choose your rower.</h1>
+    <div class="row">
+      {% for rower in rowers %}
         <div class="col s6 m3">
-          <a href="/register" class="white-text">
-            <div class="card-panel teal center-align hoverable" style="width:100%;height:400px">
-              <h2><i class="large material-icons">add_circle</i> Register New Rower</h2>
+          <form method="post" action="/login">
+            <input type="hidden" name="name" value="{{ rower._id }}">
+            <div class="card-panel teal center-align hoverable" style="cursor:pointer;width:100%;height:400px" onclick="$(this).closest('form').submit()">
+              <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
+              <div class="section">
+                <button type="submit" class="white-text btn-large" style="font-size:150%">{{ rower.name }}</button>
+              </div>
+              <a href="/rower/{{rower._id}}" class="white-text teal lighten-2 btn edit-rower"><i class="left material-icons">edit</i>Edit</a>
             </div>
-          </a>
+          </form>
         </div>
+      {% endfor %}
+      <div class="col s6 m3">
+        <a href="/register" class="white-text">
+          <div class="card-panel teal center-align hoverable" style="width:100%;height:400px">
+            <h2><i class="large material-icons">add_circle</i> Register New Rower</h2>
+          </div>
+        </a>
       </div>
     </div>
-    <!--
-    <span class="material-icons">face</span>
-    <button id="login" type="button" title="Simulate login">
-      Simulate login
-    </button>
-    <button id="logout" type="button" title="Simulate logout">
-      Simulate logout
-    </button>
-    <button id="wsButton" type="button" title="Open WebSocket connection">
-      Open WebSocket connection
-    </button>
-    <button id="wsSendButton" type="button" title="Send WebSocket message">
-      Send WebSocket message
-    </button>
-    <pre id="messages" style="height: 400px; overflow: scroll"></pre>
-    -->
+  </div>
 {% endblock %}

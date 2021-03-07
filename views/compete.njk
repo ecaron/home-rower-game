@@ -4,8 +4,14 @@
   <div class="row">
     <div id="water" style="position:absolute;border:1px solid black;top:0;bottom:0;left:0;right:50%;background-image:url('/images/water2.gif')">
       <div id="starting-line"></div>
-      <div id="rower" data-avatar="{{ rower.avatar | dump }}"></div>
-      <div id="competitor" data-avatar="{{ competitor.avatar | dump }}"></div>
+      <div id="rower">
+        <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
+        <div class="stats"></div>
+      </div>
+      <div id="competitor">
+        <div class="avatar" data-details="{{ competitor.avatar | dump }}"></div>
+        <div class="stats"></div>
+      </div>
     </div>
     <div style="position:absolute;right:10px;bottom:10px">
       <a href="#" id="logout" class="btn-small grey lighten-3 black-text">Logout</a>&nbsp;
@@ -17,18 +23,21 @@
           <div class="col s12">
             <h2>{{ rower.name }} vs {{ competitor.name }}</h2>
             <div class="divider"></div>
-            <blockquote><h4>
+            <blockquote id="timer"><h4>
               <strong>Race Date</strong>: March 12th, 9:15am<br>
               <strong>Distance</strong> 400 meters<br>
               <strong>Max Speed</strong> 72MPH
             </h4></blockquote>
           </div>
           <div class="col s12">
-            <div id="toggles">
-              <button class="btn-large" id="startRace">START</button>
-              <button class="btn-large" style="display:none" id="speedUp">SPEED UP</button>
-              <button class="btn-large" style="display:none" id="speedDown">SPEED DOWN</button>
+            <button class="btn-large" id="startRace">START</button>
+            <div id="toggles" style="display:none">
+              <button class="btn-large" id="speedUp">SPEED UP</button>
+              <button class="btn-large" id="speedDown">SPEED DOWN</button>
+              <button class="btn-large" id="endAndSave">END &amp; SAVE</button>
+              <button class="btn-large" id="endNoSave">END NO SAVE</button>
             </div>
+            <div id="messages"></div>
             <div id="graphs"></div>
           </div>
         </div>
