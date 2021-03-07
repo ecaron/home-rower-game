@@ -12,7 +12,7 @@ $(document).ready(function () {
   }
   $('.avatar').each(function () {
     const avatar = $(this).data('details')
-    const options = {}
+    const options = { style: 'none' }
     Object.keys(avatar).forEach(function (key) {
       if (avatar[key]) {
         options[key] = avatar[key]

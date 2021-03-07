@@ -6,15 +6,20 @@ $(document).ready(function () {
   const avatarGenerator = function () {
     const options = {
       width: 200,
-      height: 200
+      height: 200,
+      style: 'none'
     }
     $('#form select').each(function () {
-      if ($(this).val()) options[this.id] = $(this).val()
+      if ($('#use-custom-' + this.id).length && $('#use-custom-' + this.id).is(':checked')) {
+        options[this.id] = $('#custom-' + this.id).val()
+      } else {
+        if ($(this).val()) options[this.id] = $(this).val()
+      }
     })
     const svg = Avataaars.create(options)
     $('#avatar').html(svg)
   }
-  let formOption; let randomMatch; let optionCount; let preset = false; let selected
+  let formOption; let randomMatch; let optionCount; let preset = false; let selected; let customColor
   if ($('#avatar').data('details')) preset = $('#avatar').data('details')
   Object.keys(Avataaars.paths).forEach(function (path) {
     optionCount = 0
@@ -31,7 +36,6 @@ $(document).ready(function () {
       Object.keys(Avataaars.colors.skin).forEach(function (option) {
         selected = false
         if (preset !== false) {
-          console.log(`Comparing ${option} to ${preset[path]}`)
           if (option === preset[path]) selected = true
         } else {
           if (optionCount === randomMatch) selected = true
@@ -60,7 +64,17 @@ $(document).ready(function () {
   const colorOptions = ['hairColor', 'hatColor', 'accessoriesColor', 'facialHairColor', 'clothingColor']
   colorOptions.forEach(function (colorType) {
     optionCount = 0
-    formOption = '<div class="input-field col m4 s6"><div><label for="' + colorType + '">' + prettyText(colorType) + '</label></div><select class="browser-default" name="avatar[' + colorType + ']" id="' + colorType + '">'
+    customColor = false
+
+    if (preset !== false) {
+      if (preset[colorType].length === 7 && preset[colorType][0] === '#') {
+        console.log(preset[colorType])
+        customColor = preset[colorType]
+      }
+    }
+
+    formOption = '<div class="input-field col m4 s6"><div><label for="' + colorType + '">' + prettyText(colorType) + '</label></div>'
+    formOption += '<select class="browser-default" name="avatar[' + colorType + ']" id="' + colorType + '" ' + (customColor ? 'style="display:none"' : '') + '>'
     if (colorType === 'hairColor' || colorType === 'facialHairColor') {
       randomMatch = Math.floor(Math.random() * Object.keys(Avataaars.colors.hair).length)
       Object.keys(Avataaars.colors.hair).forEach(function (option) {
@@ -86,7 +100,10 @@ $(document).ready(function () {
         optionCount++
       })
     }
-    formOption += '</select></div>'
+    formOption += '</select>'
+    formOption += '<p class="left"><label><input type="checkbox" name="useColor[' + colorType + ']" class="custom-color" id="use-custom-' + colorType + '" data-type="' + colorType + '" ' + (customColor ? 'checked' : '') + '/><span>Use Custom Color</span></label></p>'
+    formOption += '<p><input class="right" type="color" name="customColor[' + colorType + ']" id="custom-' + colorType + '" value="' + customColor + '" ' + (customColor ? '' : 'style="display:none"') + '></p>'
+    formOption += '</div>'
     $('#formInputs').append(formOption)
   })
   $('select').formSelect()
@@ -94,4 +111,14 @@ $(document).ready(function () {
   avatarGenerator()
   $('#form').on('change', avatarGenerator)
   $('#name').focus()
+  $('.custom-color').on('click', function () {
+    const type = $(this).data('type')
+    if (this.checked) {
+      $('#' + type).hide()
+      $('#custom-' + type).show()
+    } else {
+      $('#' + type).show()
+      $('#custom-' + type).hide()
+    }
+  })
 })

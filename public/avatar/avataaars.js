@@ -20,6 +20,7 @@ const Avataaars = {
     return this._getChildOrDefault(this.paths, type, option)
   },
   _getColor (type, option) {
+    if (option.length === 7 && option[0] === '#') return option
     return this._getChildOrDefault(this.colors, type, option)
   },
   _createAvataaar (options) {
