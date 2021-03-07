@@ -296,17 +296,4 @@ S4.prototype.stopRower = function () {
   }
 }
 
-S4.prototype.fakeRower = function () {
-  debug('[Init] Faking test data')
-  // const strokeCount = 0
-  const test = function () {
-    // const watts = Math.floor(Math.random() * 10 + 120)
-    // const error = false
-    // strokeCount = strokeCount + 1
-    // callback(error, { watts: watts, rev_count: strokeCount })
-    setTimeout(test, 666)
-  }
-  test()
-}
-
 module.exports = S4

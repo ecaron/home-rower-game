@@ -1,0 +1,16 @@
+{% extends "template.njk" %}
+{% block title %}Real-time Stats{% endblock %}
+{% block content %}
+  <div class="row">
+    <div class="col s9" id="toggles"></div>
+    <div class="right-align col s3">
+      <a href="/">Exit</a>
+    </div>
+  </div>
+  <div id="graphs"></div>
+{% endblock %}
+
+{% block footer %}
+  <script src="/chart/Chart.bundle.min.js"></script>
+  <script src="/realtime.js"></script>
+{% endblock %}

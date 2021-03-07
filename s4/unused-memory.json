@@ -25,5 +25,6 @@
     {"name":"workout_time","address":"1E8","size":"D","desc":"total workout time"},
     {"name":"workout_ms","address":"1EA","size":"D","desc":"total workout m/s"},
     {"name":"total_kcal","address":"08a","size":"D"},
-    {"name":"total_kcal_up","address":"08c","size":"S"}
+    {"name":"total_kcal_up","address":"08c","size":"S"},
+    {"name":"mph_total","address":"148","size":"D","desc":"Total distance in MPH","unit":"mph","multiple":0.22}
 ]

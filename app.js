@@ -9,6 +9,7 @@ const path = require('path')
 
 const routes = require('./routes')
 const websocket = require('./lib/websocket')
+const S4 = require('./s4')
 
 const app = express()
 
@@ -36,11 +37,12 @@ app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js'
 app.use('/materialize', express.static(path.join(__dirname, 'node_modules', 'materialize-css', 'dist')))
 
 app.use('/compete', routes.compete)
-app.get('/', routes.player.home)
-app.use('/rower/', routes.player.modify)
-app.use('/register/', routes.player.register)
+app.get('/realtime', routes.realtime)
+app.use('/rower', routes.player.modify)
+app.use('/register', routes.player.register)
 app.post('/login', routes.player.login)
 app.delete('/logout', routes.player.logout)
+app.get('/', routes.player.home)
 
 app.use(express.static(path.join(__dirname, 'public')))
 
@@ -50,4 +52,10 @@ websocket.init(server, sessionParser)
 
 server.listen(process.env.PORT || 8080, function () {
   debug(`Listening on http://localhost:${process.env.PORT || 8080}`)
+})
+
+S4.init()
+
+S4.rower.event.on('update', function (data) {
+  console.log(data)
 })

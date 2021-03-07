@@ -4,8 +4,13 @@ const registerRouter = express.Router()
 const modifyRouter = express.Router()
 const db = require('../lib/db')
 const websocket = require('../lib/websocket')
+const S4 = require('../s4')
 
 exports.home = function (req, res) {
+  if (!S4.rower.port) {
+    res.render('rower-not-connected')
+    return
+  }
   db.rowers.find({}, function (err, rowers) {
     if (err) debug(err)
     if (req.session.userId) {

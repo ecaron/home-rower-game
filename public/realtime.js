@@ -63,8 +63,8 @@ window.onresize = resizeGraphs
 
 function defineGraph (response) {
   const newToggle = document.createElement('div')
-  newToggle.style = 'display:inline-block;font-size:80%;margin:3px 10px 0 3px;text-transform:capitalize'
-  newToggle.innerHTML = '<label for="toggle-' + response.name + '"><input type="checkbox" checked="checked" id="toggle-' + response.name + '" data-canvas="' + response.name + '" style="float:left;margin-right:3px"> ' + (response.desc || response.name) + '</label>'
+  newToggle.style = 'display:inline-block;margin-right:25px'
+  newToggle.innerHTML = '<label for="toggle-' + response.name + '"><input type="checkbox" checked="checked" id="toggle-' + response.name + '" data-canvas="' + response.name + '"><span style="padding-left:25px">' + (response.desc || response.name) + '</span></label>'
   toggleDiv.appendChild(newToggle)
   document.getElementById('toggle-' + response.name).addEventListener('click', toggleBlock, false)
 
@@ -145,7 +145,7 @@ function defineGraph (response) {
 }
 
 function updateGraphs () {
-  fetch('/memory.json')
+  fetch('/compete/memory.json')
     .then(response => response.json())
     .then(graphResponses => {
       graphResponses.forEach(function (response) {
