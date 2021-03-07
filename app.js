@@ -55,7 +55,3 @@ server.listen(process.env.PORT || 8080, function () {
 })
 
 S4.init()
-
-S4.rower.event.on('update', function (data) {
-  console.log(data)
-})

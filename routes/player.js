@@ -65,9 +65,13 @@ modifyRouter.get('/:rower', function (req, res) {
   })
 })
 modifyRouter.post('/:rower', function (req, res) {
-  Object.keys(req.body.useColor).forEach(function (key) {
-    req.body.avatar[key] = req.body.customColor[key]
-  })
+  if (req.body.useColor) {
+    Object.keys(req.body.useColor).forEach(function (key) {
+      if (req.body.customColor[key]) {
+        req.body.avatar[key] = req.body.customColor[key]
+      }
+    })
+  }
   const doc = {
     name: req.body.name,
     avatar: req.body.avatar

@@ -22,12 +22,12 @@ $(document).ready(function () {
     const $timer = $('#timer h4')
     setInterval(function () {
       let curElapse = Math.round((new Date() - startTime) / 1000); let output = ''; let i
-      if (curElapse > 3600) {
+      if (curElapse >= 3600) {
         i = Math.floor(curElapse / 3600)
         output += i + ((i > 1) ? ' hours, ' : ' hour, ')
         curElapse -= i * 3600
       }
-      if (curElapse > 60 || output !== '') {
+      if (curElapse >= 60 || output !== '') {
         i = Math.floor(curElapse / 60)
         output += i + ((i > 1) ? ' minutes, ' : ' minute, ')
         curElapse -= i * 60
