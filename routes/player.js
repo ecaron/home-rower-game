@@ -77,7 +77,7 @@ modifyRouter.post('/:rower', function (req, res) {
     avatar: req.body.avatar
   }
 
-  db.rowers.update({ _id: req.params.rower }, doc, function (err, newDoc) {
+  db.rowers.update({ _id: req.params.rower }, { $set: doc }, function (err, newDoc) {
     if (err) debug(err)
     res.redirect('/')
   })

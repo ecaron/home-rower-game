@@ -24,19 +24,22 @@
             <h2>{{ rower.name }} vs {{ competitor.name }}</h2>
             <div class="divider"></div>
             <blockquote id="timer"><h4>
-              <strong>Race Date</strong>: March 12th, 9:15am<br>
-              <strong>Duration</strong> 72 minutes<br>
-              <strong>Distance</strong> 400 meters<br>
-              <strong>Max Speed</strong> 72 <abbr title="meters per second">m/s</abbr>
+              {% if competitor.record %}
+                <strong>Race Date</strong>: <span id="recordDate" data-value="{{ competitor.record.start }}"></span><br>
+                <strong>Duration</strong> <span id="recordDuration" data-value="{{ competitor.record.duration }}"></span><br>
+                <strong>Distance</strong> <span id="recordDistance" data-value="{{ competitor.record.distance }}"></span><br>
+                <strong>Max Speed</strong> {{ competitor.record.maxSpeed}} <abbr title="strokes per minute">spm</abbr>
+              {% endif %}
             </h4></blockquote>
           </div>
           <div class="col s12">
             <button class="btn-large" id="startRace">START</button>
             <div id="toggles" style="display:none">
-              <button class="btn-large" id="speedUp">SPEED UP</button>
-              <button class="btn-large" id="speedDown">SPEED DOWN</button>
-              <button class="btn-large" id="endAndSave">END &amp; SAVE</button>
-              <button class="btn-large" id="endNoSave">END NO SAVE</button>
+              <!--
+                <button class="btn-large" id="speedUp">SPEED UP</button>
+                <button class="btn-large" id="speedDown">SPEED DOWN</button>
+              -->
+              <button class="btn-large" id="endRace">END RACE</button>
             </div>
             <div id="messages"></div>
             <div id="graphs"></div>
