@@ -68,7 +68,6 @@ $(document).ready(function () {
 
     if (preset !== false) {
       if (preset[colorType].length === 7 && preset[colorType][0] === '#') {
-        console.log(preset[colorType])
         customColor = preset[colorType]
       }
     }

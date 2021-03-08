@@ -1,6 +1,6 @@
-/* global $, WebSocket, location */
+/* global $, WebSocket, location, fetch, updateGraphs */
 $(document).ready(function () {
-  let waterPos = 0; let waterSpeed = 100
+  let waterPos = 0; let waterSpeed = 0
   let ws
 
   function prettyDuration (duration) {
@@ -24,6 +24,7 @@ $(document).ready(function () {
     const $competitor = $('#water #competitor')
 
     $('#starting-line').addClass('dropoff')
+    fetch('/compete/reson.json').then(updateGraphs)
 
     setInterval(function () {
       $water.css('background-position', '0 ' + waterPos + 'px')
@@ -31,7 +32,7 @@ $(document).ready(function () {
     }, 900)
 
     $('#startRace').fadeOut('slow', function () {
-      $('#toggles').fadeIn('fast')
+      $('.toggles').fadeIn('fast')
     })
 
     $('#endRace').on('click', function () {
@@ -64,6 +65,7 @@ $(document).ready(function () {
           }
           if (data.target === 'rower') {
             $rower.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${data.distance} ${distanceUnits}`)
+            waterSpeed = data.speed * 10
           } else {
             if (competitorActive === true) {
               $competitor.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${data.distance} ${distanceUnits}`)

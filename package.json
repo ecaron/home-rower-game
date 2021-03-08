@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node app",
     "lint": "standard --fix",
-    "dev": "nodemon -e js,css,njk"
+    "dev": "nodemon -e js,css,njk --ignore './public/'"
   },
   "main": "app.js",
   "license": "MIT",

@@ -13,9 +13,11 @@
         <div class="stats"></div>
       </div>
     </div>
-    <div style="position:absolute;right:10px;bottom:10px">
+    <div style="position:absolute;right:10px;bottom:10px;display:none" class="toggles">
+      <button class="btn-large grey lighten-3 black-text" id="endRace">END RACE</button>
+      <!--
       <a href="#" id="logout" class="btn-small grey lighten-3 black-text">Logout</a>&nbsp;
-      <a id="reset" href="/reset" class="btn-small grey lighten-3 black-text hide">Reset</a>
+      -->
     </div>
     <div class="col s6 offset-s6">
       <div class="section">
@@ -34,12 +36,11 @@
           </div>
           <div class="col s12">
             <button class="btn-large" id="startRace">START</button>
-            <div id="toggles" style="display:none">
+            <div class="toggles" style="display:none">
               <!--
                 <button class="btn-large" id="speedUp">SPEED UP</button>
                 <button class="btn-large" id="speedDown">SPEED DOWN</button>
               -->
-              <button class="btn-large" id="endRace">END RACE</button>
             </div>
             <div id="messages"></div>
             <div id="graphs"></div>
@@ -52,5 +53,6 @@
 
 {% block footer %}
   <script src="/chart/Chart.bundle.min.js"></script>
+  <script src="/charts.js"></script>
   <script src="/compete.js"></script>
 {% endblock %}

@@ -33,6 +33,12 @@ router.get('/memory.json', function (req, res) {
   }
   res.send(S4.memoryMap)
 })
+router.get('/reset.json', function (req, res) {
+  S4.memoryMap.forEach(response => {
+    response.value = 0
+  })
+  res.send({ status: 'success' })
+})
 router.get('/reset', function (req, res) {
   S4.memoryMap.forEach(response => {
     response.value = 0

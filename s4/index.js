@@ -7,6 +7,7 @@ const rower = new Rower(memoryMap)
 const init = async function () {
   const rowerPort = await rower.findPort()
   if (rowerPort !== false) {
+    debug('[Init] Port is available - starting rower')
     rower.startRower()
     return
   }
