@@ -10,7 +10,6 @@
     {"name":"distance_xxcm","address":"084","size":"S","base":16},
     {"name":"tank_volume","address":"0A9","size":"S","base":16},
     {"name":"mph","address":"1A3","size":"D"},
-    {"name":"stroke_rate","address":"1A9","size":"S"},
     {"name":"m_s_stored","address":"14C","size":"S","base":16},
     {"name":"m_s_proj_avg","address":"14D","size":"D","base":16},
     {"name":"screen_mode","address":"00D","size":"S","base":16},

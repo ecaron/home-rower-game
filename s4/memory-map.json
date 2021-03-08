@@ -4,5 +4,6 @@
     {"name":"stroke_cnt","address":"140","size":"D","unit":"strokes","desc":"Strokes"},
     {"name":"stroke_average","address":"142","size":"S","desc":"Average time for a whole stroke","unit":"sec"},
     {"name":"stroke_pull","address":"143","size":"S","desc":"Average time for a pull (acc to dec)","unit":"sec"},
+    {"name":"stroke_rate","address":"1A9","size":"S","desc":"Strokes per minute","unit":"spm"},
     {"name":"ms_average","address":"14A","size":"D","desc":"Current speed","unit":"m/s","multiple":0.01}
 ]

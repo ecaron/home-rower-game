@@ -18,14 +18,14 @@ router.get('/', function (req, res) {
     const data = {}
     rowers.forEach(function (rower) {
       if (rower._id === req.session.userId) data.rower = rower
-      else data.competitor = rower
+      if (rower._id === req.session.competitor) data.competitor = rower
     })
     res.render('compete', data)
   })
 })
 
 router.get('/memory.json', function (req, res) {
-  if (process.env.DEV) {
+  if (process.env.FAKE_ROWER) {
     S4.memoryMap.forEach(response => {
       if (typeof response.value === 'undefined') response.value = 1
       else response.value++

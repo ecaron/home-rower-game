@@ -9,7 +9,7 @@
         <div class="stats"></div>
       </div>
       <div id="competitor">
-        <div class="avatar" data-details="{{ competitor.avatar | dump }}"></div>
+        <div class="avatar {% if rower.name == competitor.name %}ghost{% endif %}" data-details="{{ competitor.avatar | dump }}"></div>
         <div class="stats"></div>
       </div>
     </div>

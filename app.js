@@ -46,12 +46,17 @@ app.get('/', routes.player.home)
 
 app.use(express.static(path.join(__dirname, 'public')))
 
-const server = http.createServer(app)
+const run = async function (app) {
+  if (!process.env.FAKE_ROWER) {
+    await S4.init()
+  }
 
-websocket.init(server, sessionParser)
+  const server = http.createServer(app)
 
-server.listen(process.env.PORT || 8080, function () {
-  debug(`Listening on http://localhost:${process.env.PORT || 8080}`)
-})
+  websocket.init(server, sessionParser)
 
-S4.init()
+  server.listen(process.env.PORT || 8080, function () {
+    debug(`Listening on http://localhost:${process.env.PORT || 8080}`)
+  })
+}
+run(app)

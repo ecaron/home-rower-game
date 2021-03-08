@@ -44,10 +44,19 @@ $(document).ready(function () {
       ws = new WebSocket(`ws://${location.host}`)
       ws.onmessage = function (event) {
         const data = JSON.parse(event.data)
-        $rower.css('bottom', Math.round(data.rower.position * 75) + '%')
-        $rower.find('.stats').html(`${data.rower.speed} ${data.rower.speedUnits}<br>${data.rower.distance} ${data.rower.distanceUnits}`)
-        $competitor.css('bottom', Math.round(data.competitor.position * 75) + '%')
-        $competitor.find('.stats').html(`${data.competitor.speed} ${data.competitor.speedUnits}<br>${data.competitor.distance} ${data.competitor.distanceUnits}`)
+        console.log(data)
+        let distanceUnits = 'm'
+        if (data.distance > 2000) {
+          data.distance = (data.distance / 1000).toFixed(2)
+          distanceUnits = 'km'
+        }
+        if (data.target === 'rower') {
+          $rower.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${data.distance} ${distanceUnits}`)
+        } else {
+          $competitor.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${data.distance} ${distanceUnits}`)
+        }
+        $rower.css('bottom', Math.round(data.position.rower * 75) + '%')
+        $competitor.css('bottom', Math.round(data.position.competitor * 75) + '%')
       }
       ws.onerror = function () {
         console.log('WebSocket error')

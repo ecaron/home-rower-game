@@ -7,7 +7,7 @@ const websocket = require('../lib/websocket')
 const S4 = require('../s4')
 
 exports.home = function (req, res) {
-  if (!S4.rower.port) {
+  if (!process.env.FAKE_ROWER && !S4.rower.port) {
     res.render('rower-not-connected')
     return
   }
