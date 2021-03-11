@@ -45,4 +45,11 @@ router.get('/reset', function (req, res) {
   })
   res.redirect('/')
 })
+router.get('/results', function (req, res) {
+  db.rowers.findOne({ _id: req.session.userId }, function (err, rower) {
+    if (err) debug(err)
+    res.render('results', rower.recentRace)
+  })
+})
+
 module.exports = router

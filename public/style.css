@@ -3,6 +3,16 @@
   -webkit-transition: opacity .5s ease-in-out;
   -moz-transition:opacity .5s ease-in-out;
 }
+.player-cards {
+  width:250px;
+  height:400px;
+  margin:10px;
+}
+.player-cards .card-panel {
+  padding:5px 0 15px;
+  width:100%;
+  height:400px;
+}
 #water {
   overflow:hidden;
   transition: background-position 1s linear;

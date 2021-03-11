@@ -1,30 +1,15 @@
-/* global $, WebSocket, location, fetch, updateGraphs */
+/* global $, WebSocket, location, fetch, updateGraphs, prettyDuration */
 $(document).ready(function () {
   let waterPos = 0; let waterSpeed = 0
   let ws
 
-  function prettyDuration (duration) {
-    duration = Math.round(duration / 1000)
-    let output = ''; let i
-    if (duration >= 3600) {
-      i = Math.floor(duration / 3600)
-      output += i + ((i > 1) ? ' hours, ' : ' hour, ')
-      duration -= i * 3600
-    }
-    if (duration >= 60 || output !== '') {
-      i = Math.floor(duration / 60)
-      output += i + ((i > 1) ? ' minutes, ' : ' minute, ')
-      duration -= i * 60
-    }
-    return output + duration + ((duration === 1) ? ' second' : ' seconds')
-  }
   $('#startRace').on('click', function () {
     const $water = $('#water')
     const $rower = $('#water #rower')
     const $competitor = $('#water #competitor')
 
     $('#starting-line').addClass('dropoff')
-    fetch('/compete/reson.json').then(updateGraphs)
+    fetch('/compete/reset.json').then(updateGraphs)
 
     setInterval(function () {
       $water.css('background-position', '0 ' + waterPos + 'px')
@@ -36,16 +21,17 @@ $(document).ready(function () {
     })
 
     $('#endRace').on('click', function () {
-      ws.send(JSON.stringify({ status: 'end' }))
-      ws.close()
-      window.location = '/'
+      if (ws) {
+        ws.send(JSON.stringify({ status: 'end' }))
+        ws.close()
+      }
+      window.location = '/compete/results'
     })
 
     const startTime = new Date()
     const $timer = $('#timer h4')
-    setInterval(function () {
-      $timer.html(prettyDuration((new Date() - startTime)))
-    }, 500)
+
+    $timer.html('Wait for it&hellip;')
 
     function connect () {
       if (ws) {
@@ -57,6 +43,12 @@ $(document).ready(function () {
       ws = new WebSocket(`ws://${location.host}`)
       ws.onmessage = function (event) {
         const data = JSON.parse(event.data)
+        if (data.status === 'start') {
+          setInterval(function () {
+            $timer.html(prettyDuration((new Date() - startTime)))
+          }, 500)
+          $timer.html(prettyDuration((new Date() - startTime)))
+        }
         if (data.status === 'update') {
           let distanceUnits = 'm'
           if (data.distance > 2000) {
@@ -65,7 +57,7 @@ $(document).ready(function () {
           }
           if (data.target === 'rower') {
             $rower.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${data.distance} ${distanceUnits}`)
-            waterSpeed = data.speed * 10
+            waterSpeed = data.speed * 75
           } else {
             if (competitorActive === true) {
               $competitor.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${data.distance} ${distanceUnits}`)

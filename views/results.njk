@@ -1,0 +1,30 @@
+{% extends "template.njk" %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <h1>Race Results!</h1>
+        <h2>Winner: {{ winner }}</h2>
+      </div>
+      <div class="col s6">
+        <h2>Your Time</h2>
+        <blockquote>
+          Max Speed: <strong> {{rower.maxSpeed}}knots </strong><br>
+          Distance: <strong> {{rower.distance}}m </strong><br>
+          Duration: <strong class="prettyTime">{{rower.duration}}</strong>
+        </blockquote>
+      </div>
+      <div class="col s6">
+        <h2>Their Time</h2>
+        <blockquote>
+          Max Speed: <strong> {{competitor.maxSpeed}}knots </strong><br>
+          Distance: <strong> {{competitor.distance}}m </strong><br>
+          Duration: <strong class="prettyTime">{{competitor.duration}}</strong>
+        </blockquote>
+      </div>
+      <div class="col s12">
+        <h2><a href="/">Race Again?</a></h2>
+      </div>
+    </div>
+  </div>
+{% endblock %}

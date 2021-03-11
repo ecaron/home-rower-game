@@ -1,4 +1,20 @@
 /* global $, fetch, Avataaars */
+function prettyDuration (duration) {
+  duration = Math.round(duration / 1000)
+  let output = ''; let i
+  if (duration >= 3600) {
+    i = Math.floor(duration / 3600)
+    output += i + ((i > 1) ? ' hours, ' : ' hour, ')
+    duration -= i * 3600
+  }
+  if (duration >= 60 || output !== '') {
+    i = Math.floor(duration / 60)
+    output += i + ((i > 1) ? ' minutes, ' : ' minute, ')
+    duration -= i * 60
+  }
+  return output + duration + ((duration === 1) ? ' second' : ' seconds')
+}
+
 $(document).ready(function () {
   const logout = document.querySelector('#logout')
 
@@ -20,5 +36,8 @@ $(document).ready(function () {
     })
     const svg = Avataaars.create(options)
     $(this).html(svg)
+  })
+  $('.prettyTime').each(function () {
+    $(this).text(prettyDuration($(this).text()))
   })
 })

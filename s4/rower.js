@@ -135,6 +135,7 @@ function S4 (memoryMap) {
 
   this.strokeStartHandler = function () {
     if (this.state === 2) { // ResetPingReceived
+      this.event.emit('started')
       this.state = 3 // WorkoutStarted+++
       for (let i = 0; i < memoryMap.length; i++) {
         self.readMemoryAddress(memoryMap[i].address, memoryMap[i].size)
@@ -223,7 +224,7 @@ S4.prototype.findPort = async function () {
 
 S4.prototype.open = async function (comName) {
   const self = this
-  const port = new SerialPort(comName, { baudRate: 19200, autoOpen: false, lock: false })
+  const port = new SerialPort(comName, { baudRate: 57600, autoOpen: false, lock: false })
   port.open(function (err) {
     if (err) {
       process.exit(err)
@@ -231,14 +232,19 @@ S4.prototype.open = async function (comName) {
     self.port = port
     const parser = port.pipe(new Readline({ delimiter: '\r\n' }))
     parser.on('data', self.readAndDispatch)
-    // we can only write one message every .8s
-    self.writer = setInterval(self.flushNext, 800)
+    // we can only write one message every .25s
+    self.writer = setInterval(self.flushNext, 250)
     return true
   })
 }
 
 S4.prototype.start = async function () {
   this.write('USB')
+}
+
+S4.prototype.reset = async function () {
+  this.state = 1 // ResetWaitingPing
+  this.write('RESET')
 }
 
 S4.prototype.exit = function () {
@@ -273,7 +279,7 @@ S4.prototype.startRower = async function () {
   })
 
   rower.event.on('update', function (event) {
-    debug(event)
+    //debug(event)
     // if (event.name === 'stroke_cnt' && event.value > strokeCount) {
     //   strokeCount = event.value
     //   const e = {
