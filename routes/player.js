@@ -42,9 +42,11 @@ registerRouter.get('/', function (req, res) {
   }
 })
 registerRouter.post('/', function (req, res) {
-  Object.keys(req.body.useColor).forEach(function (key) {
-    req.body.avatar[key] = req.body.customColor[key]
-  })
+  if (req.body.useColor) {
+    Object.keys(req.body.useColor).forEach(function (key) {
+      req.body.avatar[key] = req.body.customColor[key]
+    })
+  }
   const doc = {
     name: req.body.name,
     avatar: req.body.avatar
