@@ -11,7 +11,7 @@
 * https://github.com/olympum/waterrower-ble
 
 ## Essential Node.JS Packages
-* Making it possible to talk to the WaterRower - https://www.npmjs.com/package/usb & https://www.npmjs.com/package/serialport
+* Making it possible to talk to the WaterRower - https://www.npmjs.com/package/serialport
 * A local easy-to-maintain database - https://www.npmjs.com/package/nedb & https://www.npmjs.com/package/express-nedb-session
 * Making the webpages pretty - https://www.npmjs.com/package/materialize-css & https://www.npmjs.com/package/nunjucks
 * Powering the webserver - https://www.npmjs.com/package/express & https://www.npmjs.com/package/express-session

@@ -4,19 +4,6 @@ const SerialPort = require('serialport')
 const Readline = require('@serialport/parser-readline')
 const debug = require('debug')('waterrower-game:S4')
 
-// MESSAGE FLOW
-//
-// send USB packet
-// receive _WR_ packet
-// send IV? packet
-// receive IV packet (and check)
-// send RESET packet
-// receive PING packet
-// send WSI or WSU packet (distance or duration)
-// receive SS packet
-// send IRS/IRD/IRT for all required memory addresses
-// receive IDS/IDD/IDT with memory address value
-// re-send corresponding IRS/IRD/IRT
 function S4 (memoryMap) {
   const self = this
   self.memoryMap = memoryMap
@@ -24,16 +11,7 @@ function S4 (memoryMap) {
   self.port = null
   self.pending = []
   self.writer = null
-  // POSSIBLE STATES
-  //
-  //    Unset             = 0
-  //    ResetWaitingPing  = 1
-  //    ResetPingReceived = 2
-  //    WorkoutStarted    = 3
-  //    WorkoutCompleted  = 4
-  //    WorkoutExited     = 5
-  //
-  self.state = 0
+
   const EOL = '\r\n' // CRLF 0x0D0A
   this.write = function (string) {
     self.pending.push(string)
@@ -48,6 +26,7 @@ function S4 (memoryMap) {
       const buffer = Buffer.from(string + EOL)
       // debug('[OUT]: ' + buffer)
       self.port.write(buffer)
+      if (string === 'RESET') self.event.emit('started')
     } else {
       debug('Communication port is not open - not sending data: ' + string)
     }
@@ -67,12 +46,15 @@ function S4 (memoryMap) {
         // ignore
         break
       case 'E':
+        // ignore
         break
       case 'P':
-        self.pulseHandler(string)
+        // ignore
         break
       case 'S':
-        self.strokeHandler(string)
+        for (let i = 0; i < memoryMap.length; i++) {
+          self.readMemoryAddress(memoryMap[i].address, memoryMap[i].size)
+        }
         break
       default:
         self.unknownHandler(string)
@@ -106,43 +88,6 @@ function S4 (memoryMap) {
     }
   }
 
-  this.pulseHandler = function (string) {
-    const c = string.charAt(1)
-    switch (c) {
-      case 'I':
-        if (this.state === 1) { // ResetWaitingPing
-          this.state = 2 // ResetPingReceived
-        }
-        break
-      default:
-            // TODO consume PULSE event
-    }
-  }
-
-  this.strokeHandler = function (string) {
-    const c = string.charAt(1)
-    switch (c) {
-      case 'S':
-        this.strokeStartHandler()
-        break
-      case 'E':
-        // TODO this.strokeEndHandler(string);
-        break
-      default:
-        self.unknownHandler(string)
-    }
-  }
-
-  this.strokeStartHandler = function () {
-    if (this.state === 2) { // ResetPingReceived
-      this.event.emit('started')
-      this.state = 3 // WorkoutStarted+++
-      for (let i = 0; i < memoryMap.length; i++) {
-        self.readMemoryAddress(memoryMap[i].address, memoryMap[i].size)
-      }
-    }
-  }
-
   this.readMemoryAddress = function (address, size) {
     const cmd = 'IR' + size + address
     this.write(cmd)
@@ -160,8 +105,7 @@ function S4 (memoryMap) {
     } else {
       debug('WaterRower ' + version)
     }
-    this.state = 1 // ResetWaitingPing
-    this.write('RESET')
+    this.reset()
   }
 
   this.memoryValueHandler = function (string) {
@@ -193,9 +137,7 @@ function S4 (memoryMap) {
       dataPoint.value = value
       this.event.emit('update', dataPoint)
     }
-    if (this.state === 3) { // WorkoutStarted
-      this.readMemoryAddress(address, size)
-    }
+    this.readMemoryAddress(address, size)
   }
   // handlers end
 }
@@ -222,84 +164,65 @@ S4.prototype.findPort = async function () {
   }
 }
 
-S4.prototype.open = async function (comName) {
+S4.prototype.open = async function () {
   const self = this
-  const port = new SerialPort(comName, { baudRate: 57600, autoOpen: false, lock: false })
+  const comName = await self.findPort()
+  if (!comName) {
+    return false
+  }
+  const port = new SerialPort(comName, { baudRate: 19600, autoOpen: false, lock: false })
   port.open(function (err) {
     if (err) {
       process.exit(err)
     }
+    self.write('USB')
+
     self.port = port
     const parser = port.pipe(new Readline({ delimiter: '\r\n' }))
     parser.on('data', self.readAndDispatch)
-    // we can only write one message every .25s
-    self.writer = setInterval(self.flushNext, 250)
-    return true
+
+    // we can only write one message every .2s
+    self.writer = setInterval(self.flushNext, 200)
+  })
+  port.on('error', function (err) {
+    debug('Port error occurred')
+    debug(err)
+  })
+  port.on('close', function () {
+    debug('Port was closed')
   })
 }
 
-S4.prototype.start = async function () {
-  this.write('USB')
-}
-
-S4.prototype.reset = async function () {
-  this.state = 1 // ResetWaitingPing
+S4.prototype.reset = function () {
+  this.pending = []
   this.write('RESET')
+  this.memoryMap.forEach(response => {
+    response.value = 0
+  })
 }
 
 S4.prototype.exit = function () {
-  if (this.state !== 5) { // WorkoutExited
-    this.event.emit('stopped')
-    this.state = 5
-    this.write('EXIT')
-    this.pending = []
-    if (this.writer) {
-      clearInterval(this.writer)
-    }
+  this.event.emit('stopped')
+  this.write('EXIT')
+  this.pending = []
+  if (this.writer) {
+    clearInterval(this.writer)
   }
 }
 
 S4.prototype.startRower = async function () {
   const rower = this
-  let comName
-  try {
-    comName = await rower.findPort()
-  } catch (e) {
-    debug('[Init] error: ' + e)
+  const openRower = await rower.open()
+  if (openRower === false) {
+    return false
   }
-  debug('[Init] Found WaterRower S4 on com port: ' + comName)
-  // const strokeCount = 0
-  // const watts = 0
-  await rower.open(comName)
-  await rower.start()
-  debug('[Start] Start broadcasting WR data')
 
   rower.event.on('stopped', function () {
     debug('[End] Workout ended successfully ...')
   })
 
   rower.event.on('update', function (event) {
-    //debug(event)
-    // if (event.name === 'stroke_cnt' && event.value > strokeCount) {
-    //   strokeCount = event.value
-    //   const e = {
-    //     watts: watts,
-    //     rev_count: strokeCount
-    //   }
-    //   callback(e)
-    // } else if (event.name === 'kcal_watts') {
-    //   if (event.value > 0) {
-    //     watts = event.value
-    //   }
-    // }
+    // debug(event)
   })
 }
-
-S4.prototype.stopRower = function () {
-  const self = this
-  return function () {
-    self.exit()
-  }
-}
-
 module.exports = S4

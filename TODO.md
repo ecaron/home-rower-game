@@ -1,0 +1,1 @@
+* Make sure we're similar to how https://github.com/codefoster/waterrower/blob/master/src/index.ts works

@@ -14,21 +14,22 @@ $(document).ready(function () {
     setInterval(function () {
       $water.css('background-position', '0 ' + waterPos + 'px')
       waterPos += waterSpeed
-    }, 900)
+    }, 100)
 
     $('#startRace').fadeOut('slow', function () {
       $('.toggles').fadeIn('fast')
     })
 
     $('#endRace').on('click', function () {
-      if (ws) {
+      try {
         ws.send(JSON.stringify({ status: 'end' }))
         ws.close()
-      }
+      } catch (e) {}
       window.location = '/compete/results'
     })
 
     const startTime = new Date()
+    let started = false
     const $timer = $('#timer h4')
 
     $timer.html('Wait for it&hellip;')
@@ -43,7 +44,8 @@ $(document).ready(function () {
       ws = new WebSocket(`ws://${location.host}`)
       ws.onmessage = function (event) {
         const data = JSON.parse(event.data)
-        if (data.status === 'start') {
+        if (started === false || data.status === 'start') {
+          started = true
           setInterval(function () {
             $timer.html(prettyDuration((new Date() - startTime)))
           }, 500)
@@ -52,15 +54,15 @@ $(document).ready(function () {
         if (data.status === 'update') {
           let distanceUnits = 'm'
           if (data.distance > 2000) {
-            data.distance = (data.distance / 1000).toFixed(2)
+            data.distance = (data.distance / 1000)
             distanceUnits = 'km'
           }
           if (data.target === 'rower') {
-            $rower.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${data.distance} ${distanceUnits}`)
-            waterSpeed = data.speed * 75
+            $rower.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${Math.round(data.distance)}${distanceUnits}`)
+            waterSpeed = data.speed * 7
           } else {
             if (competitorActive === true) {
-              $competitor.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${data.distance} ${distanceUnits}`)
+              $competitor.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${Math.round(data.distance)}${distanceUnits}`)
             }
           }
           $rower.css('bottom', Math.round(data.position.rower * 75) + '%')
