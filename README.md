@@ -15,6 +15,18 @@ _I'll finish this once the rest of the TODO is done._
 
 ## Screenshots
 
+###
+![Realtime Competition](/docs/realtime-competition.gif)
+
+###
+![Realtime Graphs](/docs/realtime-competition.gif)
+
+###
+![Player Selection](/docs/avatar-selector.png)
+
+###
+![Player Selection](/docs/avatar-customize.png)
+
 
 ## Running
 
@@ -32,3 +44,4 @@ to configure your script to run automatically at boot. Some recommendations are:
 
 
 ## Related Projects
+* https://www.nohrd.com/uk/we-row/
