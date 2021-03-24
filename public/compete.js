@@ -53,16 +53,18 @@ $(document).ready(function () {
         }
         if (data.status === 'update') {
           let distanceUnits = 'm'
-          if (data.distance > 2000) {
-            data.distance = (data.distance / 1000)
+          if (data.distance > 1000) {
+            data.distance = (data.distance / 1000).toFixed(2)
             distanceUnits = 'km'
+          } else {
+            data.distance = Math.round(data.distance)
           }
           if (data.target === 'rower') {
-            $rower.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${Math.round(data.distance)}${distanceUnits}`)
+            $rower.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${data.distance}${distanceUnits}`)
             waterSpeed = data.speed * 7
           } else {
             if (competitorActive === true) {
-              $competitor.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${Math.round(data.distance)}${distanceUnits}`)
+              $competitor.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${data.distance}${distanceUnits}`)
             }
           }
           $rower.css('bottom', Math.round(data.position.rower * 75) + '%')
