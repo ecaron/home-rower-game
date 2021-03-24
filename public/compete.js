@@ -53,7 +53,7 @@ $(document).ready(function () {
         }
         if (data.status === 'update') {
           let distanceUnits = 'm'
-          if (data.distance > 2000) {
+          if (data.distance > 1000) {
             data.distance = (data.distance / 1000).toFixed(2)
             distanceUnits = 'km'
           } else {
