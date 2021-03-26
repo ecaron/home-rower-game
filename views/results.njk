@@ -13,6 +13,13 @@
             Distance: <strong> {{rower.distance}}m</strong><br>
             Duration: <strong class="prettyTime">{{rower.duration}}</strong>
           </h3>
+          {% if personalBest %}
+            <h3><u>A New Personal Best!</u><br>
+              Prev. Speed: <strong> {{personalBest.prevMaxSpeed}} knots</strong><br>
+              Prev. Distance: <strong> {{personalBest.prevDistance}}m</strong><br>
+              Prev. Duration: <strong class="prettyTime">{{personalBest.prevDuration}}</strong>
+            </h3>
+          {% endif %}
         </blockquote>
       </div>
       <div class="col s6">
