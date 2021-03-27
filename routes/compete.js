@@ -52,7 +52,6 @@ router.get('/results', function (req, res) {
   S4.rower.reset()
   db.rowers.findOne({ _id: req.session.userId }, function (err, rower) {
     if (err) debug(err)
-    console.log(rower.recentRace)
     if (rower.recentRace.personalBest && typeof rower.recentRace.personalBest.prevMaxSpeed !== 'string') {
       rower.recentRace.personalBest.prevMaxSpeed = rower.recentRace.personalBest.prevMaxSpeed.toFixed(2)
     }
