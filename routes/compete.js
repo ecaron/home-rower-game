@@ -20,6 +20,9 @@ router.get('/', function (req, res) {
       if (rower._id === req.session.userId) data.rower = rower
       if (rower._id === req.session.competitor) data.competitor = rower
     })
+    if (data.competitor.record.maxSpeed && typeof data.competitor.record.maxSpeed !== 'string') {
+      data.competitor.record.maxSpeed = data.competitor.record.maxSpeed.toFixed(2)
+    }
     res.render('compete', data)
   })
 })
@@ -49,6 +52,16 @@ router.get('/results', function (req, res) {
   S4.rower.reset()
   db.rowers.findOne({ _id: req.session.userId }, function (err, rower) {
     if (err) debug(err)
+    console.log(rower.recentRace)
+    if (rower.recentRace.personalBest && typeof rower.recentRace.personalBest.prevMaxSpeed !== 'string') {
+      rower.recentRace.personalBest.prevMaxSpeed = rower.recentRace.personalBest.prevMaxSpeed.toFixed(2)
+    }
+    if (rower.recentRace.rower && typeof rower.recentRace.rower.maxSpeed !== 'string') {
+      rower.recentRace.rower.maxSpeed = rower.recentRace.rower.maxSpeed.toFixed(2)
+    }
+    if (rower.recentRace.competitor && typeof rower.recentRace.competitor.maxSpeed !== 'string') {
+      rower.recentRace.competitor.maxSpeed = rower.recentRace.competitor.maxSpeed.toFixed(2)
+    }
     res.render('results', rower.recentRace)
   })
 })

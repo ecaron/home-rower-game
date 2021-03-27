@@ -60,11 +60,11 @@ $(document).ready(function () {
             data.distance = Math.round(data.distance)
           }
           if (data.target === 'rower') {
-            $rower.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${data.distance}${distanceUnits}`)
+            $rower.find('.stats').html(`${data.speed.toFixed(2)} ${data.speedUnits}<br>${data.distance}${distanceUnits}`)
             waterSpeed = data.speed * 7
           } else {
             if (competitorActive === true) {
-              $competitor.find('.stats').html(`${data.speed} ${data.speedUnits}<br>${data.distance}${distanceUnits}`)
+              $competitor.find('.stats').html(`${data.speed.toFixed(2)} ${data.speedUnits}<br>${data.distance}${distanceUnits}`)
             }
           }
           $rower.css('bottom', Math.round(data.position.rower * 75) + '%')
