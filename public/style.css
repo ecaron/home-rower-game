@@ -4,14 +4,21 @@
   -moz-transition:opacity .5s ease-in-out;
 }
 .player-cards {
-  width:250px;
-  height:400px;
+  width:200px;
+  height:300px;
   margin:10px;
 }
 .player-cards .card-panel {
   padding:5px 0 15px;
   width:100%;
-  height:400px;
+  height:300px;
+}
+.player-cards .section {
+  padding-top:0;
+}
+.player-cards .btn-large {
+  height: auto;
+  line-height: inherit;
 }
 #water {
   overflow:hidden;

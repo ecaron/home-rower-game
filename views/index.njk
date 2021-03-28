@@ -10,7 +10,11 @@
                 <input type="hidden" name="competitor" value="{{ rower._id }}">
                 <div class="card-panel teal center-align hoverable" style="cursor:pointer" onclick="$(this).closest('form').submit()">
                   <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
-                  <button type="submit" class="white-text btn-large" style="font-size:150%;margin-top:20px">{{ rower.name }}</button>
+                  {% if rower.record %}
+                    <button type="submit" class="white-text btn-large" style="font-size:150%;margin-top:20px">{{ rower.name }}</button>
+                  {% else %}
+                    <em>Not Yet Rowed</em>
+                  {% endif %}
                 </div>
             </form>
           </div>
