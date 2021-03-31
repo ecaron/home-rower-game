@@ -1,4 +1,4 @@
-/* global $, fetch, Avataaars */
+/* global $, fetch, Avataaars, alert, confirm */
 function prettyDuration (duration) {
   duration = Math.round(duration / 1000)
   let output = ''; let i
@@ -26,6 +26,18 @@ $(document).ready(function () {
         })
     }
   }
+  $('.delete-rower').on('click', function (e) {
+    e.preventDefault()
+    if (confirm('Are you sure?')) {
+      fetch('/rower/' + $(this).data('rower'), { method: 'DELETE', credentials: 'same-origin' })
+        .then(response => response.json())
+        .then(response => {
+          if (response.error) alert(response.error)
+          else window.location = '/'
+        })
+    }
+    return false
+  })
   $('.avatar').each(function () {
     const avatar = $(this).data('details')
     const options = { style: 'none' }

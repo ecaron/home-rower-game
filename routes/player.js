@@ -84,4 +84,21 @@ modifyRouter.post('/:rower', function (req, res) {
     res.redirect('/')
   })
 })
+modifyRouter.delete('/:rower', function (req, res) {
+  db.rowers.find({}, function (err, rowers) {
+    if (err) debug(err)
+    let activeRowerFound = false
+    for (let i = 0; i < rowers.length; i++) {
+      if (rowers[i]._id !== req.params.rower && rowers[i].record) {
+        activeRowerFound = true
+      }
+    }
+    if (activeRowerFound === false) {
+      return res.json({ error: 'This rower cannot be deleted since it is the only one with a recorded session.' })
+    }
+    db.rowers.remove({ _id: req.params.rower }, {}, function () {
+      return res.json({})
+    })
+  })
+})
 exports.modify = modifyRouter
