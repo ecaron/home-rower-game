@@ -16,6 +16,7 @@ $(document).ready(function () {
       waterPos += waterSpeed
     }, 100)
 
+    $('#cancelRace').hide()
     $('#startRace').fadeOut('slow', function () {
       $('.toggles').fadeIn('fast')
     })

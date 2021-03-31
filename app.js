@@ -7,6 +7,7 @@ const nunjucks = require('nunjucks')
 const http = require('http')
 const path = require('path')
 
+const db = require('./lib/db')
 const routes = require('./routes')
 const websocket = require('./lib/websocket')
 const S4 = require('./s4')
@@ -50,6 +51,7 @@ const run = async function (app) {
   if (!process.env.FAKE_ROWER) {
     await S4.init()
   }
+  await db.init()
 
   const server = http.createServer(app)
 
