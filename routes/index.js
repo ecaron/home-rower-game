@@ -1,3 +1,3 @@
 exports.compete = require('./compete')
-exports.player = require('./player')
+exports.rower = require('./rower')
 exports.realtime = require('./realtime')

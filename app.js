@@ -35,15 +35,16 @@ app.use(express.urlencoded({
 }))
 
 app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js', 'dist')))
+app.use('/jquery', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
 app.use('/materialize', express.static(path.join(__dirname, 'node_modules', 'materialize-css', 'dist')))
 
 app.use('/compete', routes.compete)
 app.get('/realtime', routes.realtime)
-app.use('/rower', routes.player.modify)
-app.use('/register', routes.player.register)
-app.post('/login', routes.player.login)
-app.delete('/logout', routes.player.logout)
-app.get('/', routes.player.home)
+app.use('/rower', routes.rower.modify)
+app.use('/register', routes.rower.register)
+app.post('/login', routes.rower.login)
+app.delete('/logout', routes.rower.logout)
+app.get('/', routes.rower.home)
 
 app.use(express.static(path.join(__dirname, 'public')))
 

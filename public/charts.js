@@ -1,4 +1,4 @@
-/* global Chart, fetch */
+/* global Chart, fetch, prettyDuration */
 /* eslint-disable no-unused-vars */
 'use strict'
 
@@ -37,51 +37,39 @@ function defineGraph (response) {
   graphsDiv.appendChild(newCanvasWrapper)
 
   graphs[response.name] = {}
+  graphs[response.name].firstUpdate = new Date()
   graphs[response.name].lineChartData = {
-    labels: [new Date()],
+    labels: ['0s'],
     datasets: [{
       label: response.name,
       borderColor: chartColors.blue,
       backgroundColor: chartColors.grey,
       fill: false,
-      data: [{ t: new Date(), y: response.value }]
+      data: [response.value]
     }]
   }
   const ctx = document.getElementById('canvas-' + response.name).getContext('2d')
-  graphs[response.name].chart = Chart.Line(ctx, {
+  graphs[response.name].chart = new Chart(ctx, {
+    type: 'line',
     data: graphs[response.name].lineChartData,
     options: {
-      legend: {
-        display: false
-      },
-      responsive: true,
       maintainAspectRatio: false,
       title: {
-        display: true,
-        text: response.desc || response.name
+        display: false
+      },
+      plugins: {
+        legend: {
+          display: false
+        }
       },
       scales: {
-        xAxes: [{
-          type: 'time',
-          time: {
-            displayFormats: {
-              millisecond: 'h:mm:ss a',
-              second: 'h:mm:ss a',
-              minute: 'h:mm a',
-              hour: 'h:mm a',
-              day: 'h:mm a',
-              week: 'h:mm a',
-              month: 'h:mm a',
-              quarter: 'h:mm a',
-              year: 'h:mm a'
-            }
-          }
-        }],
-        yAxes: [{
-          type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+        x: {
+        },
+        y: {
+          type: 'linear',
           display: true,
           position: 'left'
-        }]
+        }
       }
     }
   })
@@ -106,9 +94,10 @@ function updateGraphs () {
               }, 800)
             }
 
-            graphs[response.name].lineChartData.labels.push(new Date())
-            graphs[response.name].lineChartData.datasets[0].data.push({ t: new Date(), y: response.value })
-            graphs[response.name].chart.update()
+            const newTime = new Date() - graphs[response.name].firstUpdate
+            graphs[response.name].lineChartData.labels.push(prettyDuration(newTime, true))
+            graphs[response.name].lineChartData.datasets[0].data.push(response.value)
+            graphs[response.name].chart.update('none')
           }
         }
       })

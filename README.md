@@ -11,6 +11,8 @@ There are two modes: **Head-to-head competition** and **Real-time Charting**
 ### Head-to-head competition
 Picking another rower's previous record, or your own personal best, you'll go side-by-side seeing who can row farther. The system measures & reports in realtime your current speed (in knots) and the total distance you've traveled.
 
+Logbooks are kept & provided, per rower, to track total distance, maximum speed, and number of sessions in last 7 days, last 30 days and all-time.
+
 ### Real-time Charting
 If you're not feeling like a competition, you can watch up to 6 different metrics at the same-time and watch your trendlines over the course of your current session.
 

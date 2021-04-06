@@ -69,12 +69,9 @@ $(document).ready(function () {
             }
           }
           $rower.css('bottom', Math.round(data.position.rower * 75) + '%')
-          if (competitorActive === true) {
-            $competitor.css('bottom', Math.round(data.position.competitor * 75) + '%')
-          }
+          $competitor.css('bottom', Math.round(data.position.competitor * 75) + '%')
         } else if (data.status === 'competitorDone') {
           competitorActive = false
-          $competitor.css('bottom', 0 + '%')
           $competitor.find('.stats').html('<b>Finished</b><br>' + $competitor.find('.stats').html())
         }
       }

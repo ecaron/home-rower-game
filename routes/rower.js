@@ -1,5 +1,6 @@
 const debug = require('debug')('waterrower-game:main')
 const express = require('express')
+const nunjucks = require('nunjucks')
 const registerRouter = express.Router()
 const modifyRouter = express.Router()
 const db = require('../lib/db')
@@ -60,6 +61,50 @@ registerRouter.post('/', function (req, res) {
 })
 exports.register = registerRouter
 
+modifyRouter.get('/:rower/logbook', function (req, res) {
+  db.rowers.findOne({ _id: req.params.rower }, function (err, rower) {
+    if (err) debug(err)
+    const entries = []
+    const daysAgo = {
+      7: new Date() - (7 * 24 * 60 * 60 * 1000),
+      30: new Date() - (30 * 24 * 60 * 60 * 1000)
+    }
+    if (rower.logbook && rower.logbook.length > 0) {
+      entries.push({ key: 'All-Time', distance: 0, maxSpeed: 0, sessions: 0, show: true })
+      for (let i = 0; i < rower.logbook.length; i++) {
+        entries[0].sessions++
+        entries[0].distance += rower.logbook[i].distance
+        if (rower.logbook[i].maxSpeed > entries[0].maxSpeed) {
+          entries[0].maxSpeed = rower.logbook[i].maxSpeed
+        }
+        if (rower.logbook[i].date > daysAgo[30]) {
+          if (entries.length === 1) {
+            entries.push({ key: 'Within 30 Days', distance: 0, maxSpeed: 0, sessions: 0, show: true })
+          }
+          entries[1].sessions++
+          entries[1].distance += rower.logbook[i].distance
+          if (rower.logbook[i].maxSpeed > entries[1].maxSpeed) {
+            entries[1].maxSpeed = rower.logbook[i].maxSpeed
+          }
+        }
+        if (rower.logbook[i].date > daysAgo[7]) {
+          if (entries.length === 2) {
+            entries.push({ key: 'Within 7 Days', distance: 0, maxSpeed: 0, sessions: 0, show: true })
+          }
+          entries[2].sessions++
+          entries[2].distance += rower.logbook[i].distance
+          if (rower.logbook[i].maxSpeed > entries[2].maxSpeed) {
+            entries[2].maxSpeed = rower.logbook[i].maxSpeed
+          }
+        }
+      }
+      if (entries.length >= 3 && entries[2].sessions === entries[1].sessions) entries[1].show = false
+      if (entries.length >= 3 && entries[2].sessions === entries[0].sessions) entries[0].show = false
+      if (entries.length >= 2 && entries[1].sessions === entries[0].sessions) entries[0].show = false
+    }
+    res.send(nunjucks.render('partials/logbook.njk', { entries: entries, name: rower.name }))
+  })
+})
 modifyRouter.get('/:rower', function (req, res) {
   db.rowers.findOne({ _id: req.params.rower }, function (err, rower) {
     if (err) debug(err)
