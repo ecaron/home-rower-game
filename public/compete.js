@@ -1,4 +1,4 @@
-/* global $, WebSocket, location, fetch, updateGraphs, prettyDuration */
+/* global $, WebSocket, location, fetch, updateGraphs, prettyDuration, NoSleep */
 $(document).ready(function () {
   let waterPos = 0; let waterSpeed = 0
   let ws
@@ -7,6 +7,9 @@ $(document).ready(function () {
     const $water = $('#water')
     const $rower = $('#water #rower')
     const $competitor = $('#water #competitor')
+
+    const noSleep = new NoSleep()
+    noSleep.enable()
 
     $('#starting-line').addClass('dropoff')
     fetch('/compete/reset.json').then(updateGraphs)

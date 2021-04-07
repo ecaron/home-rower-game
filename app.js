@@ -37,6 +37,7 @@ app.use(express.urlencoded({
 app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js', 'dist')))
 app.use('/jquery', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
 app.use('/materialize', express.static(path.join(__dirname, 'node_modules', 'materialize-css', 'dist')))
+app.use('/nosleep.js', express.static(path.join(__dirname, 'node_modules', 'nosleep.js', 'dist')))
 
 app.use('/compete', routes.compete)
 app.get('/realtime', routes.realtime)

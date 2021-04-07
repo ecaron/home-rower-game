@@ -1,4 +1,4 @@
-/* global Chart, fetch, alert, localStorage, prettyDuration */
+/* global Chart, fetch, alert, localStorage, prettyDuration, NoSleep */
 'use strict'
 
 let adjustedToggles = JSON.parse(localStorage.getItem('toggles'))
@@ -169,3 +169,9 @@ function resizeGraphs () {
 window.onresize = resizeGraphs
 
 updateGraphs()
+
+const noSleep = new NoSleep()
+document.addEventListener('click', function enableNoSleep () {
+  document.removeEventListener('click', enableNoSleep, false)
+  noSleep.enable()
+}, false)
