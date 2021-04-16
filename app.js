@@ -39,6 +39,14 @@ app.use('/jquery', express.static(path.join(__dirname, 'node_modules', 'jquery',
 app.use('/materialize', express.static(path.join(__dirname, 'node_modules', 'materialize-css', 'dist')))
 app.use('/nosleep.js', express.static(path.join(__dirname, 'node_modules', 'nosleep.js', 'dist')))
 
+app.use(function (req, res, next) {
+  if (!process.env.FAKE_ROWER && !S4.rower.connected) {
+    res.render('rower-not-connected')
+    return
+  }
+  next()
+})
+
 app.use('/compete', routes.compete)
 app.get('/realtime', routes.realtime)
 app.use('/rower', routes.rower.modify)
@@ -51,7 +59,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 const run = async function (app) {
   if (!process.env.FAKE_ROWER) {
-    await S4.init()
+    S4.init()
   }
   await db.init()
 

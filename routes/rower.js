@@ -5,13 +5,8 @@ const registerRouter = express.Router()
 const modifyRouter = express.Router()
 const db = require('../lib/db')
 const websocket = require('../lib/websocket')
-const S4 = require('../s4')
 
 exports.home = function (req, res) {
-  if (!process.env.FAKE_ROWER && !S4.rower.port) {
-    res.render('rower-not-connected')
-    return
-  }
   db.rowers.find({}, function (err, rowers) {
     if (err) debug(err)
     if (req.session.userId) {
@@ -101,6 +96,9 @@ modifyRouter.get('/:rower/logbook', function (req, res) {
       if (entries.length >= 3 && entries[2].sessions === entries[1].sessions) entries[1].show = false
       if (entries.length >= 3 && entries[2].sessions === entries[0].sessions) entries[0].show = false
       if (entries.length >= 2 && entries[1].sessions === entries[0].sessions) entries[0].show = false
+      for (let i = 0; i < entries.length; i++) {
+        entries[i].maxSpeed = entries[i].maxSpeed.toFixed(2)
+      }
     }
     res.send(nunjucks.render('partials/logbook.njk', { entries: entries, name: rower.name }))
   })

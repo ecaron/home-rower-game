@@ -11,6 +11,8 @@ function S4 (memoryMap) {
   self.port = null
   self.pending = []
   self.writer = null
+  self.connected = false
+  self.reconnecting = false
 
   const EOL = '\r\n' // CRLF 0x0D0A
   this.write = function (string) {
@@ -147,49 +149,50 @@ S4.prototype.toString = function () {
 }
 
 S4.prototype.findPort = async function () {
-  let port
+  let i
   const ports = await SerialPort.list()
-  ports.forEach(function (p) {
+  for (i = 0; i < ports.length; i++) {
     // https://usb-ids.gowdy.us/read/UD/04d8/000a
-    if (p.vendorId === '04d8' && p.productId === '000a') {
+    if (ports[i].vendorId === '04d8' && ports[i].productId === '000a') {
       // port is an object literal with string values
-      port = p
+      return ports[i].path
     }
-  })
-  if (port) {
-    return port.path
-  } else {
-    debug('Prolific USB CDC RS-232 Serial Emulation port not found')
-    return false
   }
+  debug('USB device not detected')
+  return false
 }
 
-S4.prototype.open = async function () {
-  const self = this
-  const comName = await self.findPort()
-  if (!comName) {
-    return false
+S4.prototype.reconnect = function () {
+  this.connected = false
+  if (this.reconnecting) {
+    debug('Already trying to reconnect')
+    return
   }
-  const port = new SerialPort(comName, { baudRate: 19600, autoOpen: false, lock: false })
-  port.open(function (err) {
-    if (err) {
-      process.exit(err)
-    }
-    self.write('USB')
+  debug('Attempting reconnect in 5s')
+  this.reconnecting = setTimeout(this.open.bind(this), 5000)
+}
 
-    self.port = port
-    const parser = port.pipe(new Readline({ delimiter: '\r\n' }))
-    parser.on('data', self.readAndDispatch)
+S4.prototype.open = function () {
+  const self = this
+  clearTimeout(this.reconnecting)
+  this.reconnecting = false
+  self.port.open(function (err) {
+    if (err) {
+      debug('Error occorred opening connection. Attempting reconnect.')
+      self.reconnect()
+      return
+    }
 
     // we can only write one message every .2s
+    if (self.writer) {
+      clearInterval(self.writer)
+      if (self.pending.length > 0) self.reset()
+    }
     self.writer = setInterval(self.flushNext, 200)
-  })
-  port.on('error', function (err) {
-    debug('Port error occurred')
-    debug(err)
-  })
-  port.on('close', function () {
-    debug('Port was closed')
+
+    debug('Connected successfully')
+    self.connected = true
+    self.write('USB')
   })
 }
 
@@ -210,19 +213,32 @@ S4.prototype.exit = function () {
   }
 }
 
-S4.prototype.startRower = async function () {
-  const rower = this
-  const openRower = await rower.open()
-  if (openRower === false) {
+S4.prototype.startRower = function (comName) {
+  if (!comName) {
     return false
   }
+  const self = this
+  this.port = new SerialPort(comName, { baudRate: 19600, autoOpen: false, lock: false })
+  const parser = this.port.pipe(new Readline({ delimiter: '\r\n' }))
+  parser.on('data', this.readAndDispatch)
+  this.open()
+  this.port.on('error', function (err) {
+    debug('Port errored, trying to open again in 5 seconds')
+    debug(err)
+    self.reconnect()
+  })
+  this.port.on('close', function () {
+    debug('Port was closed, trying again in 5 seconds')
+    self.reconnect()
+  })
 
-  rower.event.on('stopped', function () {
+  this.event.on('stopped', function () {
     debug('[End] Workout ended successfully ...')
   })
 
-  rower.event.on('update', function (event) {
+  this.event.on('update', function (event) {
     // debug(event)
   })
 }
+
 module.exports = S4
