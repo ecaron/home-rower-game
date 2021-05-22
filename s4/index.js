@@ -7,9 +7,10 @@ const init = async function () {
   const rowerPort = await rower.findPort()
   if (rowerPort !== false) {
     debug('[Init] Port is available - starting rower')
-    rower.startRower()
+    rower.startRower(rowerPort)
   } else {
-    debug('[Init] Rower not found')
+    debug('[Init] Rower not found. Trying again in 5 seconds')
+    setTimeout(init, 5000)
   }
 }
 
