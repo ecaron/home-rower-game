@@ -1,10 +1,11 @@
-# A Rowing Game, powered by the WaterRower's S4 USB Output
+# The Home Rower Game, powered by the home rowing machines such as the awesome WaterRower
 
-![David](https://img.shields.io/david/ecaron/waterrower-game)
+![David](https://img.shields.io/david/ecaron/home-rower-game)
 
-This is a simple NodeJS application that connects to a [WaterRower](https://www.waterrower.com/us/) (with the [S4 module](https://www.waterrower.com/us/shop/accessories/commodule.html)) and creates charts & games that can be accessed by any web browser.
+This is a simple NodeJS application that connects to a home rowing machine and creates charts & games that can be accessed by any web browser.
 
-The app can run on hardware as small as a [Raspberry Pi](https://www.raspberrypi.org/) and connects to the WaterRower's S4 with a USB cable.
+It currently supports the [WaterRower](https://www.waterrower.com/us/) (with the [S4 module](https://www.waterrower.com/us/shop/accessories/commodule.html)), but other machines could work.
+(The app can run on hardware as small as a [Raspberry Pi](https://www.raspberrypi.org/) and connects to the WaterRower's S4 with a USB cable.)
 
 There are two modes: **Head-to-head competition** and **Real-time Charting**
 
@@ -59,11 +60,11 @@ SAVE_FAKE_RESULTS | If you're using *FAKE_ROWER* and want race results saved to 
 After you've installed [Node](https://nodejs.org/en/download/), then just download this package and run `npm install`.
 
 ### *Operating System Support*
-This application has only been tested on Linux. That said, the only complicated piece is using [SerialPort](https://serialport.io/) to talk to the WaterRower, and that's been thoroughly tested on Windows and Mac.
+This application has only been tested on Linux. That said, the only complicated piece is using [SerialPort](https://serialport.io/), and that's been thoroughly tested on Windows and Mac.
 
 If you follow the [Installing SerialPort](https://serialport.io/docs/guide-installation#installation-special-cases) documentation, that'll cover the nuances to get this to run.
 
-You'll also want to make sure the user running this app has read & write permissions to the WaterRower's port (such as /dev/ttyACM0).
+You'll also want to make sure the user running this app has read & write permissions to the rowing machine's USB port (such as /dev/ttyACM0).
 
 ### Running On Startup
 
@@ -73,7 +74,7 @@ to configure your script to run automatically at boot. Some recommendations are:
 * https://www.linuxuprising.com/2018/04/how-to-install-and-configure-nodejs-and.html
 
 ## Troubleshooting
-See the (page on the wiki)[https://github.com/ecaron/waterrower-game/wiki/Troubleshooting).
+See the (page on the wiki)[https://github.com/ecaron/home-rower-game/wiki/Troubleshooting).
 
 ## Related Projects
 * https://github.com/olympum/waterrower-ble/ (inspiration for this package)

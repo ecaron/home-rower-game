@@ -1,7 +1,7 @@
 {
-  "name": "waterrower-game",
+  "name": "home-rower-game",
   "version": "0.0.1",
-  "description": "A WaterRower webapp for friendly in-house competitions",
+  "description": "A rowing machine webapp for friendly in-house competitions",
   "scripts": {
     "start": "node app",
     "lint": "standard --fix",
@@ -9,7 +9,7 @@
   },
   "main": "app.js",
   "license": "MIT",
-  "repository": "ecaron/waterrower-game",
+  "repository": "ecaron/home-rower-game",
   "engines": {
     "node": ">=12"
   },

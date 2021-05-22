@@ -1,4 +1,4 @@
-const debug = require('debug')('waterrower-game:main')
+const debug = require('debug')('home-rower-game:main')
 const express = require('express')
 const nunjucks = require('nunjucks')
 const registerRouter = express.Router()

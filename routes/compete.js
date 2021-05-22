@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const debug = require('debug')('waterrower-game:compete')
+const debug = require('debug')('home-rower-game:compete')
 
 const db = require('../lib/db')
 const S4 = require('../s4')

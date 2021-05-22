@@ -1,6 +1,6 @@
 const Rower = require('./rower')
 const memoryMap = require('./memory-map')
-const debug = require('debug')('waterrower-game:S4')
+const debug = require('debug')('home-rower-game:S4')
 const rower = new Rower(memoryMap)
 
 const init = async function () {

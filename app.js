@@ -1,5 +1,5 @@
 require('dotenv').config()
-const debug = require('debug')('waterrower-game:main')
+const debug = require('debug')('home-rower-game:main')
 const express = require('express')
 const session = require('express-session')
 const NedbStore = require('express-nedb-session')(session)

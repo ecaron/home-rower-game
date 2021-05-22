@@ -2,7 +2,7 @@
 const { EventEmitter } = require('events')
 const SerialPort = require('serialport')
 const Readline = require('@serialport/parser-readline')
-const debug = require('debug')('waterrower-game:S4')
+const debug = require('debug')('home-rower-game:S4')
 
 function S4 (memoryMap) {
   const self = this
