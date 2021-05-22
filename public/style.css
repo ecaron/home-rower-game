@@ -23,6 +23,7 @@
 #water {
   overflow:hidden;
   transition: background-position 1s linear;
+  background-blend-mode: hard-light;
 }
 #starting-line {
   position: absolute;

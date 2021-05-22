@@ -3,8 +3,19 @@ $(document).ready(function () {
   let waterPos = 0; let waterSpeed = 0
   let ws
 
+  function getRandomInt (max) {
+    return Math.floor(Math.random() * max)
+  }
+
+  let randomGreen = getRandomInt(255)
+  let randomBlue = getRandomInt(255)
+  let randomDirection = { green: 1, blue: 1, transparent: 0.4 }
+  const randomColor = 'rgba(0,' + randomGreen + ',' + randomBlue + ',' + randomDirection.transparent + ')'
+
+  const $water = $('#water')
+  $water.css({ 'background-image': 'url(\'/images/water_' + getRandomInt(7) + '.jpg\')', 'background-color': randomColor })
+
   $('#startRace').on('click', function () {
-    const $water = $('#water')
     const $rower = $('#water #rower')
     const $competitor = $('#water #competitor')
 
@@ -14,9 +25,39 @@ $(document).ready(function () {
     $('#starting-line').addClass('dropoff')
     fetch('/compete/reset.json').then(updateGraphs)
 
+    const cycleDirection = function () {
+      if (randomGreen < 0) randomGreen = 0
+      else if (randomGreen > 255) randomGreen = 255
+      if (randomBlue < 0) randomBlue = 0
+      else if (randomBlue > 255) randomBlue = 255
+
+      const random = Math.random()
+      if (random < 0.25) {
+        randomDirection = { green: 1, blue: 1, transparent: randomDirection.transparent }
+      } else if (random < 0.5) {
+        randomDirection = { green: -1, blue: 1, transparent: randomDirection.transparent }
+      } else if (random < 0.75) {
+        randomDirection = { green: -1, blue: -1, transparent: randomDirection.transparent }
+      } else {
+        randomDirection = { green: 1, blue: -1, transparent: randomDirection.transparent }
+      }
+      // Randomizing the alpha layer turned out to be overkill
+      // if (Math.floor(random * 10) % 2 === 1) {
+      // randomDirection.transparent = Math.random()
+      // }
+    }
+
     setInterval(function () {
-      $water.css('background-position', '0 ' + waterPos + 'px')
-      waterPos += waterSpeed
+      if (waterSpeed > 0) {
+        waterPos += waterSpeed
+        randomGreen += randomDirection.green * getRandomInt(2)
+        randomBlue += randomDirection.blue * getRandomInt(2)
+        if (randomGreen < 0 || randomGreen > 255 || randomBlue < 0 || randomBlue > 255) {
+          cycleDirection()
+        }
+        const randomColor = 'rgba(0,' + randomGreen + ',' + randomBlue + ',' + randomDirection.transparent + ')'
+        $('#water').css({ 'background-position': '0 ' + waterPos + 'px', 'background-color': randomColor })
+      }
     }, 100)
 
     $('#cancelRace').hide()
