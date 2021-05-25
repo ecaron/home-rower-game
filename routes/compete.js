@@ -16,8 +16,8 @@ router.get('/', async function (req, res) {
   const rowers = await db.rowers.findAll({ where: { id: [req.session.userId, req.session.competitor] } })
   const data = {}
   rowers.forEach(function (rower) {
-    if (rower.id === req.session.userId) data.rower = rower
-    if (rower.id === req.session.competitor) data.competitor = rower
+    if (rower.id === parseInt(req.session.userId)) data.rower = rower
+    if (rower.id === parseInt(req.session.competitor)) data.competitor = rower
   })
   if (data.competitor.record && data.competitor.record.maxSpeed && typeof data.competitor.record.maxSpeed !== 'string') {
     data.competitor.record.maxSpeed = data.competitor.record.maxSpeed.toFixed(2)

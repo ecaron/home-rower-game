@@ -6,8 +6,9 @@ const modifyRouter = express.Router()
 const db = require('../lib/db')
 const websocket = require('../lib/websocket')
 
-exports.home = function (req, res) {
-  const rowers = db.rowers.findAll({})
+exports.home = async function (req, res) {
+  const rowers = await db.rowers.findAll({})
+  console.log(rowers)
   if (req.session.userId) {
     res.render('index', { rowers: rowers })
   } else {
@@ -46,7 +47,7 @@ registerRouter.post('/', async function (req, res) {
     avatar: req.body.avatar
   }
 
-  const newDoc = await db.rowers.create(doc)
+  await db.rowers.create(doc)
   req.session.userId = req.body.name
   res.redirect('/')
 })
