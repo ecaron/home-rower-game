@@ -4,7 +4,7 @@
     <h1>Register your rower.</h1>
     <form id="form" class="col s12" method="post">
       <div class="row" style="position:relative">
-        <input name="id" type="hidden" value="{{rower._id}}">
+        <input name="id" type="hidden" value="{{rower.id}}">
         <div id="avatar" class="col s3" data-details="{{ rower.avatar | dump }}"></div>
         <div class="input-field col s6" style="position:absolute;bottom:0;right:0">
           <input placeholder="Hank" name="name" id="name" type="text" class="validate" required="required" value="{{rower.name}}">

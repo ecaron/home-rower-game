@@ -7,14 +7,14 @@
         {% for rower in rowers %}
           <div class="rower-cards left">
             <form method="post" action="/compete">
-                <input type="hidden" name="competitor" value="{{ rower._id }}">
+                <input type="hidden" name="competitor" value="{{ rower.id }}">
                 <div class="card-panel green lighten-4 center-align hoverable" style="cursor:pointer" onclick="$(this).closest('form').submit()">
                   <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
                   {% if rower.record %}
                     <div class="section">
                       <button type="submit" class="teal white-text btn-large" style="display:block;margin:0 auto;font-size:150%">{{ rower.name }}</button>
                       {% if rower.logbook %}
-                        <button type="button" class="light-green darken-2 black-text btn-large info-rower" data-rower="{{ rower._id }}" style="margin-top:10px">Records</button>
+                        <button type="button" class="light-green darken-2 black-text btn-large info-rower" data-rower="{{ rower.id }}" style="margin-top:10px">Records</button>
                       {% endif %}
                     </div>
                   {% else %}
