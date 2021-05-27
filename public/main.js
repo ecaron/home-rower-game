@@ -45,14 +45,14 @@ $(document).ready(function () {
   })
   $('.info-rower').on('click', function (e) {
     e.preventDefault()
-    $('.modal .modal-content').html('Loading...')
-    $('.modal').modal('open')
+    $('.modal .modal-body').html('Loading...')
+    appModal.show()
     fetch('/rower/' + $(this).data('rower') + '/logbook', { method: 'GET', credentials: 'same-origin' })
       .then(response => response.text())
       .then(response => {
-        $('.modal .modal-content').html(response)
+        $('.modal .modal-body').html(response)
       }).catch(e => {
-        $('.modal .modal-content').html('Sorry. Some error happened.')
+        $('.modal .modal-body').html('Sorry. Some error happened.')
         console.log(e)
       })
     return false
@@ -71,5 +71,7 @@ $(document).ready(function () {
   $('.prettyTime').each(function () {
     $(this).text(prettyDuration($(this).text()))
   })
-  $('.modal').modal()
+  var appModal = new bootstrap.Modal(document.getElementById('modal-1'), {
+    keyboard: false
+  })
 })

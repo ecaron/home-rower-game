@@ -47,9 +47,10 @@ app.use(express.urlencoded({
   extended: true
 }))
 
+app.use('/animate.css', express.static(path.join(__dirname, 'node_modules', 'animate.css')))
 app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js', 'dist')))
 app.use('/jquery', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
-app.use('/materialize', express.static(path.join(__dirname, 'node_modules', '@materializecss', 'materialize', 'dist')))
+app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')))
 app.use('/nosleep.js', express.static(path.join(__dirname, 'node_modules', 'nosleep.js', 'dist')))
 
 app.use(function (req, res, next) {

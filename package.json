@@ -18,8 +18,8 @@
     "url": "https://github.com/ecaron"
   },
   "dependencies": {
-    "@materializecss/materialize": "1.1.0-alpha",
     "animate.css": "^4.1.1",
+    "bootstrap": "^5.0.1",
     "chart.js": "^3.0.2",
     "connect-session-sequelize": "^7.1.1",
     "debug": "^4.3.1",
