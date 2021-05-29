@@ -1,58 +1,50 @@
 {% extends "template.njk" %}
-
+{% block bodyClasses %}water-bg{% endblock %}
 {% block content %}
-  <div class="no-container">
+  <div id="intro" style="display:none">
+    <h1 class="animate__animated animate__bounceInDown">Welcome To Home Rower!</h1>
+    <h2 class="animate__animated animate__bounceInDown animate__delay-1s">Select Your Rower</h2>
+  </div>
 
-    <div id="intro">
-      <h1 class="animate__animated animate__bounceInDown">Welcome To Home Rower!</h1>
-      <h2 class="animate__animated animate__bounceInDown animate__delay-1s">Select Your Rower</h2>
-    </div>
-
-    <div id="main" style="display:none">
-      <div class="row">
-        {% for rower in rowers %}
-          <div class="left rower-cards">
+  <div id="main" style="display:block" class="container-fluid">
+    <div class="row row-cols-1 row-cols-md-{% if rowers | length > 5 %}4{% else %}3 {% endif %} g-4 p-2">
+      {% for rower in rowers %}
+        <div class="col">
+          <div class="card border-primary h-100 hover" onclick="$(this).find('form').submit()">
             <form method="post" action="/login">
               <input type="hidden" name="name" value="{{ rower.id }}">
-              <div class="card-panel green lighten-4 center-align hoverable" style="cursor:pointer" onclick="$(this).closest('form').submit()">
-                <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
-                <div class="section">
-                  <button type="submit" class="white-text btn-large" style="font-size:150%">{{ rower.name }}</button>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col">
+                    <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
+                  </div>
+                  <div class="col position-relative">
+                    <a href="#" class="fs-1">{{ rower.name }} <i class="bi bi-arrow-right-circle fs-4"></i></a>
+                    <div class="position-absolute bottom-0 start-0 end-0">
+                      {% if rower.logbook %}
+                        <a href="#" data-rower="{{rower.id}}" style="display:block;margin:.5rem 0" class="btn btn-info info-rower" title="Rower Log"><i class="bi bi-book"></i> View Logs</a>
+                      {% endif %}
+                      <a href="/rower/{{rower.id}}" class="float-start btn btn-secondary edit-rower" title="Edit"><i class="bi bi-pencil-square"></i> Edit</a>
+                      <a href="#" data-rower="{{rower.id}}" class="float-end btn btn-danger delete-rower" title="Delete"><i class="bi bi-trash"></i> Delete</a>
+                      </div>
+                  </div>
                 </div>
-                <a href="/rower/{{rower.id}}" class="black-text green lighten-2 btn-small edit-rower" title="Edit"><i class="material-icons">edit</i></a>&nbsp;&nbsp;
-                {% if rower.logbook %}
-                  <a href="#" data-rower="{{rower.id}}" class="black-text light-green darken-2 btn-small info-rower" title="Rower Log"><i class="material-icons">info</i></a>&nbsp;&nbsp;
-                {% endif %}
-                <a href="#" data-rower="{{rower.id}}" class="black-text lime darken-2 btn-small delete-rower" title="Delete"><i class="material-icons">delete</i></a>
+              </div>
+              <div class="card-footer">
+                <small class="text-muted">Last rowed 3 mins ago</small>
               </div>
             </form>
           </div>
-        {% endfor %}
-        <div class="rower-cards left">
-          <a href="/register" class="white-text">
-            <div class="card-panel teal center-align hoverable">
-              <h3><i class="large material-icons">add_circle</i><br>Add New Rower</h3>
-            </div>
-          </a>
         </div>
-        <div class="rower-cards left">
-          <a href="/realtime" class="white-text">
-            <div class="card-panel teal center-align hoverable">
-              <h3><i class="large material-icons">show_chart</i><br>Just The Charts</h3>
-            </div>
-          </a>
-        </div>
+      {% endfor %}
+      <div class="col position-relative">
+        <a href="/register" class="btn btn-info fs-2 text-white top-0 start-0 end-0 position-absolute">
+          <i class="bi bi-person-plus align-middle" style="font-size:200%"></i> Add New Rower
+        </a>
+        <a href="/realtime" class="btn btn-secondary fs-2 text-white bottom-0 start-0 end-0 position-absolute">
+          <i class="bi bi-graph-up align-middle" style="font-size:200%"></i> Just The Charts
+        </a>
       </div>
     </div>
   </div>
-  <script>
-  setTimeout(function(){
-    var $intro = $('#intro')
-    setTimeout(function(){
-      $intro.hide()
-      $('#main').show()
-    }, 500)
-    $intro.addClass('animate__animated animate__zoomOutDown')
-  }, 4000)
-  </script>
 {% endblock %}

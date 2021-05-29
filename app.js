@@ -51,6 +51,7 @@ app.use('/animate.css', express.static(path.join(__dirname, 'node_modules', 'ani
 app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js', 'dist')))
 app.use('/jquery', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
 app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')))
+app.use('/bootstrap-icons', express.static(path.join(__dirname, 'node_modules', 'bootstrap-icons', 'font')))
 app.use('/nosleep.js', express.static(path.join(__dirname, 'node_modules', 'nosleep.js', 'dist')))
 
 app.use(function (req, res, next) {

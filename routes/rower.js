@@ -98,8 +98,9 @@ modifyRouter.get('/:rower/logbook', async function (req, res) {
   }
   res.send(nunjucks.render('partials/logbook.njk', { entries: entries, name: rower.name }))
 })
-modifyRouter.get('/:rower', function (req, res) {
-  const rower = db.rowers.findByPk(req.params.rower)
+modifyRouter.get('/:rower', async function (req, res) {
+  const rower = await db.rowers.findByPk(req.params.rower)
+  console.log(rower)
   res.render('edit-rower', { rower: rower })
 })
 

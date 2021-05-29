@@ -31,6 +31,18 @@ $(document).ready(function () {
         })
     }
   }
+
+  var $intro = $('#intro')
+  if ($intro.length) {
+    setTimeout(function(){
+      setTimeout(function(){
+        $intro.hide()
+        $('#main').show()
+      }, 500)
+      $intro.addClass('animate__animated animate__zoomOutDown')
+    }, 4000)
+  }
+
   $('.delete-rower').on('click', function (e) {
     e.preventDefault()
     if (confirm('Are you sure?')) {

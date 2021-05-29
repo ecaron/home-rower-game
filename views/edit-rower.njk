@@ -2,22 +2,22 @@
 {% block content %}
   <div class="container">
     <h1>Register your rower.</h1>
-    <form id="form" class="col s12" method="post">
-      <div class="row" style="position:relative">
+    <form id="form" method="post">
+      <div class="row">
         <input name="id" type="hidden" value="{{rower.id}}">
-        <div id="avatar" class="col s3" data-details="{{ rower.avatar | dump }}"></div>
-        <div class="input-field col s6" style="position:absolute;bottom:0;right:0">
+        <div id="avatar" class="col" data-details="{{ rower.avatar | dump }}"></div>
+        <div class="input-field col" style="position:absolute;bottom:0;right:0">
           <input placeholder="Hank" name="name" id="name" type="text" class="validate" required="required" value="{{rower.name}}">
           <label for="name">Your Name</label>
         </div>
       </div>
-      <div class="row" id="formInputs"></div>
+      <div class="row row-cols-1 row-cols-md-5" id="formInputs"></div>
       <div class="row">
-        <div class="col s6">
-          <button type="submit" id="generate" class="btn">Save</button>
+        <div class="col">
+          <button type="submit" id="generate" class="btn btn-primary">Save</button>
         </div>
-        <div class="col s6 right-align">
-          <button type="button" id="generate" class="btn grey" onclick="window.location='/'">Cancel</button>
+        <div class="col right-align">
+          <button type="button" id="generate" class="btn btn-secondary" onclick="window.location='/'">Cancel</button>
         </div>
       </div>
     </form>

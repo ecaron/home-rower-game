@@ -2,8 +2,8 @@
 <html>
   <head>
     <title>{% block title %}Home Rower Game{% endblock %}</title>
-    <link rel="stylesheet" href="/fonts/fonts.css">
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/bootstrap-icons/bootstrap-icons.css">
     <link rel="stylesheet" href="/animate.css/animate.min.css">
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/darkmode.css">
@@ -11,7 +11,7 @@
     <script src="/jquery/jquery.js"></script>
     {% block header %}{% endblock %}
   </head>
-  <body>
+  <body class="{%block bodyClasses %}{% endblock %}">
     {% block content %}{% endblock %}
     {% block footer %}{% endblock %}
 
@@ -23,6 +23,7 @@
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           </div>
         </div>
+      </div>
     </div>
 
     <script src="/avatar/avataaars.js"></script>
