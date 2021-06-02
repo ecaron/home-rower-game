@@ -2,26 +2,33 @@ const express = require('express')
 const router = express.Router()
 const debug = require('debug')('home-rower-game:compete')
 
-const db = require('../lib/db')
+const Rowers = require('../controllers').rowers
 const S4 = require('../s4')
 
 router.post('/', function (req, res) {
   req.session.competitor = req.body.competitor
+  req.session.mode = req.body.competitor
   res.redirect('/compete')
 })
 router.get('/', async function (req, res) {
-  if (!req.session.userId || !req.session.competitor) {
+  if (!req.session.userId) {
     return res.redirect('/')
   }
-  const rowers = await db.rowers.findAll({ where: { id: [req.session.userId, req.session.competitor] } })
-  const data = {}
-  rowers.forEach(function (rower) {
-    if (rower.id === parseInt(req.session.userId)) data.rower = rower
-    if (rower.id === parseInt(req.session.competitor)) data.competitor = rower
-  })
-  if (data.competitor.record && data.competitor.record.maxSpeed && typeof data.competitor.record.maxSpeed !== 'string') {
-    data.competitor.record.maxSpeed = data.competitor.record.maxSpeed.toFixed(2)
+
+  const data = {
+    rower: await Rowers.getById(req.session.userId, { records: true })
   }
+  if (req.session.competitor) {
+    if (req.session.userId === req.session.competitor) {
+      data.competitor = data.rower
+    } else {
+      data.competitor = await Rowers.getById(req.session.competitor, { records: true })
+    }
+    if (data.competitor.record && data.competitor.record.maxSpeed && typeof data.competitor.record.maxSpeed !== 'string') {
+      data.competitor.record.maxSpeed = data.competitor.record.maxSpeed.toFixed(2)
+    }
+  }
+
   res.render('compete', data)
 })
 
@@ -49,7 +56,7 @@ router.get('/reset', function (req, res) {
 })
 router.get('/results', async function (req, res) {
   S4.rower.reset()
-  const rower = await db.rowers.findByPk(req.session.userId)
+  const rower = await Rowers.getById(req.session.userId)
   if (!rower.recentRace) {
     res.redirect('/')
     return

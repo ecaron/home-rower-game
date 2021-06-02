@@ -1,4 +1,4 @@
-{% extends "template.njk" %}
+{% extends "_template.njk" %}
 {% block bodyClasses %}water-bg{% endblock %}
 {% block content %}
   <div id="intro" style="display:none">
@@ -7,43 +7,19 @@
   </div>
 
   <div id="main" style="display:block" class="container-fluid">
-    <div class="row row-cols-1 row-cols-md-{% if rowers | length > 5 %}4{% else %}3 {% endif %} g-4 p-2">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-2 p-1">
       {% for rower in rowers %}
-        <div class="col">
-          <div class="card border-primary h-100 hover" onclick="$(this).find('form').submit()">
-            <form method="post" action="/login">
-              <input type="hidden" name="name" value="{{ rower.id }}">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
-                  </div>
-                  <div class="col position-relative">
-                    <a href="#" class="fs-1">{{ rower.name }} <i class="bi bi-arrow-right-circle fs-4"></i></a>
-                    <div class="position-absolute bottom-0 start-0 end-0">
-                      {% if rower.logbook %}
-                        <a href="#" data-rower="{{rower.id}}" style="display:block;margin:.5rem 0" class="btn btn-info info-rower" title="Rower Log"><i class="bi bi-book"></i> View Logs</a>
-                      {% endif %}
-                      <a href="/rower/{{rower.id}}" class="float-start btn btn-secondary edit-rower" title="Edit"><i class="bi bi-pencil-square"></i> Edit</a>
-                      <a href="#" data-rower="{{rower.id}}" class="float-end btn btn-danger delete-rower" title="Delete"><i class="bi bi-trash"></i> Delete</a>
-                      </div>
-                  </div>
-                </div>
-              </div>
-              <div class="card-footer">
-                <small class="text-muted">Last rowed 3 mins ago</small>
-              </div>
-            </form>
-          </div>
-        </div>
+        {{ macros.card(rower)}}
       {% endfor %}
-      <div class="col position-relative">
-        <a href="/register" class="btn btn-info fs-2 text-white top-0 start-0 end-0 position-absolute">
-          <i class="bi bi-person-plus align-middle" style="font-size:200%"></i> Add New Rower
-        </a>
-        <a href="/realtime" class="btn btn-secondary fs-2 text-white bottom-0 start-0 end-0 position-absolute">
-          <i class="bi bi-graph-up align-middle" style="font-size:200%"></i> Just The Charts
-        </a>
+      <div class="col position-relative" style="order:99">
+        <div class="card bg-transparent h-100 hover">
+          <a href="/register" class="btn btn-info fs-2 text-white top-0 start-0 end-0 position-relative mb-2">
+            <i class="bi bi-person-plus align-middle" style="font-size:200%"></i> Add New Rower
+          </a>
+          <a href="/realtime" class="btn btn-secondary fs-2 text-white bottom-0 start-0 end-0 position-relative">
+            <i class="bi bi-graph-up align-middle" style="font-size:200%"></i> Just The Charts
+          </a>
+        </div>
       </div>
     </div>
   </div>

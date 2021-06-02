@@ -7,7 +7,6 @@ const nunjucks = require('nunjucks')
 const http = require('http')
 const path = require('path')
 
-const db = require('./lib/db')
 const routes = require('./routes')
 const websocket = require('./lib/websocket')
 const S4 = require('./s4')
@@ -18,7 +17,8 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store)
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: path.join(__dirname, 'db', 'session.sqlite')
+  storage: path.join(__dirname, 'db', 'session.sqlite'),
+  logging: false
 })
 
 app.set('views', path.join(__dirname, 'views'))
@@ -76,7 +76,6 @@ const run = async function (app) {
   if (!process.env.FAKE_ROWER) {
     S4.init()
   }
-  await db.init()
 
   const server = http.createServer(app)
 
