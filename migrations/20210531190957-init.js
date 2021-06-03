@@ -14,6 +14,9 @@ module.exports = {
       avatar: {
         type: Sequelize.JSON
       },
+      recentRace: {
+        type: Sequelize.JSON
+      },
       lastRowed: {
         type: Sequelize.DATE
       },

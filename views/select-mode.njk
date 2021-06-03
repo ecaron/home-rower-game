@@ -6,7 +6,7 @@
     <div class="row g-2 p-2">
       <select class="form-select form-select-lg fs-2" id="race-mode" aria-label="Select race mode">
         <option disabled selected>Select Mode</option>
-        <option value="marathon" style="font-weight:bold">Marathon - Set a new record for farthest in least time</option>
+        <option value="marathon">Marathon - Set a new record for farthest in least time</option>
         <optgroup label="Duration - See how far you can go in selected time">
           <option value="time5">5 minutes</option>
           <option value="time10">10 minutes</option>
@@ -30,23 +30,27 @@
       {% for rower in rowers %}
         {{ macros.card(rower, 'compete')}}
       {% endfor %}
-      <div class="col rower-box hover disabled" style="order:0" id="race-alone">
+      <div class="col rower-box hover disabled order-0" id="race-alone">
         <div class="card border-primary h-100" {% if mode == 'login' %}onclick="$(this).find('form').submit()"{% endif %}>
           <div class="card-body p-0">
             <div class="row">
-              <div class="col-5 text-center py-3">
-                <svg xmlns="http://www.w3.org/2000/svg" style="width:75%" fill="currentColor" class="bi bi-person-circle ps-2" viewBox="0 0 16 16">
-                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-                  <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
-                </svg>
+              <div class="col-5">
+                <div class="m-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                  </svg>
+                </div>
               </div>
-              <div class="col-7 position-relative p-0">
-                <h2 class="pt-2">Race Alone</h2>
-                <div class="position-absolute" style="bottom:5px;left:5px;right:20px">
+              <div class="col-7 flex-column d-flex p-0 m-0">
+                <div class="flex-grow-1 pe-1 me-3 overflow-hidden">
+                  <h2 class="pt-2">Race Alone</h2>
+                </div>
+                <div class="flex-shrink-0 pb-2 pe-4">
                   <form method="post" action="/compete">
                     <input type="hidden" name="competitor" value="">
                     <input type="hidden" name="mode" value="" class="race-mode">
-                    <button type="submit" class="btn btn-lg btn-primary" style="display:block;margin-bottom:5px;width:100%"><i class="bi bi-play-fill"></i> Start Race</button>
+                    <button type="submit" class="btn btn-lg btn-primary w-100 d-block"><i class="bi bi-play-fill"></i> Start Race</button>
                   </form>
                 </div>
               </div>
@@ -57,10 +61,10 @@
           </div>
         </div>
       </div>
-      <div class="col position-relative" style="order:99">
+      <div class="col position-relative order-last">
         <div class="card bg-transparent h-100 hover">
           <a href="#" class="btn btn-secondary fs-2 top-0 bottom-0 start-0 end-0 position-absolute d-flex align-items-center justify-content-center" id="logout">
-            <i class="bi bi-door-closed " style="font-size:200%"></i> Logout
+            <i class="bi bi-door-closed fs-1 me-2"></i> Logout
           </a>
         </div>
       </div>

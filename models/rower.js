@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
   Rower.init({
     name: DataTypes.STRING,
     avatar: DataTypes.JSON,
+    recentRace: DataTypes.JSON,
     totalDistance: DataTypes.INTEGER,
     lastRowed: DataTypes.DATE
   }, {

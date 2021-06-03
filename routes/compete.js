@@ -7,7 +7,7 @@ const S4 = require('../s4')
 
 router.post('/', function (req, res) {
   req.session.competitor = req.body.competitor
-  req.session.mode = req.body.competitor
+  req.session.mode = req.body.mode
   res.redirect('/compete')
 })
 router.get('/', async function (req, res) {
@@ -16,16 +16,21 @@ router.get('/', async function (req, res) {
   }
 
   const data = {
-    rower: await Rowers.getById(req.session.userId, { records: true })
+    rower: await Rowers.getById(req.session.userId, { records: true }),
+    mode: req.session.mode
   }
+
   if (req.session.competitor) {
     if (req.session.userId === req.session.competitor) {
       data.competitor = data.rower
     } else {
       data.competitor = await Rowers.getById(req.session.competitor, { records: true })
     }
-    if (data.competitor.record && data.competitor.record.maxSpeed && typeof data.competitor.record.maxSpeed !== 'string') {
-      data.competitor.record.maxSpeed = data.competitor.record.maxSpeed.toFixed(2)
+    if (data.competitor.Records) {
+      data.competitor.record = data.competitor.Records.find(element => element.mode === req.session.mode)
+      if (data.competitor.record && data.competitor.record.maxSpeed && typeof data.competitor.record.maxSpeed !== 'string') {
+        data.competitor.record.maxSpeed = data.competitor.record.maxSpeed.toFixed(2)
+      }
     }
   }
 

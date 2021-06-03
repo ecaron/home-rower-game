@@ -1,4 +1,4 @@
-/* global $, fetch, Avataaars, alert, confirm, bootstrap */
+/* global jQuery, fetch, Avataaars, alert, confirm, bootstrap */
 function prettyDuration (duration, briefUnits) {
   if (!briefUnits) briefUnits = false
   duration = Math.round(duration / 1000)
@@ -20,7 +20,8 @@ function prettyDuration (duration, briefUnits) {
   else return output + duration + ((duration === 1) ? ' second' : ' seconds')
 }
 
-$(document).ready(function () {
+jQuery(function () {
+  const $ = jQuery
   const logout = document.querySelector('#logout')
 
   if (logout) {
@@ -105,13 +106,12 @@ $(document).ready(function () {
   $('#race-mode').on('change', function () {
     $('.race-mode').val($(this).val())
     $('#race-alone').removeClass('disabled').addClass('hover')
-    let order = 1
     const raceMode = $(this).val()
     Object.keys(rowers).forEach(function (rowerId) {
       const $rowerBox = $('#rower-box-' + rowerId)
       let raceText
       if (rowers[rowerId][raceMode]) {
-        $rowerBox.removeClass('disabled').addClass('hover').css({ order: order })
+        $rowerBox.removeClass('disabled order-last').addClass('hover order-2')
         if (raceMode === 'marathon' || raceMode.substring(0, 4) === 'time') {
           if (rowers[rowerId][raceMode].distance > 1000) {
             raceText = (rowers[rowerId][raceMode].distance / 1000).toFixed(2) + ' kilometers'
@@ -122,11 +122,24 @@ $(document).ready(function () {
           raceText = prettyDuration(rowers[rowerId][raceMode].duration)
         }
         $rowerBox.find('.record-details').html(raceText)
-        order++
       } else {
-        $rowerBox.addClass('disabled').removeClass('hover').css({ order: 90 })
+        $rowerBox.addClass('disabled order-last').removeClass('hover order-2')
         $rowerBox.find('.record-details').html('')
       }
     })
   })
+
+  const $currentTime = $('.current-time')
+  if ($currentTime.length) {
+    setTimeout(function () {
+      setInterval(function () {
+        const time = new Date()
+        $currentTime.html(time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }))
+      }, 60 * 1000)
+      const time = new Date()
+      $currentTime.html(time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }))
+    }, (60 - (new Date()).getSeconds()) * 1000)
+    const time = new Date()
+    $currentTime.html(time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }))
+  }
 })

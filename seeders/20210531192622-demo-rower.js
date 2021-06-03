@@ -19,6 +19,7 @@ module.exports = {
         facialHairColor: 'blondeGolden',
         clothingColor: 'heather'
       }),
+      recentRace: JSON.stringify({}),
       lastRowed: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),

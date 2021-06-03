@@ -123,17 +123,18 @@ modifyRouter.post('/:rower', async function (req, res) {
 })
 
 modifyRouter.delete('/:rower', async function (req, res) {
-  const rowers = await Rowers.getAll()
+  const rowers = await Rowers.getAll({ records: true })
+  const rowerId = parseInt(req.params.rower)
   let activeRowerFound = false
   for (let i = 0; i < rowers.length; i++) {
-    if (rowers[i].id !== req.params.rower && rowers[i].record) {
+    if (rowers[i].id !== rowerId && rowers[i].Records.length) {
       activeRowerFound = true
     }
   }
   if (activeRowerFound === false) {
     return res.json({ error: 'This rower cannot be deleted since it is the only one with a recorded session.' })
   }
-  await Rowers.deleteById(req.params.rower)
+  await Rowers.deleteById(rowerId)
   return res.json({})
 })
 exports.modify = modifyRouter

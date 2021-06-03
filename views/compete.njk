@@ -1,54 +1,56 @@
 {% extends "_template.njk" %}
 {% block content %}
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col">
+  <div class="container-fluid h-100">
+    <div class="row h-100">
+      <div class="col p-0 m-0">
         <div id="water" class="position-absolute" style="border:1px solid black;top:0;bottom:0;left:0;right:50%">
           <div id="starting-line"></div>
           <div id="rower">
             <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
             <div class="stats"></div>
           </div>
-          <div id="competitor">
-            <div class="avatar {% if rower.name == competitor.name %}ghost{% endif %}" data-details="{{ competitor.avatar | dump }}"></div>
-            <div class="stats"></div>
-          </div>
-        </div>
-        <div style="position:absolute;right:10px;bottom:10px;display:none" class="toggles">
-          <button class="btn-large grey lighten-3 black-text" id="endRace">END RACE</button>
-          <!--
-          <a href="#" id="logout" class="btn-small grey lighten-3 black-text">Logout</a>&nbsp;
-          -->
+          {% if competitor %}
+            <div id="competitor">
+              <div class="avatar {% if rower.name == competitor.name %}ghost{% endif %}" data-details="{{ competitor.avatar | dump }}"></div>
+              <div class="stats"></div>
+            </div>
+          {% endif %}
         </div>
       </div>
-      <div class="col">
-        <div class="section">
-          <div class="row">
-            <div class="col s12">
-              <h2>{{ rower.name }} vs {{ competitor.name }}</h2>
-              <div class="divider"></div>
-              <blockquote id="timer"><h4>
-                {% if competitor.record %}
-                  <strong>Race Date</strong>: <span id="recordDate" data-value="{{ competitor.record.start }}"></span><br>
-                  <strong>Duration</strong> <span id="recordDuration" data-value="{{ competitor.record.duration }}"></span><br>
-                  <strong>Distance</strong> <span id="recordDistance" data-value="{{ competitor.record.distance }}"></span><br>
-                  <strong>Max Speed</strong> {{ competitor.record.maxSpeed }} knots
-                {% endif %}
-              </h4></blockquote>
-            </div>
-            <div class="col s12">
-              <button class="btn-large left" id="startRace">START</button>
-              <a href="/" class="btn-large grey right" id="cancelRace">CANCEL</a>
-              <div class="toggles" style="display:none">
-                <!--
-                  <button class="btn-large" id="speedUp">SPEED UP</button>
-                  <button class="btn-large" id="speedDown">SPEED DOWN</button>
-                -->
-              </div>
-              <div id="messages"></div>
-              <div id="graphs"></div>
-            </div>
-          </div>
+      <div class="col position-relative h-100 p-0 m-0">
+        <div class="border-bottom bg-light bg-gradient p-3 mb-3">
+          <div class="position-absolute top-0 end-0 m-3 fs-5 font-monospace current-time"></div>
+          {% if competitor %}
+            <h1>{{ rower.name }} vs {{ competitor.name }}</h1>
+          {% else %}
+            <h1>Solo Mode</h1>
+          {% endif %}
+
+          {% if mode === 'marathon' %}
+            <h2 id="mode" data-type="marathon">Marathon - <small>Set a new record for farthest in least time</small></h2>
+          {% elseif mode.slice(0, 4) === 'time' %}
+            <h2 id="mode" data-type="time" data-value="{{ mode.slice(4) }}">Time - <small>Farthest you can go in {{ mode.slice(4) }} minutes</small></h2>
+          {% else %}
+            <h2 id="mode" data-type="length" data-value="{{ mode.slice(6) }}">Distance - <small>How long to go {{ mode.slice(6) }} meters</small></h2>
+          {% endif %}
+        </div>
+
+        <div class="p-3">
+          {% if competitor %}
+            <blockquote id="record"><h4>
+              <strong>Race Date</strong>: <span id="recordDate" data-value="{{ competitor.record.createdAt }}"></span><br>
+              <strong>Duration</strong> <span id="recordDuration" data-value="{{ competitor.record.duration }}"></span><br>
+              <strong>Distance</strong> <span id="recordDistance" data-value="{{ competitor.record.distance }}"></span><br>
+              <strong>Max Speed</strong> {{ competitor.record.maxSpeed }} knots
+            </h4></blockquote>
+          {% endif %}
+          <div id="messages" class="fs-3"></div>
+          <div id="graphs"></div>
+        </div>
+        <button class="btn btn-lg btn-primary start-0 bottom-0 ms-3 mb-3 position-absolute" id="startRace">START</button>
+        <a href="/" class="btn btn-lg btn-secondary end-0 bottom-0 me-3 mb-3 position-absolute" id="cancelRace">CANCEL</a>
+        <div class="d-none toggles end-0 bottom-0 me-3 mb-3 position-absolute">
+          <button class="btn btn-lg btn-secondary" id="endRace">END RACE</button>
         </div>
       </div>
     </div>

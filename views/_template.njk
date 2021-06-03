@@ -1,6 +1,6 @@
 {% import "_macros.njk" as macros %}
 <!DOCTYPE html>
-<html>
+<html class="h-100">
   <head>
     <title>{% block title %}Home Rower Game{% endblock %}</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
@@ -12,7 +12,7 @@
     <script src="/jquery/jquery.js"></script>
     {% block header %}{% endblock %}
   </head>
-  <body class="{%block bodyClasses %}{% endblock %}">
+  <body class="h-100 {%block bodyClasses %}{% endblock %}">
     {% block content %}{% endblock %}
     {% block footer %}{% endblock %}
 

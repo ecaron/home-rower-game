@@ -1,6 +1,8 @@
-/* global $, WebSocket, location, fetch, updateGraphs, prettyDuration, NoSleep */
-$(document).ready(function () {
-  let waterPos = 0; let waterSpeed = 0
+/* global jQuery, WebSocket, location, fetch, updateGraphs, prettyDuration, NoSleep */
+jQuery(function () {
+  const $ = jQuery
+  let waterPos = 0
+  let waterSpeed = 0
   let ws
 
   function getRandomInt (max) {
@@ -61,9 +63,32 @@ $(document).ready(function () {
     }, 100)
 
     $('#cancelRace').hide()
+    $('.toggles').hide().removeClass('d-none')
     $('#startRace').fadeOut('slow', function () {
       $('.toggles').fadeIn('fast')
     })
+    const $messages = $('#messages')
+    const $raceMode = $('#mode')
+    let raceValue = false
+    if ($raceMode.data('value')) raceValue = parseInt($raceMode.data('value'))
+
+    const updateCountdown = function (amountLeft) {
+      if ($raceMode.data('type') === 'time') {
+        amountLeft = raceValue * 60 * 1000 - (new Date() - startTime)
+        $messages.text('Time remaining: ' + prettyDuration(amountLeft))
+        setTimeout(updateCountdown, 5000)
+      } else if ($raceMode.data('type') === 'marathon') {
+        setInterval(function () {
+          $messages.text('Time elapsed: ' + prettyDuration((new Date() - startTime)))
+        }, 500)
+        $messages.text('Time elapsed: ' + prettyDuration((new Date() - startTime)))
+      } else {
+        $messages.text('Distance remaining: ' + amountLeft + ' meters')
+      }
+      if ($raceMode.data('type') !== 'marathon' && amountLeft <= 0) {
+        $('#endRace').trigger('click')
+      }
+    }
 
     $('#endRace').on('click', function () {
       try {
@@ -75,9 +100,9 @@ $(document).ready(function () {
 
     const startTime = new Date()
     let started = false
-    const $timer = $('#timer h4')
 
-    $timer.html('Wait for it&hellip;')
+    $('#record').hide()
+    $messages.html('Wait for it&hellip;')
 
     function connect () {
       if (ws) {
@@ -90,11 +115,8 @@ $(document).ready(function () {
       ws.onmessage = function (event) {
         const data = JSON.parse(event.data)
         if (started === false || data.status === 'start') {
+          updateCountdown(raceValue)
           started = true
-          setInterval(function () {
-            $timer.html(prettyDuration((new Date() - startTime)))
-          }, 500)
-          $timer.html(prettyDuration((new Date() - startTime)))
         }
         if (data.status === 'update') {
           let distanceUnits = 'm'
@@ -105,16 +127,17 @@ $(document).ready(function () {
             data.distance = Math.round(data.distance)
           }
           if (data.target === 'rower') {
+            updateCountdown(raceValue - data.distance)
             $rower.find('.stats').html(`${data.speed.toFixed(2)} ${data.speedUnits}<br>${data.distance}${distanceUnits}`)
             waterSpeed = data.speed * 7
           } else {
-            if (competitorActive === true) {
+            if ($competitor.length && competitorActive === true) {
               $competitor.find('.stats').html(`${data.speed.toFixed(2)} ${data.speedUnits}<br>${data.distance}${distanceUnits}`)
             }
           }
           $rower.css('bottom', Math.round(data.position.rower * 75) + '%')
-          $competitor.css('bottom', Math.round(data.position.competitor * 75) + '%')
-        } else if (data.status === 'competitorDone') {
+          if ($competitor.length) $competitor.css('bottom', Math.round(data.position.competitor * 75) + '%')
+        } else if ($competitor.length && data.status === 'competitorDone') {
           competitorActive = false
           $competitor.find('.stats').html('<b>Finished</b><br>' + $competitor.find('.stats').html())
         }

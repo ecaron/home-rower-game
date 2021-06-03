@@ -11,13 +11,13 @@
       {% for rower in rowers %}
         {{ macros.card(rower)}}
       {% endfor %}
-      <div class="col position-relative" style="order:99">
+      <div class="col position-relative order-last">
         <div class="card bg-transparent h-100 hover">
           <a href="/register" class="btn btn-info fs-2 text-white top-0 start-0 end-0 position-relative mb-2">
-            <i class="bi bi-person-plus align-middle" style="font-size:200%"></i> Add New Rower
+            <i class="bi bi-person-plus align-middle fs-1 me-2"></i> Add New Rower
           </a>
           <a href="/realtime" class="btn btn-secondary fs-2 text-white bottom-0 start-0 end-0 position-relative">
-            <i class="bi bi-graph-up align-middle" style="font-size:200%"></i> Just The Charts
+            <i class="bi bi-graph-up align-middle fs-1 me-2"></i> Just The Charts
           </a>
         </div>
       </div>
