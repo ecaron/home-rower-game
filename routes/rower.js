@@ -16,7 +16,7 @@ exports.home = async function (req, res) {
 }
 
 exports.login = function (req, res) {
-  req.session.userId = req.body.name
+  req.session.userId = req.body.id
   res.redirect('/')
 }
 exports.logout = function (req, res) {

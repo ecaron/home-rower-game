@@ -75,7 +75,6 @@ router.get('/results', async function (req, res) {
   if (rower.recentRace.competitor && typeof rower.recentRace.competitor.maxSpeed !== 'string') {
     rower.recentRace.competitor.maxSpeed = rower.recentRace.competitor.maxSpeed.toFixed(2)
   }
-  console.log(rower.recentRace)
   res.render('results', rower.recentRace)
 })
 

@@ -10,7 +10,7 @@
             <div class="flex-grow-1 pe-1 me-3 overflow-hidden">
               {% if mode == 'login' %}
                 <form method="post" action="/login">
-                  <input type="hidden" name="name" value="{{ rower.id }}">
+                  <input type="hidden" name="id" value="{{ rower.id }}">
                   <button type="submit" class="btn btn-link fs-2 p-0 text-nowrap" title="{{rower.name}}">{{ rower.name }} <i class="bi bi-arrow-right-circle fs-4"></i></button>
                 </form>
               {% else %}

@@ -1,8 +1,9 @@
-/* global $, Avataaars */
+/* global jQuery, Avataaars */
 function prettyText (input) {
   return input.replace(/([A-Z])/g, ' $1').replace(/^./, function (str) { return str.toUpperCase() })
 }
-$(document).ready(function () {
+jQuery(function () {
+  const $ = jQuery
   const avatarGenerator = function () {
     const options = {
       width: 200,
@@ -108,7 +109,7 @@ $(document).ready(function () {
 
   avatarGenerator()
   $('#form').on('change', avatarGenerator)
-  $('#name').focus()
+  $('#name').trigger('focus')
   $('.custom-color').on('click', function () {
     const type = $(this).data('type')
     if (this.checked) {
