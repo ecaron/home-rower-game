@@ -1,6 +1,6 @@
 {
   "name": "home-rower-game",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A rowing machine webapp for friendly in-house competitions",
   "scripts": {
     "start": "node app",
