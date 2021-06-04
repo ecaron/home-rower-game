@@ -1,12 +1,12 @@
 {% extends "_template.njk" %}
 {% block bodyClasses %}water-bg{% endblock %}
 {% block content %}
-  <div id="intro" style="display:none">
+  <div id="intro" class="d-block">
     <h1 class="animate__animated animate__bounceInDown">Welcome To Home Rower!</h1>
     <h2 class="animate__animated animate__bounceInDown animate__delay-1s">Select Your Rower</h2>
   </div>
 
-  <div id="main" style="display:block" class="container-fluid">
+  <div id="main" class="container-fluid d-none">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-2 p-1">
       {% for rower in rowers %}
         {{ macros.card(rower)}}

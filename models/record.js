@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     checkpoints: DataTypes.JSON,
     distance: DataTypes.INTEGER,
     duration: DataTypes.INTEGER,
+    competitor: DataTypes.INTEGER,
+    won: DataTypes.BOOLEAN,
     mode: DataTypes.STRING
   }, {
     sequelize,

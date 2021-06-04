@@ -66,8 +66,8 @@ router.get('/results', async function (req, res) {
     res.redirect('/')
     return
   }
-  if (rower.recentRace.personalBest && typeof rower.recentRace.personalBest.prevMaxSpeed !== 'string') {
-    rower.recentRace.personalBest.prevMaxSpeed = rower.recentRace.personalBest.prevMaxSpeed.toFixed(2)
+  if (rower.recentRace.isPersonalBest && rower.recentRace.prevPersonalBest && typeof rower.recentRace.prevPersonalBest.maxSpeed !== 'string') {
+    rower.recentRace.prevPersonalBest.maxSpeed = rower.recentRace.prevPersonalBest.maxSpeed.toFixed(2)
   }
   if (rower.recentRace.rower && typeof rower.recentRace.rower.maxSpeed !== 'string') {
     rower.recentRace.rower.maxSpeed = rower.recentRace.rower.maxSpeed.toFixed(2)
@@ -75,6 +75,7 @@ router.get('/results', async function (req, res) {
   if (rower.recentRace.competitor && typeof rower.recentRace.competitor.maxSpeed !== 'string') {
     rower.recentRace.competitor.maxSpeed = rower.recentRace.competitor.maxSpeed.toFixed(2)
   }
+  console.log(rower.recentRace)
   res.render('results', rower.recentRace)
 })
 

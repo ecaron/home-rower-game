@@ -63,6 +63,8 @@ module.exports = {
         checkpoints: JSON.stringify(checkpoints),
         distance: distance,
         duration: duration,
+        competitor: false,
+        won: false,
         createdAt: new Date(),
         updatedAt: new Date()
       })
@@ -73,6 +75,9 @@ module.exports = {
         distance: distance,
         maxSpeed: 1,
         date: new Date(),
+        finished: true,
+        competitor: false,
+        won: false,
         createdAt: new Date(),
         updatedAt: new Date()
       })

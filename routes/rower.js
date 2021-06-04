@@ -46,20 +46,19 @@ registerRouter.post('/', async function (req, res) {
     avatar: req.body.avatar
   }
 
-  await Rowers.create(doc)
-  req.session.userId = req.body.name
+  const rower = await Rowers.create(doc)
+  req.session.userId = rower.id
   res.redirect('/')
 })
 exports.register = registerRouter
 
 modifyRouter.get('/:rower/logbook', async function (req, res) {
-  const rower = await Rowers.getById(req.params.rower, { records: true, logbooks: true, excludeCheckpoints: true })
+  const rower = await Rowers.getById(req.params.rower, { logbooks: true })
   const entries = []
   const daysAgo = {
     7: new Date() - (7 * 24 * 60 * 60 * 1000),
     30: new Date() - (30 * 24 * 60 * 60 * 1000)
   }
-  console.log()
 
   if (rower.Logbooks && rower.Logbooks.length > 0) {
     entries.push({ key: 'All-Time', distance: 0, maxSpeed: 0, sessions: 0, show: true })

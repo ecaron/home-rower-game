@@ -64,6 +64,12 @@ module.exports = {
       duration: {
         type: Sequelize.INTEGER
       },
+      competitor: {
+        type: Sequelize.INTEGER
+      },
+      won: {
+        type: Sequelize.BOOLEAN
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -101,6 +107,15 @@ module.exports = {
       },
       duration: {
         type: Sequelize.INTEGER
+      },
+      finished: {
+        type: Sequelize.BOOLEAN
+      },
+      competitor: {
+        type: Sequelize.INTEGER
+      },
+      won: {
+        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,

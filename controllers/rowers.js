@@ -2,6 +2,8 @@ const { DateTime } = require('luxon')
 const debug = require('debug')('home-rower-game:rower')
 const models = require('../models')
 const Rower = models.Rower
+const Record = models.Record
+const Logbook = models.Logbook
 
 exports.getAll = async function (options) {
   const extras = {}
@@ -24,25 +26,12 @@ exports.getAll = async function (options) {
     } else {
       rowers[i].note = 'Has not rowed... yet.'
     }
-    //
+    // We support removing checkpoints to deduce data sent to browser
     if (options.excludeCheckpoints) {
       rowers[i].Records.forEach(function (record) {
         delete record.dataValues.checkpoints
       })
     }
-    // if (!rowers[i].records) {
-    //   rowers[i].records = {}
-    //   if (process.env.DEV) {
-    //     if (Math.random() > 0.5) {
-    //       rowers[i].records.marathon = { time: 10000, distance: 10000 }
-    //     }
-    //     ['time5', 'time10', 'time15', 'time20', 'time30', 'time45', 'time60', 'length500', 'length1000', 'length2000', 'length5000', 'length6000', 'length10000'].forEach(function (key) {
-    //       if (Math.random() > 0.5) {
-    //         rowers[i].records[key] = { distance: 10000, time: 10000 }
-    //       }
-    //     })
-    //   }
-    // }
   }
   return rowers
 }
@@ -60,6 +49,8 @@ exports.getById = async function (id, options) {
     else extras.include = [models.Logbook]
   }
   const rower = await Rower.findByPk(id, extras)
+
+  // We support removing checkpoints to deduce data sent to browser
   if (options.excludeCheckpoints) {
     rower.Records.forEach(function (record) {
       delete record.dataValues.checkpoints
@@ -75,40 +66,85 @@ exports.create = async function (doc) {
 exports.update = async function (doc, whereClause) {
   return await Rower.update(doc, { where: whereClause })
 }
-exports.saveRecording = async function (id, recording) {
+exports.saveRecording = async function (id, results, recording) {
   const rower = await exports.getById(id)
-  let personalBest = false
 
   if (process.env.FAKE_ROWER && !process.env.SAVE_FAKE_RESULTS) {
-    return personalBest
-  }
+    debug('Not processing the recording from this race')
+  } else {
+    const duration = recording.checkpoints[recording.checkpoints.length - 1].time - recording.checkpoints[0].time
+    let finishedRace = false
+    let raceValue
+    if (recording.mode === 'marathon') {
+      finishedRace = true
+    } else if (recording.mode.substring(0, 4) === 'time') {
+      raceValue = recording.mode.substring(4)
+      finishedRace = duration >= raceValue * 60 * 1000
+    } else if (recording.mode.substring(0, 6) === 'length') {
+      raceValue = recording.mode.substring(6)
+      finishedRace = recording.distance >= raceValue
+    }
+    results.finishedRace = finishedRace
+    await Logbook.create({
+      RowerId: rower.id,
+      mode: recording.mode,
+      maxSpeed: recording.maxSpeed,
+      date: new Date(),
+      duration: duration,
+      competitor: recording.competitor,
+      won: (results.winner === 'YOU'),
+      distance: recording.distance,
+      finished: finishedRace
+    })
+    if (finishedRace === true) {
+      let isPersonalBest = false
+      const record = await Record.findOne({ where: { RowerId: id, mode: recording.mode } })
+      if (!record) {
+        isPersonalBest = true
+      } else if (recording.mode === 'marathon') {
+        isPersonalBest = record.distance < recording.distance
+      } else if (recording.mode.substring(0, 4) === 'time') {
+        isPersonalBest = record.distance < recording.distance
+      } else if (recording.mode.substring(0, 6) === 'length') {
+        isPersonalBest = record.duration > recording.duration
+      }
+      results.isPersonalBest = isPersonalBest
+      if (isPersonalBest === true) {
+        if (!record) {
+          // Determine if this race is a personal record for the rower
+          await Record.create({
+            RowerId: rower.id,
+            mode: recording.mode,
+            checkpoints: recording.checkpoints,
+            start: recording.start,
+            maxSpeed: recording.maxSpeed,
+            distance: recording.distance,
+            duration: duration,
+            competitor: recording.competitor,
+            won: (results.winner === 'YOU')
+          })
+        } else {
+          results.prevPersonalBest = {
+            maxSpeed: record.maxSpeed,
+            distance: record.distance,
+            duration: record.duration
+          }
 
-  const update = {}
-  update.lastRowed = new Date()
-  if (!rower.record || parseInt(rower.record.distance, 10) < parseInt(recording.distance, 10)) {
-    debug('A new record was set!')
-    recording.duration = recording.checkpoints[recording.checkpoints.length - 1].time
-    update.record = recording
-    personalBest = {
-      prevMaxSpeed: rower.record ? rower.record.maxSpeed : 0,
-      prevDistance: rower.record ? rower.record.distance : 0,
-      prevDuration: rower.record ? rower.record.duration : 0
+          record.checkpoints = recording.checkpoints
+          record.start = recording.start
+          record.maxSpeed = recording.maxSpeed
+          record.duration = duration
+          record.distance = recording.distance
+          record.competitor = recording.competitor
+          record.won = (results.winner === 'YOU')
+          await record.save()
+        }
+      }
     }
   }
-  const logEntry = {
-    duration: recording.checkpoints[recording.checkpoints.length - 1].time,
-    distance: parseInt(recording.distance, 10),
-    maxSpeed: recording.maxSpeed,
-    date: recording.start
-  }
-  if (rower.logbook) {
-    rower.logbook.push(logEntry)
-    update.logbook = rower.logbook
-  } else {
-    update.logbook = [logEntry]
-  }
-  await exports.update(update, { id: id })
-  return personalBest
+  rower.lastRowed = new Date()
+  rower.recentRace = results
+  await rower.save()
 }
 
 exports.deleteById = async function (id) {

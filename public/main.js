@@ -34,13 +34,14 @@ jQuery(function () {
   }
 
   const $intro = $('#intro')
-  if ($intro.length) {
+  if ($intro.length && $intro.hasClass('d-block')) {
+    $('#main').hide().removeClass('d-none')
     setTimeout(function () {
       setTimeout(function () {
         $intro.hide()
         $('#main').show()
       }, 500)
-      $intro.addClass('animate__animated animate__zoomOutDown')
+      $intro.addClass('animate__animated animate__zoomOut')
     }, 4000)
   }
 

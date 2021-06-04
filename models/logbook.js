@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) => {
     duration: DataTypes.INTEGER,
     distance: DataTypes.INTEGER,
     maxSpeed: DataTypes.DECIMAL(10, 2),
+    finished: DataTypes.BOOLEAN,
+    competitor: DataTypes.INTEGER,
+    won: DataTypes.BOOLEAN,
     date: DataTypes.DATE
   }, {
     sequelize,
