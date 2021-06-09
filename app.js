@@ -6,7 +6,7 @@ const Sequelize = require('sequelize')
 const nunjucks = require('nunjucks')
 const http = require('http')
 const path = require('path')
-
+const models = require('./models')
 const routes = require('./routes')
 const websocket = require('./lib/websocket')
 const S4 = require('./s4')
@@ -17,8 +17,8 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store)
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: path.join(__dirname, 'db', 'session.sqlite'),
-  logging: false
+  storage: path.join(__dirname, 'db', 'session.sqlite3'),
+  logging: require('debug')('sequelize:session')
 })
 
 app.set('views', path.join(__dirname, 'views'))
@@ -76,6 +76,7 @@ const run = async function (app) {
   if (!process.env.FAKE_ROWER) {
     S4.init()
   }
+  await models.init()
 
   const server = http.createServer(app)
 

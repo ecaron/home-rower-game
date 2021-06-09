@@ -1,6 +1,6 @@
-'use strict'
+const Sequelize = require('sequelize')
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface) => {
     await queryInterface.createTable('Rowers', {
       id: {
         allowNull: false,
@@ -127,7 +127,7 @@ module.exports = {
       }
     })
   },
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.dropTable('Rowers')
     await queryInterface.dropTable('Records')
     await queryInterface.dropTable('Logbooks')

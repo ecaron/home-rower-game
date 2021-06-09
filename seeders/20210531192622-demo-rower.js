@@ -1,7 +1,5 @@
-'use strict'
-
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface) => {
     const doc = {
       name: 'Elisabeta',
       avatar: JSON.stringify({
@@ -51,8 +49,8 @@ module.exports = {
       }
       rowerDistance += distance
 
-      for (j = 1; j <= duration / 60000; j++) {
-        checkpoints.push({ time: j * 60000, speed: 1, distance: j * 100 })
+      for (j = 1; j <= duration / 6000; j++) {
+        checkpoints.push({ time: j * 6000, speed: 3, distance: j * 10 })
       }
 
       records.push({
@@ -96,7 +94,7 @@ module.exports = {
     }
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.bulkDelete('Rowers', null, {})
     await queryInterface.bulkDelete('Records', null, {})
     await queryInterface.bulkDelete('Logbooks', null, {})

@@ -63,6 +63,7 @@ router.get('/results', async function (req, res) {
   S4.rower.reset()
   const rower = await Rowers.getById(req.session.userId)
   if (!rower.recentRace) {
+    debug('Got to results before recentRace was saved')
     res.redirect('/')
     return
   }

@@ -36,15 +36,18 @@
           {% endif %}
         </div>
 
-        <div class="p-3">
+        <div class="px-3">
           {% if competitor %}
-            <blockquote id="record"><h4>
-              <div class="text-decoration-underline">Competing against previous record of {{ competitor.name }}:</div>
-              <strong>Set On</strong>: <span id="recordDate" data-value="{{ competitor.record.createdAt }}"></span><br>
-              <strong>Duration</strong> <span id="recordDuration" data-value="{{ competitor.record.duration }}"></span><br>
-              <strong>Distance</strong> <span id="recordDistance" data-value="{{ competitor.record.distance }}"></span><br>
+            <blockquote id="record" class="fs-4">
+              <div><span class="text-decoration-underline">Record to Beat</span>
+              <small class="text-muted">Set <span id="recordDate" data-value="{{ competitor.record.createdAt }}"></small></div>
+              {% if mode.slice(0, 6) === 'length' %}
+                <strong>Time</strong> <span id="recordDuration" data-value="{{ competitor.record.duration }}"></span>,
+              {% else %}
+                <strong>Distance</strong> <span id="recordDistance" data-value="{{ competitor.record.distance }}"></span>,
+              {% endif %}
               <strong>Max Speed</strong> {{ competitor.record.maxSpeed }} knots
-            </h4></blockquote>
+            </blockquote>
           {% endif %}
           <div id="messages" class="fs-3"></div>
           <div id="graphs"></div>

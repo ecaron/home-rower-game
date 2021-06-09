@@ -83,7 +83,8 @@ jQuery(function () {
         }, 500)
         $messages.text('Time elapsed: ' + prettyDuration((new Date() - startTime)))
       } else {
-        $messages.text('Distance remaining: ' + amountLeft + ' meters')
+        $messages.html('Distance remaining: ' + amountLeft + ' meters<br>' +
+          'Time elapsed: ' + prettyDuration((new Date() - startTime)))
       }
       if ($raceMode.data('type') !== 'marathon' && amountLeft <= 0) {
         $('#endRace').trigger('click')
@@ -94,14 +95,18 @@ jQuery(function () {
       try {
         ws.send(JSON.stringify({ status: 'end' }))
         ws.close()
-      } catch (e) {}
-      window.location = '/compete/results'
+      } catch (e) {
+        console.log(e)
+      }
+      // Pause half a second to delete the database & sockets catch up
+      setTimeout(function () {
+        window.location = '/compete/results'
+      }, 500)
     })
 
     const startTime = new Date()
     let started = false
 
-    $('#record').hide()
     $messages.html('Wait for it&hellip;')
 
     function connect () {
@@ -114,6 +119,7 @@ jQuery(function () {
       ws = new WebSocket(`ws://${location.host}`)
       ws.onmessage = function (event) {
         const data = JSON.parse(event.data)
+        let distanceValue = data.distance
         if (started === false || data.status === 'start') {
           updateCountdown(raceValue)
           started = true
@@ -121,18 +127,18 @@ jQuery(function () {
         if (data.status === 'update') {
           let distanceUnits = 'm'
           if (data.distance > 1000) {
-            data.distance = (data.distance / 1000).toFixed(2)
+            distanceValue = (distanceValue / 1000).toFixed(2)
             distanceUnits = 'km'
           } else {
-            data.distance = Math.round(data.distance)
+            distanceValue = Math.round(distanceValue)
           }
           if (data.target === 'rower') {
             updateCountdown(raceValue - data.distance)
-            $rower.find('.stats').html(`${data.speed.toFixed(2)} ${data.speedUnits}<br>${data.distance}${distanceUnits}`)
+            $rower.find('.stats').html(`${data.speed.toFixed(2)} ${data.speedUnits}<br>${distanceValue}${distanceUnits}`)
             waterSpeed = data.speed * 7
           } else {
             if ($competitor.length && competitorActive === true) {
-              $competitor.find('.stats').html(`${data.speed.toFixed(2)} ${data.speedUnits}<br>${data.distance}${distanceUnits}`)
+              $competitor.find('.stats').html(`${data.speed.toFixed(2)} ${data.speedUnits}<br>${distanceValue}${distanceUnits}`)
             }
           }
           $rower.css('bottom', Math.round(data.position.rower * 75) + '%')
@@ -168,6 +174,8 @@ jQuery(function () {
     } else {
       $('#recordDistance').text($('#recordDistance').data('value') + 'm')
     }
+  }
+  if ($('#recordDuration').length) {
     $('#recordDuration').text(prettyDuration($('#recordDuration').data('value')))
   }
 })
