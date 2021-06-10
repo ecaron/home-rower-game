@@ -1,1 +1,0 @@
-* Make sure that, when racing, we know what we're racing against
