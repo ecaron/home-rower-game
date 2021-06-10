@@ -165,6 +165,12 @@ jQuery(function () {
     raceData.readyToStart = true
     fetch('/compete/reset.json').then(updateGraphs).then(socketConnect)
     $messages.html('Wait for the beep, then start rowing!')
+
+    $('#cancelRace').hide()
+    $('.toggles').hide().removeClass('d-none')
+    $('#startRace').fadeOut('slow', function () {
+      $('.toggles').fadeIn('fast')
+    })
   })
 
   const startRace = function () {
@@ -186,12 +192,6 @@ jQuery(function () {
         })
       }
     }, 500)
-
-    $('#cancelRace').hide()
-    $('.toggles').hide().removeClass('d-none')
-    $('#startRace').fadeOut('slow', function () {
-      $('.toggles').fadeIn('fast')
-    })
 
     countdownInterval = setInterval(updateCountdown, 1000)
   }
