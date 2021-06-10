@@ -8,12 +8,12 @@
           <div id="starting-line"></div>
           <div id="rower">
             <div class="avatar" data-details="{{ rower.avatar | dump }}"></div>
-            <div class="stats"></div>
+            <div class="stats text-nowrap"></div>
           </div>
           {% if competitor %}
             <div id="competitor">
               <div class="avatar {% if rower.name == competitor.name %}ghost{% endif %}" data-details="{{ competitor.avatar | dump }}"></div>
-              <div class="stats"></div>
+              <div class="stats text-nowrap"></div>
             </div>
           {% endif %}
         </div>
@@ -53,7 +53,7 @@
           <div id="messages" class="fs-4"></div>
           <div id="graphs"></div>
         </div>
-        <button class="btn btn-lg btn-primary start-0 bottom-0 ms-3 mb-3 position-absolute" id="startRace">START</button>
+        <button class="btn btn-lg btn-primary start-0 bottom-0 ms-3 mb-3 position-absolute" id="startRace">READY?</button>
         <a href="/" class="btn btn-lg btn-secondary end-0 bottom-0 me-3 mb-3 position-absolute" id="cancelRace">CANCEL</a>
         <div class="d-none toggles end-0 bottom-0 me-3 mb-3 position-absolute">
           <button class="btn btn-lg btn-secondary" id="endRace">END RACE</button>
