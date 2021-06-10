@@ -94,7 +94,7 @@ modifyRouter.get('/:rower/logbook', async function (req, res) {
     if (entries.length >= 3 && entries[2].sessions === entries[0].sessions) entries[0].show = false
     if (entries.length >= 2 && entries[1].sessions === entries[0].sessions) entries[0].show = false
     for (let i = 0; i < entries.length; i++) {
-      entries[i].maxSpeed = entries[i].maxSpeed.toFixed(2)
+      entries[i].maxSpeed = parseFloat(entries[i].maxSpeed.toFixed(2))
     }
   }
   res.send(nunjucks.render('partials/logbook.njk', { entries: entries, name: rower.name }))

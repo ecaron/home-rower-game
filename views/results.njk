@@ -18,19 +18,19 @@
           <div class="col">
             <blockquote>
               <h3><u>Your Time</u><br>
-                Max Speed: <strong> {{rower.maxSpeed}} knots</strong><br>
-                Distance: <strong> {{rower.distance}}m</strong><br>
+                Max Speed: <strong>{{rower.maxSpeed}} knots</strong><br>
+                Distance: <strong class="prettyDistance" data-value="{{rower.distance}}">{{rower.distance}} meters</strong><br>
                 {% if rower.duration %}
-                  Duration: <strong class="prettyTime">{{rower.duration}}</strong>
+                  Duration: <strong class="prettyDuration" data-value="{{rower.duration}}"></strong>
                 {% endif %}
               </h3>
               {% if isPersonalBest %}
                 <h3><u>A New Personal Best!</u><br>
                 {% if prevPersonalBest %}
-                  Prev. Speed: <strong> {{prevPersonalBest.maxSpeed}} knots</strong><br>
-                  Prev. Distance: <strong> {{prevPersonalBest.distance}}m</strong><br>
+                  Prev. Speed: <strong>{{prevPersonalBest.maxSpeed}} knots</strong><br>
+                  Prev. Distance: <strong class="prettyDistance" data-value="{{prevPersonalBest.distance}}">{{prevPersonalBest.distance}} meters</strong><br>
                   {% if prevPersonalBest.duration %}
-                    Prev. Duration: <strong class="prettyTime">{{prevPersonalBest.duration}}</strong>
+                    Prev. Duration: <strong class="prettyDuration" data-value="{{prevPersonalBest.duration}}"></strong>
                   {% endif %}
                 {% endif %}
                 </h3>
@@ -42,9 +42,9 @@
               <blockquote>
                 <h3><u>Their Time</u><br>
                   Max Speed: <strong> {{competitor.maxSpeed}} knots</strong><br>
-                  Distance: <strong> {{competitor.distance}}m</strong><br>
+                  Distance: <strong class="prettyDistance" data-value="{{competitor.distance}}">{{competitor.distance}} meters</strong><br>
                   {% if competitor.duration %}
-                    Duration: <strong class="prettyTime">{{competitor.duration}}</strong>
+                    Duration: <strong class="prettyDuration" data-value="{{competitor.duration}}"></strong>
                   {% endif %}
                 </h3>
               </blockquote>

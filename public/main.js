@@ -20,6 +20,24 @@ function prettyDuration (duration, briefUnits) {
   else return output + duration + ((duration === 1) ? ' second' : ' seconds')
 }
 
+function prettyDistance (distance, briefUnits) {
+  if (!briefUnits) briefUnits = false
+  let distanceValue
+  if (typeof distance === 'string') distance = parseFloat(distance)
+  if (distance > 1000) {
+    distanceValue = parseFloat((distance / 1000).toFixed(2))
+    distanceValue += (briefUnits === true) ? 'km' : ' kilometers'
+  } else {
+    distanceValue = Math.round(distance)
+    distanceValue += (briefUnits === true) ? 'm' : ' meters'
+  }
+  return distanceValue
+}
+
+function getRandomInt (max) { // eslint-disable-line no-unused-vars
+  return Math.floor(Math.random() * max)
+}
+
 jQuery(function () {
   const $ = jQuery
   const logout = document.querySelector('#logout')
@@ -69,6 +87,10 @@ jQuery(function () {
       .then(response => response.text())
       .then(response => {
         $('.modal .modal-body').html(response)
+        $('.modal .modal-body .duration').each(function () {
+          const value = $(this).data('value')
+          $(this).text(prettyDistance(value), true)
+        })
       }).catch(e => {
         $('.modal .modal-body').html('Sorry. Some error happened.')
         console.log(e)
@@ -86,8 +108,11 @@ jQuery(function () {
     const svg = Avataaars.create(options)
     $(this).html(svg)
   })
-  $('.prettyTime').each(function () {
-    $(this).text(prettyDuration($(this).text()))
+  $('.prettyDuration').each(function () {
+    $(this).text(prettyDuration($(this).data('value')))
+  })
+  $('.prettyDistance').each(function () {
+    $(this).text(prettyDistance($(this).data('value')))
   })
   const appModal = new bootstrap.Modal(document.getElementById('modal-1'), {
     keyboard: false
@@ -105,30 +130,29 @@ jQuery(function () {
   })
 
   $('#race-mode').on('change', function () {
-    $('.race-mode').val($(this).val())
-    $('#race-alone').removeClass('disabled').addClass('hover')
     const raceMode = $(this).val()
-    Object.keys(rowers).forEach(function (rowerId) {
-      const $rowerBox = $('#rower-box-' + rowerId)
-      let raceText
-      if (rowers[rowerId][raceMode]) {
-        $rowerBox.removeClass('disabled order-last').addClass('hover order-2')
-        if (raceMode === 'marathon' || raceMode.substring(0, 4) === 'time') {
-          if (rowers[rowerId][raceMode].distance > 1000) {
-            raceText = (rowers[rowerId][raceMode].distance / 1000).toFixed(2) + ' kilometers'
+    if (raceMode) {
+      $('.race-mode').val($(this).val())
+      $('#race-alone').removeClass('disabled').addClass('hover')
+      Object.keys(rowers).forEach(function (rowerId) {
+        const $rowerBox = $('#rower-box-' + rowerId)
+        let raceText
+        if (rowers[rowerId][raceMode]) {
+          $rowerBox.removeClass('disabled order-last').addClass('hover order-2')
+          if (raceMode === 'marathon' || raceMode.substring(0, 4) === 'time') {
+            raceText = prettyDistance(rowers[rowerId][raceMode].distance)
           } else {
-            raceText = Math.round(rowers[rowerId][raceMode].distance) + ' meters'
+            raceText = prettyDuration(rowers[rowerId][raceMode].duration)
           }
+          $rowerBox.find('.record-details').html(raceText)
         } else {
-          raceText = prettyDuration(rowers[rowerId][raceMode].duration)
+          $rowerBox.addClass('disabled order-last').removeClass('hover order-2')
+          $rowerBox.find('.record-details').html('')
         }
-        $rowerBox.find('.record-details').html(raceText)
-      } else {
-        $rowerBox.addClass('disabled order-last').removeClass('hover order-2')
-        $rowerBox.find('.record-details').html('')
-      }
-    })
+      })
+    }
   })
+  $('#race-mode').trigger('change')
 
   const $currentTime = $('.current-time')
   if ($currentTime.length) {

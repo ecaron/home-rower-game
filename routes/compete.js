@@ -29,7 +29,7 @@ router.get('/', async function (req, res) {
     if (data.competitor.Records) {
       data.competitor.record = data.competitor.Records.find(element => element.mode === req.session.mode)
       if (data.competitor.record && data.competitor.record.maxSpeed && typeof data.competitor.record.maxSpeed !== 'string') {
-        data.competitor.record.maxSpeed = data.competitor.record.maxSpeed.toFixed(2)
+        data.competitor.record.maxSpeed = parseFloat(data.competitor.record.maxSpeed.toFixed(2))
       }
     }
   }
@@ -68,13 +68,13 @@ router.get('/results', async function (req, res) {
     return
   }
   if (rower.recentRace.isPersonalBest && rower.recentRace.prevPersonalBest && typeof rower.recentRace.prevPersonalBest.maxSpeed !== 'string') {
-    rower.recentRace.prevPersonalBest.maxSpeed = rower.recentRace.prevPersonalBest.maxSpeed.toFixed(2)
+    rower.recentRace.prevPersonalBest.maxSpeed = parseFloat(rower.recentRace.prevPersonalBest.maxSpeed.toFixed(2))
   }
   if (rower.recentRace.rower && typeof rower.recentRace.rower.maxSpeed !== 'string') {
-    rower.recentRace.rower.maxSpeed = rower.recentRace.rower.maxSpeed.toFixed(2)
+    rower.recentRace.rower.maxSpeed = parseFloat(rower.recentRace.rower.maxSpeed.toFixed(2))
   }
   if (rower.recentRace.competitor && typeof rower.recentRace.competitor.maxSpeed !== 'string') {
-    rower.recentRace.competitor.maxSpeed = rower.recentRace.competitor.maxSpeed.toFixed(2)
+    rower.recentRace.competitor.maxSpeed = parseFloat(rower.recentRace.competitor.maxSpeed.toFixed(2))
   }
   res.render('results', rower.recentRace)
 })

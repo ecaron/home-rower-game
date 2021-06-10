@@ -72,7 +72,7 @@ exports.saveRecording = async function (id, results, recording) {
   if (process.env.FAKE_ROWER && !process.env.SAVE_FAKE_RESULTS) {
     debug('Not processing the recording from this race')
   } else {
-    const duration = recording.checkpoints[recording.checkpoints.length - 1].time - recording.checkpoints[0].time
+    const duration = recording.checkpoints[recording.checkpoints.length - 1].time
     let finishedRace = false
     let raceValue
     if (recording.mode === 'marathon') {

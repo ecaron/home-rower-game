@@ -1,95 +1,147 @@
-/* global jQuery, WebSocket, location, fetch, updateGraphs, prettyDuration, NoSleep */
+/* global jQuery, WebSocket, location, fetch, updateGraphs, getRandomInt, prettyDuration, prettyDistance, NoSleep */
 jQuery(function () {
   const $ = jQuery
-  let waterPos = 0
-  let waterSpeed = 0
+  const noSleep = new NoSleep()
+  const $water = $('#water')
+  const $rower = $('#water #rower')
+  const $competitor = $('#water #competitor')
+  const $messages = $('#messages')
+  const $record = $('#record')
   let ws
 
-  function getRandomInt (max) {
-    return Math.floor(Math.random() * max)
+  const raceData = {
+    mode: {
+      type: $('#mode').data('type'),
+      value: parseInt($('#mode').data('value'))
+    },
+    rower: {
+      distance: 0
+    },
+    startTime: false,
+    ended: false,
+    water: {
+      pos: 0,
+      speed: 0,
+      green: getRandomInt(255),
+      blue: getRandomInt(255),
+      transparent: 0.4,
+      direction: {
+        green: 1,
+        blue: 1
+      }
+    }
+  }
+  if ($record.length) {
+    raceData.competitor = {
+      record: parseInt($record.data('value'))
+    }
   }
 
-  let randomGreen = getRandomInt(255)
-  let randomBlue = getRandomInt(255)
-  let randomDirection = { green: 1, blue: 1, transparent: 0.4 }
-  const randomColor = 'rgba(0,' + randomGreen + ',' + randomBlue + ',' + randomDirection.transparent + ')'
+  const cycleDirection = function () {
+    if (raceData.water.green < 0) raceData.water.green = 0
+    else if (raceData.water.green > 255) raceData.water.green = 255
+    if (raceData.water.blue < 0) raceData.water.blue = 0
+    else if (raceData.water.blue > 255) raceData.water.blue = 255
 
-  const $water = $('#water')
-  $water.css({ 'background-image': 'url(\'/images/water_' + getRandomInt(7) + '.jpg\')', 'background-color': randomColor })
+    const random = Math.random()
+    if (random < 0.25) {
+      raceData.water.direction = { green: 1, blue: 1 }
+    } else if (random < 0.5) {
+      raceData.water.direction = { green: -1, blue: 1 }
+    } else if (random < 0.75) {
+      raceData.water.direction = { green: -1, blue: -1 }
+    } else {
+      raceData.water.direction = { green: 1, blue: -1 }
+    }
+  }
+
+  $water.css({
+    'background-image': 'url(\'/images/water_' + getRandomInt(7) + '.jpg\')',
+    'background-color': 'rgba(0,' + raceData.water.green + ',' + raceData.water.blue + ',' + raceData.water.transparent + ')'
+  })
 
   $('#startRace').on('click', function () {
-    const $rower = $('#water #rower')
-    const $competitor = $('#water #competitor')
-
-    const noSleep = new NoSleep()
     noSleep.enable()
-
+    raceData.startTime = new Date()
     $('#starting-line').addClass('dropoff')
     fetch('/compete/reset.json').then(updateGraphs)
 
-    const cycleDirection = function () {
-      if (randomGreen < 0) randomGreen = 0
-      else if (randomGreen > 255) randomGreen = 255
-      if (randomBlue < 0) randomBlue = 0
-      else if (randomBlue > 255) randomBlue = 255
-
-      const random = Math.random()
-      if (random < 0.25) {
-        randomDirection = { green: 1, blue: 1, transparent: randomDirection.transparent }
-      } else if (random < 0.5) {
-        randomDirection = { green: -1, blue: 1, transparent: randomDirection.transparent }
-      } else if (random < 0.75) {
-        randomDirection = { green: -1, blue: -1, transparent: randomDirection.transparent }
-      } else {
-        randomDirection = { green: 1, blue: -1, transparent: randomDirection.transparent }
-      }
-      // Randomizing the alpha layer turned out to be overkill
-      // if (Math.floor(random * 10) % 2 === 1) {
-      // randomDirection.transparent = Math.random()
-      // }
-    }
-
     setInterval(function () {
-      if (waterSpeed > 0) {
-        waterPos += waterSpeed
-        randomGreen += randomDirection.green * getRandomInt(2)
-        randomBlue += randomDirection.blue * getRandomInt(2)
-        if (randomGreen < 0 || randomGreen > 255 || randomBlue < 0 || randomBlue > 255) {
+      if (raceData.water.speed > 0) {
+        raceData.water.pos += raceData.water.speed
+        raceData.water.green += raceData.water.direction.green * getRandomInt(2)
+        raceData.water.blue += raceData.water.direction.blue * getRandomInt(2)
+        if (raceData.water.green < 0 || raceData.water.green > 255 || raceData.water.blue < 0 || raceData.water.blue > 255) {
           cycleDirection()
         }
-        const randomColor = 'rgba(0,' + randomGreen + ',' + randomBlue + ',' + randomDirection.transparent + ')'
-        $('#water').css({ 'background-position': '0 ' + waterPos + 'px', 'background-color': randomColor })
+        $('#water').css({
+          'background-position': '0 ' + raceData.water.pos + 'px',
+          'background-color': 'rgba(0,' + raceData.water.green + ',' + raceData.water.blue + ',' + raceData.water.transparent + ')'
+        })
       }
-    }, 100)
+    }, 500)
 
     $('#cancelRace').hide()
     $('.toggles').hide().removeClass('d-none')
     $('#startRace').fadeOut('slow', function () {
       $('.toggles').fadeIn('fast')
     })
-    const $messages = $('#messages')
-    const $raceMode = $('#mode')
-    let raceValue = false
-    if ($raceMode.data('value')) raceValue = parseInt($raceMode.data('value'))
 
-    const updateCountdown = function (amountLeft) {
-      if ($raceMode.data('type') === 'time') {
-        amountLeft = raceValue * 60 * 1000 - (new Date() - startTime)
-        $messages.text('Time remaining: ' + prettyDuration(amountLeft))
-        setTimeout(updateCountdown, 5000)
-      } else if ($raceMode.data('type') === 'marathon') {
-        setInterval(function () {
-          $messages.text('Time elapsed: ' + prettyDuration((new Date() - startTime)))
-        }, 500)
-        $messages.text('Time elapsed: ' + prettyDuration((new Date() - startTime)))
-      } else {
-        $messages.html('Distance remaining: ' + amountLeft + ' meters<br>' +
-          'Time elapsed: ' + prettyDuration((new Date() - startTime)))
+    const updateCountdown = function () {
+      if (raceData.startTime === false || raceData.ended === true) return
+      let endRace = false
+      let messageHTML = ''
+      const timeElapsed = new Date() - raceData.startTime
+      if (raceData.mode.type === 'time') {
+        const timeLeft = (raceData.mode.value * 60 * 1000) - timeElapsed
+        messageHTML += 'Time remaining: <strong>' + prettyDuration(timeLeft) + '</strong>'
+        if (raceData.competitor) {
+          if (raceData.competitor.record > raceData.rower.distance) {
+            messageHTML += '<br>Distance to win: <strong>' + prettyDistance(raceData.competitor.record - raceData.rower.distance) + '</strong>'
+          } else {
+            messageHTML += '<br>Won race by: <strong>' + prettyDistance(raceData.rower.distance - raceData.competitor.record) + '</strong>'
+          }
+        } else {
+          messageHTML += '<br>Distance rowed: <strong>' + prettyDistance(raceData.rower.distance) + '</strong>'
+        }
+        if (timeLeft <= 0 && raceData.ended === false) {
+          endRace = true
+        }
+      } else if (raceData.mode.type === 'marathon') {
+        if (raceData.competitor) {
+          if (raceData.competitor.record > raceData.rower.distance) {
+            messageHTML += 'Distance to win: <strong>' + prettyDistance(raceData.competitor.record - raceData.rower.distance) + '</strong>'
+          } else {
+            messageHTML += 'Won race by: <strong>' + prettyDistance(raceData.rower.distance - raceData.competitor.record) + '</strong>'
+          }
+        } else {
+          messageHTML += 'Distance rowed: <strong>' + prettyDistance(raceData.rower.distance) + '</strong>'
+        }
+      } else if (raceData.mode.type === 'length') {
+        messageHTML += 'Distance remaining: <strong>' + prettyDistance(raceData.mode.value - raceData.rower.distance) + '</strong>'
+        if (raceData.competitor) {
+          if (raceData.competitor && raceData.competitor.record < timeElapsed) {
+            messageHTML += '<br>Lost by: <strong>' + prettyDuration(timeElapsed - raceData.competitor.record) + '</strong>'
+          } else {
+            messageHTML += '<br>Time to win: <strong>' + prettyDuration(raceData.competitor.record - timeElapsed) + '</strong>'
+          }
+        } else {
+          messageHTML += '<br>Time rowed: <strong>' + prettyDuration(timeElapsed) + '</strong>'
+        }
+        if (raceData.mode.value <= raceData.rower.distance && raceData.ended === false) {
+          endRace = true
+        }
       }
-      if ($raceMode.data('type') !== 'marathon' && amountLeft <= 0) {
-        $('#endRace').trigger('click')
+      $messages.html(messageHTML)
+      if (endRace === true) {
+        clearInterval(countdownInterval)
+        raceData.ended = true
+        setTimeout(function () {
+          $('#endRace').trigger('click')
+        }, 1000)
       }
     }
+    const countdownInterval = setInterval(updateCountdown, 1000)
 
     $('#endRace').on('click', function () {
       try {
@@ -101,13 +153,10 @@ jQuery(function () {
       // Pause half a second to delete the database & sockets catch up
       setTimeout(function () {
         window.location = '/compete/results'
-      }, 500)
+      }, 1000)
     })
 
-    const startTime = new Date()
-    let started = false
-
-    $messages.html('Wait for it&hellip;')
+    $messages.html('Wait for the beep&hellip;')
 
     function connect () {
       if (ws) {
@@ -119,26 +168,15 @@ jQuery(function () {
       ws = new WebSocket(`ws://${location.host}`)
       ws.onmessage = function (event) {
         const data = JSON.parse(event.data)
-        let distanceValue = data.distance
-        if (started === false || data.status === 'start') {
-          updateCountdown(raceValue)
-          started = true
-        }
         if (data.status === 'update') {
-          let distanceUnits = 'm'
-          if (data.distance > 1000) {
-            distanceValue = (distanceValue / 1000).toFixed(2)
-            distanceUnits = 'km'
-          } else {
-            distanceValue = Math.round(distanceValue)
-          }
           if (data.target === 'rower') {
-            updateCountdown(raceValue - data.distance)
-            $rower.find('.stats').html(`${data.speed.toFixed(2)} ${data.speedUnits}<br>${distanceValue}${distanceUnits}`)
-            waterSpeed = data.speed * 7
+            raceData.rower.distance = data.distance
+            updateCountdown()
+            $rower.find('.stats').html(`${parseFloat(data.speed.toFixed(2))} ${data.speedUnits}<br>${prettyDistance(data.distance)}`)
+            raceData.water.speed = data.speed * 20
           } else {
             if ($competitor.length && competitorActive === true) {
-              $competitor.find('.stats').html(`${data.speed.toFixed(2)} ${data.speedUnits}<br>${distanceValue}${distanceUnits}`)
+              $competitor.find('.stats').html(`${parseFloat(data.speed.toFixed(2))} ${data.speedUnits}<br>${prettyDistance(data.distance)}`)
             }
           }
           $rower.css('bottom', Math.round(data.position.rower * 75) + '%')
@@ -154,7 +192,6 @@ jQuery(function () {
       }
       ws.onopen = function () {
         console.log('WebSocket connection established')
-        // ws.send('Race Start!')
       }
       ws.onclose = function () {
         console.log('WebSocket connection closed')
@@ -165,17 +202,7 @@ jQuery(function () {
     }
     connect()
   })
-  $('#speedUp').on('click', function () { waterSpeed = waterSpeed * 2 })
-  $('#speedDown').on('click', function () { waterSpeed = Math.ceil(waterSpeed / 2) })
   if ($('#recordDate').length) {
     $('#recordDate').text((new Date($('#recordDate').data('value'))).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }))
-    if (parseInt($('#recordDistance').data('value'), 10) > 2000) {
-      $('#recordDistance').text((parseInt($('#recordDistance').data('value')) / 1000).toFixed(2) + 'km')
-    } else {
-      $('#recordDistance').text($('#recordDistance').data('value') + 'm')
-    }
-  }
-  if ($('#recordDuration').length) {
-    $('#recordDuration').text(prettyDuration($('#recordDuration').data('value')))
   }
 })

@@ -31,7 +31,7 @@ module.exports = {
     let checkpoints = []
     let i, j, mode
 
-    const modes = ['marathon', 'time5', 'time10', 'time15', 'time20', 'time30', 'time45', 'time60', 'length500', 'length1000', 'length2000', 'length5000', 'length6000', 'length10000']
+    const modes = ['marathon', 'time1', 'time5', 'time10', 'time15', 'time20', 'time30', 'time45', 'time60', 'length100', 'length500', 'length1000', 'length2000', 'length5000', 'length6000', 'length10000']
     const logbooks = []
     const records = []
     for (i = 0; i < modes.length; i++) {
