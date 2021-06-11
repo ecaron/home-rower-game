@@ -164,7 +164,7 @@ jQuery(function () {
     noSleep.enable()
     raceData.readyToStart = true
     fetch('/compete/reset.json').then(updateGraphs).then(socketConnect)
-    $messages.html('Wait for the beep, then start rowing!')
+    $messages.html('Start rowing when you are ready!')
 
     $('#cancelRace').hide()
     $('.toggles').hide().removeClass('d-none')
