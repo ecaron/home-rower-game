@@ -1,24 +1,37 @@
+body.water-bg {
+  background-blend-mode: hard-light;
+  background-image: url('/images/water_6.jpg');
+  background-color: rgba(0, 10, 50, .9);
+}
+#intro {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+body.water-bg #intro h1, body.water-bg #intro h2 {
+  color: white;
+  text-shadow: 2px 2px #000;
+}
+#intro h1 {
+  font-size: 500%;
+}
+#intro h2 {
+  font-size: 300%;
+}
+.card.hover {
+  opacity: .95;
+}
+.card.hover:active, .card.hover:hover {
+  opacity: 1;
+}
 .counter {
   transition: opacity .5s ease-in-out;
   -webkit-transition: opacity .5s ease-in-out;
   -moz-transition:opacity .5s ease-in-out;
-}
-.rower-cards {
-  width:200px;
-  height:300px;
-  margin:10px;
-}
-.rower-cards .card-panel {
-  padding:5px 0 15px;
-  width:100%;
-  height:300px;
-}
-.rower-cards .section {
-  padding-top:0;
-}
-.rower-cards .btn-large {
-  height: auto;
-  line-height: inherit;
 }
 #water {
   overflow:hidden;
@@ -75,4 +88,13 @@
   margin-top:15%;
   font-size:32px;
   line-height:32px;
+}
+.rower-box {
+  transition: opacity 0.5s ease-in-out;
+}
+.rower-box.disabled {
+  opacity: .5;
+}
+.rower-box.disabled button, .rower-box.disabled a {
+  display:none !important;
 }

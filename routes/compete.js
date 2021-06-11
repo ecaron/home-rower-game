@@ -2,29 +2,39 @@ const express = require('express')
 const router = express.Router()
 const debug = require('debug')('home-rower-game:compete')
 
-const db = require('../lib/db')
+const Rowers = require('../controllers').rowers
 const S4 = require('../s4')
 
 router.post('/', function (req, res) {
   req.session.competitor = req.body.competitor
+  req.session.mode = req.body.mode
   res.redirect('/compete')
 })
-router.get('/', function (req, res) {
-  if (!req.session.userId || !req.session.competitor) {
+router.get('/', async function (req, res) {
+  if (!req.session.userId) {
     return res.redirect('/')
   }
-  db.rowers.find({ _id: { $in: [req.session.userId, req.session.competitor] } }, function (err, rowers) {
-    if (err) debug(err)
-    const data = {}
-    rowers.forEach(function (rower) {
-      if (rower._id === req.session.userId) data.rower = rower
-      if (rower._id === req.session.competitor) data.competitor = rower
-    })
-    if (data.competitor.record && data.competitor.record.maxSpeed && typeof data.competitor.record.maxSpeed !== 'string') {
-      data.competitor.record.maxSpeed = data.competitor.record.maxSpeed.toFixed(2)
+
+  const data = {
+    rower: await Rowers.getById(req.session.userId, { records: true }),
+    mode: req.session.mode
+  }
+
+  if (req.session.competitor) {
+    if (req.session.userId === req.session.competitor) {
+      data.competitor = data.rower
+    } else {
+      data.competitor = await Rowers.getById(req.session.competitor, { records: true })
     }
-    res.render('compete', data)
-  })
+    if (data.competitor.Records) {
+      data.competitor.record = data.competitor.Records.find(element => element.mode === req.session.mode)
+      if (data.competitor.record && data.competitor.record.maxSpeed && typeof data.competitor.record.maxSpeed !== 'string') {
+        data.competitor.record.maxSpeed = parseFloat(data.competitor.record.maxSpeed.toFixed(2))
+      }
+    }
+  }
+
+  res.render('compete', data)
 })
 
 router.get('/memory.json', function (req, res) {
@@ -43,30 +53,30 @@ router.get('/reset.json', function (req, res) {
   res.send({ status: 'success' })
 })
 router.get('/reset', function (req, res) {
+  debug('Resetting memory state')
   S4.memoryMap.forEach(response => {
     response.value = 0
   })
   res.redirect('/')
 })
-router.get('/results', function (req, res) {
+router.get('/results', async function (req, res) {
   S4.rower.reset()
-  db.rowers.findOne({ _id: req.session.userId }, function (err, rower) {
-    if (err) debug(err)
-    if (!rower.recentRace) {
-      res.redirect('/')
-      return
-    }
-    if (rower.recentRace.personalBest && typeof rower.recentRace.personalBest.prevMaxSpeed !== 'string') {
-      rower.recentRace.personalBest.prevMaxSpeed = rower.recentRace.personalBest.prevMaxSpeed.toFixed(2)
-    }
-    if (rower.recentRace.rower && typeof rower.recentRace.rower.maxSpeed !== 'string') {
-      rower.recentRace.rower.maxSpeed = rower.recentRace.rower.maxSpeed.toFixed(2)
-    }
-    if (rower.recentRace.competitor && typeof rower.recentRace.competitor.maxSpeed !== 'string') {
-      rower.recentRace.competitor.maxSpeed = rower.recentRace.competitor.maxSpeed.toFixed(2)
-    }
-    res.render('results', rower.recentRace)
-  })
+  const rower = await Rowers.getById(req.session.userId)
+  if (!rower.recentRace) {
+    debug('Got to results before recentRace was saved')
+    res.redirect('/')
+    return
+  }
+  if (rower.recentRace.isPersonalBest && rower.recentRace.prevPersonalBest && typeof rower.recentRace.prevPersonalBest.maxSpeed !== 'string') {
+    rower.recentRace.prevPersonalBest.maxSpeed = parseFloat(rower.recentRace.prevPersonalBest.maxSpeed.toFixed(2))
+  }
+  if (rower.recentRace.rower && typeof rower.recentRace.rower.maxSpeed !== 'string') {
+    rower.recentRace.rower.maxSpeed = parseFloat(rower.recentRace.rower.maxSpeed.toFixed(2))
+  }
+  if (rower.recentRace.competitor && typeof rower.recentRace.competitor.maxSpeed !== 'string') {
+    rower.recentRace.competitor.maxSpeed = parseFloat(rower.recentRace.competitor.maxSpeed.toFixed(2))
+  }
+  res.render('results', rower.recentRace)
 })
 
 module.exports = router

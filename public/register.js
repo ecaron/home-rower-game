@@ -1,8 +1,9 @@
-/* global $, Avataaars */
+/* global jQuery, Avataaars */
 function prettyText (input) {
   return input.replace(/([A-Z])/g, ' $1').replace(/^./, function (str) { return str.toUpperCase() })
 }
-$(document).ready(function () {
+jQuery(function () {
+  const $ = jQuery
   const avatarGenerator = function () {
     const options = {
       width: 200,
@@ -24,7 +25,7 @@ $(document).ready(function () {
   Object.keys(Avataaars.paths).forEach(function (path) {
     optionCount = 0
     selected = false
-    formOption = '<div class="input-field col m4 s6"><div><label for="' + path + '">' + prettyText(path) + '</label></div><select class="browser-default" name="avatar[' + path + ']" id="' + path + '">'
+    formOption = '<div class="col mb-3"><label for="' + path + '" class="form-label">' + prettyText(path) + '</label><select class="form-select" name="avatar[' + path + ']" id="' + path + '">'
     if (path === 'clothingGraphic') return
     if (path === 'accessories') {
       optionCount++
@@ -72,8 +73,8 @@ $(document).ready(function () {
       }
     }
 
-    formOption = '<div class="input-field col m4 s6"><div><label for="' + colorType + '">' + prettyText(colorType) + '</label></div>'
-    formOption += '<select class="browser-default" name="avatar[' + colorType + ']" id="' + colorType + '" ' + (customColor ? 'style="display:none"' : '') + '>'
+    formOption = '<div class="col mb-3"><label for="' + colorType + '"  class="form-label">' + prettyText(colorType) + '</label>'
+    formOption += '<select class="form-select" name="avatar[' + colorType + ']" id="' + colorType + '" ' + (customColor ? 'style="display:none"' : '') + '>'
     if (colorType === 'hairColor' || colorType === 'facialHairColor') {
       randomMatch = Math.floor(Math.random() * Object.keys(Avataaars.colors.hair).length)
       Object.keys(Avataaars.colors.hair).forEach(function (option) {
@@ -100,16 +101,15 @@ $(document).ready(function () {
       })
     }
     formOption += '</select>'
-    formOption += '<p class="left"><label><input type="checkbox" name="useColor[' + colorType + ']" class="custom-color" id="use-custom-' + colorType + '" data-type="' + colorType + '" ' + (customColor ? 'checked' : '') + '/><span>Use Custom Color</span></label></p>'
-    formOption += '<p><input class="right" type="color" name="customColor[' + colorType + ']" id="custom-' + colorType + '" value="' + customColor + '" ' + (customColor ? '' : 'style="display:none"') + '></p>'
+    formOption += '<div class="form-check"><input type="checkbox" name="useColor[' + colorType + ']" class="form-check-input custom-color" id="use-custom-' + colorType + '" data-type="' + colorType + '" ' + (customColor ? 'checked' : '') + '/><label class="form-check-label" for="use-custom-' + colorType + '">Use Custom Color</label></div>'
+    formOption += '<div><input class="right" type="color" name="customColor[' + colorType + ']" id="custom-' + colorType + '" value="' + customColor + '" ' + (customColor ? '' : 'style="display:none"') + '></div>'
     formOption += '</div>'
     $('#formInputs').append(formOption)
   })
-  $('select').formSelect()
 
   avatarGenerator()
   $('#form').on('change', avatarGenerator)
-  $('#name').focus()
+  $('#name').trigger('focus')
   $('.custom-color').on('click', function () {
     const type = $(this).data('type')
     if (this.checked) {

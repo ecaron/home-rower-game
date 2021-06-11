@@ -1,7 +1,7 @@
 <h2>Logbook for {{ name }}</h2>
 {% for entry in entries %}
   {% if entry.show %}
-    <h4>{{entry.key}}<br><strong>{{entry.distance}} meters, max speed {{entry.maxSpeed}} knots, over {{ entry.sessions }} {% if entry.sessions > 1 %}sessions{% else %}session{% endif %}</strong></h4>
+    <h4>{{entry.key}}<br><strong><span class="duration" data-value="{{entry.distance}}">{{entry.distance}} meters</span>, max speed {{entry.maxSpeed}} knots, over {{ entry.sessions }} {% if entry.sessions > 1 %}sessions{% else %}session{% endif %}</strong></h4>
   {% endif %}
 {% else %}
   <strong>There are no logs for this rower.</strong>

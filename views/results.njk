@@ -1,36 +1,60 @@
-{% extends "template.njk" %}
+{% extends "_template.njk" %}
+{% block title %}Rowing Results{% endblock %}
+{% block bodyClasses %}water-bg{% endblock %}
 {% block content %}
-  <div class="container-full">
-    <div class="row">
-      <div class="col s12">
-        <h1>Race Results! - Winner: {{ winner }}</h1>
-      </div>
-      <div class="col s6">
-        <blockquote>
-          <h3><u>Your Time</u><br>
-            Max Speed: <strong> {{rower.maxSpeed}} knots</strong><br>
-            Distance: <strong> {{rower.distance}}m</strong><br>
-            Duration: <strong class="prettyTime">{{rower.duration}}</strong>
-          </h3>
-          {% if personalBest %}
-            <h3><u>A New Personal Best!</u><br>
-              Prev. Speed: <strong> {{personalBest.prevMaxSpeed}} knots</strong><br>
-              Prev. Distance: <strong> {{personalBest.prevDistance}}m</strong><br>
-              Prev. Duration: <strong class="prettyTime">{{personalBest.prevDuration}}</strong>
-            </h3>
+  <div class="container h-100">
+    <div class="flex-column d-flex h-100">
+      {% if finishedRace  === false %}
+        <div class="flex-shrink-0 bg-white p-3">
+          <h1>Sorry - you didn't finish the race&hellip;</h1>
+        </div>
+      {% elseif competitor %}
+        <div class="flex-shrink-0 bg-white p-3">
+          <h1>Race Results! <strong>Winner: {{ winner }}</strong></h1>
+        </div>
+      {% endif %}
+      <div class="flex-grow-1 bg-white p-3">
+        <div class="row">
+          <div class="col">
+            <blockquote>
+              <h3><u>Your Time</u><br>
+                Max Speed: <strong>{{rower.maxSpeed}} knots</strong><br>
+                Distance: <strong class="prettyDistance" data-value="{{rower.distance}}">{{rower.distance}} meters</strong><br>
+                {% if rower.duration %}
+                  Duration: <strong class="prettyDuration" data-value="{{rower.duration}}"></strong>
+                {% endif %}
+              </h3>
+              {% if isPersonalBest %}
+                <h3><u>A New Personal Best!</u><br>
+                {% if prevPersonalBest %}
+                  Prev. Speed: <strong>{{prevPersonalBest.maxSpeed}} knots</strong><br>
+                  Prev. Distance: <strong class="prettyDistance" data-value="{{prevPersonalBest.distance}}">{{prevPersonalBest.distance}} meters</strong><br>
+                  {% if prevPersonalBest.duration %}
+                    Prev. Duration: <strong class="prettyDuration" data-value="{{prevPersonalBest.duration}}"></strong>
+                  {% endif %}
+                {% endif %}
+                </h3>
+              {% endif %}
+            </blockquote>
+          </div>
+          {% if competitor %}
+            <div class="col">
+              <blockquote>
+                <h3><u>Their Time</u><br>
+                  Max Speed: <strong> {{competitor.maxSpeed}} knots</strong><br>
+                  Distance: <strong class="prettyDistance" data-value="{{competitor.distance}}">{{competitor.distance}} meters</strong><br>
+                  {% if competitor.duration %}
+                    Duration: <strong class="prettyDuration" data-value="{{competitor.duration}}"></strong>
+                  {% endif %}
+                </h3>
+              </blockquote>
+            </div>
           {% endif %}
-        </blockquote>
+        </div>
       </div>
-      <div class="col s6">
-        <blockquote>
-          <h3><u>Their Time</u><br>
-            Max Speed: <strong> {{competitor.maxSpeed}} knots</strong><br>
-            Distance: <strong> {{competitor.distance}}m</strong><br>
-            Duration: <strong class="prettyTime">{{competitor.duration}}</strong>
-          </h3>
-        </blockquote>
+      <div class="flex-shrink-0">
+        <a href="/" class="fs-1 d-block m-5 btn btn-primary">Race Again?</a>
       </div>
     </div>
   </div>
-  <h2 style="position:fixed;right:10px;bottom:5px"><a href="/">Race Again?</a></h2>
 {% endblock %}

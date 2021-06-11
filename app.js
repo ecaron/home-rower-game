@@ -2,17 +2,24 @@ require('dotenv').config()
 const debug = require('debug')('home-rower-game:main')
 const express = require('express')
 const session = require('express-session')
-const NedbStore = require('express-nedb-session')(session)
+const Sequelize = require('sequelize')
 const nunjucks = require('nunjucks')
 const http = require('http')
 const path = require('path')
-
-const db = require('./lib/db')
+const models = require('./models')
 const routes = require('./routes')
 const websocket = require('./lib/websocket')
 const S4 = require('./s4')
 
 const app = express()
+
+const SequelizeStore = require('connect-session-sequelize')(session.Store)
+
+const sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: path.join(__dirname, 'db', 'session.sqlite3'),
+  logging: require('debug')('sequelize:session')
+})
 
 app.set('views', path.join(__dirname, 'views'))
 nunjucks.configure('views', {
@@ -21,22 +28,30 @@ nunjucks.configure('views', {
 })
 app.set('view engine', 'njk')
 
+const sessionStore = new SequelizeStore({
+  db: sequelize
+})
+
 const sessionParser = session({
-  saveUninitialized: false,
+  saveUninitialized: true,
   secret: process.env.SESSION_SECRET || 'forgotToSetEnv',
-  resave: false,
+  store: sessionStore,
   cookie: { path: '/', httpOnly: true, maxAge: 365 * 24 * 3600 * 1000 },
-  store: new NedbStore({ filename: path.join(__dirname, 'db', 'sessions') })
+  resave: false
 })
 
 app.use(sessionParser)
+sessionStore.sync()
+
 app.use(express.urlencoded({
   extended: true
 }))
 
+app.use('/animate.css', express.static(path.join(__dirname, 'node_modules', 'animate.css')))
 app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js', 'dist')))
 app.use('/jquery', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
-app.use('/materialize', express.static(path.join(__dirname, 'node_modules', 'materialize-css', 'dist')))
+app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')))
+app.use('/bootstrap-icons', express.static(path.join(__dirname, 'node_modules', 'bootstrap-icons', 'font')))
 app.use('/nosleep.js', express.static(path.join(__dirname, 'node_modules', 'nosleep.js', 'dist')))
 
 app.use(function (req, res, next) {
@@ -61,7 +76,7 @@ const run = async function (app) {
   if (!process.env.FAKE_ROWER) {
     S4.init()
   }
-  await db.init()
+  await models.init()
 
   const server = http.createServer(app)
 

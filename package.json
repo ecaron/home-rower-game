@@ -1,6 +1,6 @@
 {
   "name": "home-rower-game",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A rowing machine webapp for friendly in-house competitions",
   "scripts": {
     "start": "node app",
@@ -19,22 +19,27 @@
   },
   "dependencies": {
     "animate.css": "^4.1.1",
+    "bootstrap": "^5.0.1",
+    "bootstrap-icons": "^1.5.0",
     "chart.js": "^3.0.2",
+    "connect-session-sequelize": "^7.1.1",
     "debug": "^4.3.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "express-nedb-session": "^0.1.1",
     "express-session": "^1.17.1",
     "jquery": "^3.6.0",
-    "materialize-css": "^1.0.0",
-    "nedb": "^1.8.0",
+    "luxon": "^1.27.0",
     "nosleep.js": "^0.12.0",
     "nunjucks": "^3.2.3",
+    "sequelize": "^6.6.2",
     "serialport": "^9.0.7",
+    "sqlite3": "^5.0.2",
+    "umzug": "^2.3.0",
     "ws": "^7.4.4"
   },
   "devDependencies": {
     "nodemon": "^2.0.7",
+    "sequelize-cli": "^6.2.0",
     "standard": "^16.0.3"
   }
 }

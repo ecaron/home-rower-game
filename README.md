@@ -10,9 +10,19 @@ It currently supports the [WaterRower](https://www.waterrower.com/us/) (with the
 There are two modes: **Head-to-head competition** and **Real-time Charting**
 
 ### Head-to-head competition
-Picking another rower's previous record, or your own personal best, you'll go side-by-side seeing who can row farther. The system measures & reports in realtime your current speed (in knots) and the total distance you've traveled.
 
-Logbooks are kept & provided, per rower, to track total distance, maximum speed, and number of sessions in last 7 days, last 30 days and all-time.
+#### Race Modes
+
+You can compete in one of three modes:
+* **Marathon** - See how far you can row
+* **Time Trial** - See how far you can row in a preset length of time (1, 5, 10, 15, 20, 30, 40 & 60 minute options)
+* **Distance Trial** - Show how fast you can row a preset distance (100m, 500m, 1km, 2km, 5km, 6km & 10km options)
+
+#### Race Style
+
+If you can pick another rower's previous record or go against your own personal best, then you'll go side-by-side seeing who can row farther. Or you can go solo & be the only one on the river.  The system measures & reports in realtime your current speed (in knots) and the total distance you've traveled.
+
+Logbooks are kept & provided, per rower, to track total distance, race mode, maximum speed, and number of sessions in last 7 days, last 30 days and all-time.
 
 ### Real-time Charting
 If you're not feeling like a competition, you can watch up to 6 different metrics at the same-time and watch your trendlines over the course of your current session.
@@ -28,18 +38,27 @@ If you're not feeling like a competition, you can watch up to 6 different metric
 
 ### Realtime Competition
 Watch your speed and distance against a competitor! Go side-by-side, seeing if you're outpacing them or need to catch up. Also the speed of the water changes related to your owner personal pace.
+<img src="/docs/active-competition.png" width="640">
 <img src="/docs/realtime-competition.gif">
 
 ### Realtime Graphs
 If you're not feeling competitive and love a screen full of charts, then the realtime charts (powered by [Chart.js](https://www.chartjs.org/)) will let you select the metrics you want to see & trace your progress over the course of a row.
+
 <img src="/docs/realtime-graphs.gif">
 
 ### Select Your Rower
 Do multiple people use your rower? Great! Select who you are, and select who you want to row against! You can race against their best record or try to outdo your personal best!!
-<img src="/docs/avatar-selector.png" width="640">
+
+<img src="/docs/select-rower.png" width="640">
+
+### Select Your Mode
+Pick from doing a marathon, a time trial or a distance trial. Race against a past record of yourself, a competitor, or just row alone!
+
+<img src="/docs/select-competitor.png" width="640">
 
 ### Customize Your Rower
 Using the great [Avataaars](https://getavataaars.com/) library, you can customize your rower to fit your style.
+
 <img src="/docs/avatar-customize.png" width="640">
 
 

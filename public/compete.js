@@ -1,150 +1,215 @@
-/* global $, WebSocket, location, fetch, updateGraphs, prettyDuration, NoSleep */
-$(document).ready(function () {
-  let waterPos = 0; let waterSpeed = 0
-  let ws
+/* global jQuery, WebSocket, location, fetch, updateGraphs, getRandomInt, prettyDuration, prettyDistance, NoSleep */
+jQuery(function () {
+  const $ = jQuery
+  const noSleep = new NoSleep()
+  const $water = $('#water')
+  const $rower = $('#water #rower')
+  const $competitor = $('#water #competitor')
+  const $messages = $('#messages')
+  const $record = $('#record')
+  const ws = new WebSocket(`ws://${location.host}`)
+  let countdownInterval
 
-  function getRandomInt (max) {
-    return Math.floor(Math.random() * max)
+  const raceData = {
+    mode: {
+      type: $('#mode').data('type'),
+      value: parseInt($('#mode').data('value'))
+    },
+    rower: {
+      distance: 0
+    },
+    readyToStart: false,
+    startTime: false,
+    ended: false,
+    water: {
+      pos: 0,
+      speed: 0,
+      green: getRandomInt(255),
+      blue: getRandomInt(255),
+      transparent: 0.4,
+      direction: {
+        green: 1,
+        blue: 1
+      }
+    }
+  }
+  if ($record.length) {
+    raceData.competitor = {
+      record: parseInt($record.data('value'))
+    }
   }
 
-  let randomGreen = getRandomInt(255)
-  let randomBlue = getRandomInt(255)
-  let randomDirection = { green: 1, blue: 1, transparent: 0.4 }
-  const randomColor = 'rgba(0,' + randomGreen + ',' + randomBlue + ',' + randomDirection.transparent + ')'
+  const cycleDirection = function () {
+    if (raceData.water.green < 0) raceData.water.green = 0
+    else if (raceData.water.green > 255) raceData.water.green = 255
+    if (raceData.water.blue < 0) raceData.water.blue = 0
+    else if (raceData.water.blue > 255) raceData.water.blue = 255
 
-  const $water = $('#water')
-  $water.css({ 'background-image': 'url(\'/images/water_' + getRandomInt(7) + '.jpg\')', 'background-color': randomColor })
+    const random = Math.random()
+    if (random < 0.25) {
+      raceData.water.direction = { green: 1, blue: 1 }
+    } else if (random < 0.5) {
+      raceData.water.direction = { green: -1, blue: 1 }
+    } else if (random < 0.75) {
+      raceData.water.direction = { green: -1, blue: -1 }
+    } else {
+      raceData.water.direction = { green: 1, blue: -1 }
+    }
+  }
 
-  $('#startRace').on('click', function () {
-    const $rower = $('#water #rower')
-    const $competitor = $('#water #competitor')
-
-    const noSleep = new NoSleep()
-    noSleep.enable()
-
-    $('#starting-line').addClass('dropoff')
-    fetch('/compete/reset.json').then(updateGraphs)
-
-    const cycleDirection = function () {
-      if (randomGreen < 0) randomGreen = 0
-      else if (randomGreen > 255) randomGreen = 255
-      if (randomBlue < 0) randomBlue = 0
-      else if (randomBlue > 255) randomBlue = 255
-
-      const random = Math.random()
-      if (random < 0.25) {
-        randomDirection = { green: 1, blue: 1, transparent: randomDirection.transparent }
-      } else if (random < 0.5) {
-        randomDirection = { green: -1, blue: 1, transparent: randomDirection.transparent }
-      } else if (random < 0.75) {
-        randomDirection = { green: -1, blue: -1, transparent: randomDirection.transparent }
-      } else {
-        randomDirection = { green: 1, blue: -1, transparent: randomDirection.transparent }
-      }
-      // Randomizing the alpha layer turned out to be overkill
-      // if (Math.floor(random * 10) % 2 === 1) {
-      // randomDirection.transparent = Math.random()
-      // }
+  const socketConnect = function () {
+    if (ws && ws.onopen !== null) {
+      ws.onerror = ws.onopen = ws.onclose = null
+      ws.close()
     }
 
-    setInterval(function () {
-      if (waterSpeed > 0) {
-        waterPos += waterSpeed
-        randomGreen += randomDirection.green * getRandomInt(2)
-        randomBlue += randomDirection.blue * getRandomInt(2)
-        if (randomGreen < 0 || randomGreen > 255 || randomBlue < 0 || randomBlue > 255) {
-          cycleDirection()
+    let competitorActive = true
+    ws.onmessage = function (event) {
+      const data = JSON.parse(event.data)
+      if (data.status === 'update') {
+        if (raceData.readyToStart === true && raceData.startTime === false) {
+          startRace()
         }
-        const randomColor = 'rgba(0,' + randomGreen + ',' + randomBlue + ',' + randomDirection.transparent + ')'
-        $('#water').css({ 'background-position': '0 ' + waterPos + 'px', 'background-color': randomColor })
+        if (data.target === 'rower') {
+          raceData.rower.distance = data.distance
+          updateCountdown()
+          $rower.find('.stats').html(`${parseFloat(data.speed.toFixed(2))} ${data.speedUnits}<br>${prettyDistance(data.distance)}`)
+          raceData.water.speed = data.speed * 20
+        } else {
+          if ($competitor.length && competitorActive === true) {
+            $competitor.find('.stats').html(`${parseFloat(data.speed.toFixed(2))} ${data.speedUnits}<br>${prettyDistance(data.distance)}`)
+          }
+        }
+        $rower.css('bottom', Math.round(data.position.rower * 75) + '%')
+        if ($competitor.length) $competitor.css('bottom', Math.round(data.position.competitor * 75) + '%')
+      } else if ($competitor.length && data.status === 'competitorDone') {
+        competitorActive = false
+        $competitor.find('.stats').html('<b>Finished</b><br>' + $competitor.find('.stats').html())
       }
-    }, 100)
+    }
+    ws.onerror = function () {
+      console.log('WebSocket error')
+      ws.close()
+    }
+    ws.onopen = function () {
+      console.log('WebSocket connection established')
+    }
+    ws.onclose = function () {
+      console.log('WebSocket connection closed')
+      setTimeout(socketConnect, 1000)
+    }
+  }
+
+  const updateCountdown = function () {
+    if (raceData.startTime === false || raceData.ended === true) return
+    let endRace = false
+    let messageHTML = ''
+    const timeElapsed = new Date() - raceData.startTime
+    if (raceData.mode.type === 'time') {
+      const timeLeft = (raceData.mode.value * 60 * 1000) - timeElapsed
+      messageHTML += 'Time remaining: <strong>' + prettyDuration(timeLeft) + '</strong>'
+      if (raceData.competitor) {
+        if (raceData.competitor.record > raceData.rower.distance) {
+          messageHTML += '<br>Distance to win: <strong>' + prettyDistance(raceData.competitor.record - raceData.rower.distance) + '</strong>'
+        } else {
+          messageHTML += '<br>Won race by: <strong>' + prettyDistance(raceData.rower.distance - raceData.competitor.record) + '</strong>'
+        }
+      } else {
+        messageHTML += '<br>Distance rowed: <strong>' + prettyDistance(raceData.rower.distance) + '</strong>'
+      }
+      if (timeLeft <= 0 && raceData.ended === false) {
+        endRace = true
+      }
+    } else if (raceData.mode.type === 'marathon') {
+      if (raceData.competitor) {
+        if (raceData.competitor.record > raceData.rower.distance) {
+          messageHTML += 'Distance to win: <strong>' + prettyDistance(raceData.competitor.record - raceData.rower.distance) + '</strong>'
+        } else {
+          messageHTML += 'Won race by: <strong>' + prettyDistance(raceData.rower.distance - raceData.competitor.record) + '</strong>'
+        }
+      } else {
+        messageHTML += 'Distance rowed: <strong>' + prettyDistance(raceData.rower.distance) + '</strong>'
+      }
+    } else if (raceData.mode.type === 'length') {
+      messageHTML += 'Distance remaining: <strong>' + prettyDistance(raceData.mode.value - raceData.rower.distance) + '</strong>'
+      if (raceData.competitor) {
+        if (raceData.competitor && raceData.competitor.record < timeElapsed) {
+          messageHTML += '<br>Lost by: <strong>' + prettyDuration(timeElapsed - raceData.competitor.record) + '</strong>'
+        } else {
+          messageHTML += '<br>Time to win: <strong>' + prettyDuration(raceData.competitor.record - timeElapsed) + '</strong>'
+        }
+      } else {
+        messageHTML += '<br>Time rowed: <strong>' + prettyDuration(timeElapsed) + '</strong>'
+      }
+      if (raceData.mode.value <= raceData.rower.distance && raceData.ended === false) {
+        endRace = true
+      }
+    }
+    $messages.html(messageHTML)
+    if (endRace === true) {
+      clearInterval(countdownInterval)
+      raceData.ended = true
+      setTimeout(function () {
+        $('#endRace').trigger('click')
+      }, 1000)
+    }
+  }
+
+  $water.css({
+    'background-image': 'url(\'/images/water_' + getRandomInt(7) + '.jpg\')',
+    'background-color': 'rgba(0,' + raceData.water.green + ',' + raceData.water.blue + ',' + raceData.water.transparent + ')'
+  })
+
+  $('#startRace').on('click', function () {
+    noSleep.enable()
+    raceData.readyToStart = true
+    fetch('/compete/reset.json').then(updateGraphs).then(socketConnect)
+    $messages.html('Start rowing when you are ready!')
 
     $('#cancelRace').hide()
+    $('.toggles').hide().removeClass('d-none')
     $('#startRace').fadeOut('slow', function () {
       $('.toggles').fadeIn('fast')
     })
-
-    $('#endRace').on('click', function () {
-      try {
-        ws.send(JSON.stringify({ status: 'end' }))
-        ws.close()
-      } catch (e) {}
-      window.location = '/compete/results'
-    })
-
-    const startTime = new Date()
-    let started = false
-    const $timer = $('#timer h4')
-
-    $timer.html('Wait for it&hellip;')
-
-    function connect () {
-      if (ws) {
-        ws.onerror = ws.onopen = ws.onclose = null
-        ws.close()
-      }
-
-      let competitorActive = true
-      ws = new WebSocket(`ws://${location.host}`)
-      ws.onmessage = function (event) {
-        const data = JSON.parse(event.data)
-        if (started === false || data.status === 'start') {
-          started = true
-          setInterval(function () {
-            $timer.html(prettyDuration((new Date() - startTime)))
-          }, 500)
-          $timer.html(prettyDuration((new Date() - startTime)))
-        }
-        if (data.status === 'update') {
-          let distanceUnits = 'm'
-          if (data.distance > 1000) {
-            data.distance = (data.distance / 1000).toFixed(2)
-            distanceUnits = 'km'
-          } else {
-            data.distance = Math.round(data.distance)
-          }
-          if (data.target === 'rower') {
-            $rower.find('.stats').html(`${data.speed.toFixed(2)} ${data.speedUnits}<br>${data.distance}${distanceUnits}`)
-            waterSpeed = data.speed * 7
-          } else {
-            if (competitorActive === true) {
-              $competitor.find('.stats').html(`${data.speed.toFixed(2)} ${data.speedUnits}<br>${data.distance}${distanceUnits}`)
-            }
-          }
-          $rower.css('bottom', Math.round(data.position.rower * 75) + '%')
-          $competitor.css('bottom', Math.round(data.position.competitor * 75) + '%')
-        } else if (data.status === 'competitorDone') {
-          competitorActive = false
-          $competitor.find('.stats').html('<b>Finished</b><br>' + $competitor.find('.stats').html())
-        }
-      }
-      ws.onerror = function () {
-        console.log('WebSocket error')
-        ws.close()
-      }
-      ws.onopen = function () {
-        console.log('WebSocket connection established')
-        // ws.send('Race Start!')
-      }
-      ws.onclose = function () {
-        console.log('WebSocket connection closed')
-        setTimeout(function () {
-          connect()
-        }, 1000)
-      }
-    }
-    connect()
   })
-  $('#speedUp').on('click', function () { waterSpeed = waterSpeed * 2 })
-  $('#speedDown').on('click', function () { waterSpeed = Math.ceil(waterSpeed / 2) })
+
+  const startRace = function () {
+    raceData.startTime = new Date()
+    $('#starting-line').addClass('dropoff')
+    updateGraphs()
+
+    setInterval(function () {
+      if (raceData.water.speed > 0) {
+        raceData.water.pos += raceData.water.speed
+        raceData.water.green += raceData.water.direction.green * getRandomInt(2)
+        raceData.water.blue += raceData.water.direction.blue * getRandomInt(2)
+        if (raceData.water.green < 0 || raceData.water.green > 255 || raceData.water.blue < 0 || raceData.water.blue > 255) {
+          cycleDirection()
+        }
+        $('#water').css({
+          'background-position': '0 ' + raceData.water.pos + 'px',
+          'background-color': 'rgba(0,' + raceData.water.green + ',' + raceData.water.blue + ',' + raceData.water.transparent + ')'
+        })
+      }
+    }, 500)
+
+    countdownInterval = setInterval(updateCountdown, 1000)
+  }
+
+  $('#endRace').on('click', function () {
+    try {
+      ws.send(JSON.stringify({ status: 'end' }))
+      ws.close()
+    } catch (e) {
+      console.log(e)
+    }
+    // Pause half a second to delete the database & sockets catch up
+    setTimeout(function () {
+      window.location = '/compete/results'
+    }, 1000)
+  })
+
   if ($('#recordDate').length) {
     $('#recordDate').text((new Date($('#recordDate').data('value'))).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }))
-    if (parseInt($('#recordDistance').data('value'), 10) > 2000) {
-      $('#recordDistance').text((parseInt($('#recordDistance').data('value')) / 1000).toFixed(2) + 'km')
-    } else {
-      $('#recordDistance').text($('#recordDistance').data('value') + 'm')
-    }
-    $('#recordDuration').text(prettyDuration($('#recordDuration').data('value')))
   }
 })
