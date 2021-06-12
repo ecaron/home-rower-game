@@ -1,5 +1,7 @@
 require('dotenv').config()
 const debug = require('debug')('home-rower-game:main')
+const getPort = require('get-port')
+const electron = require('electron')
 const express = require('express')
 const session = require('express-session')
 const Sequelize = require('sequelize')
@@ -15,14 +17,14 @@ const app = express()
 
 const SequelizeStore = require('connect-session-sequelize')(session.Store)
 
+const userDataPath = process.versions['electron'] ? (electron.app || electron.remote.app).getPath('userData'): path.join(__dirname, '..', 'db')
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: path.join(__dirname, 'db', 'session.sqlite3'),
+  storage: path.join(userDataPath, 'session.sqlite3'),
   logging: require('debug')('sequelize:session')
 })
 
-app.set('views', path.join(__dirname, 'views'))
-nunjucks.configure('views', {
+nunjucks.configure(path.join(__dirname, 'views'), {
   express: app,
   autoescape: true
 })
@@ -47,12 +49,12 @@ app.use(express.urlencoded({
   extended: true
 }))
 
-app.use('/animate.css', express.static(path.join(__dirname, 'node_modules', 'animate.css')))
-app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js', 'dist')))
-app.use('/jquery', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
-app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')))
-app.use('/bootstrap-icons', express.static(path.join(__dirname, 'node_modules', 'bootstrap-icons', 'font')))
-app.use('/nosleep.js', express.static(path.join(__dirname, 'node_modules', 'nosleep.js', 'dist')))
+app.use('/animate.css', express.static(path.join(__dirname, '..', 'node_modules', 'animate.css')))
+app.use('/chart', express.static(path.join(__dirname, '..', 'node_modules', 'chart.js', 'dist')))
+app.use('/jquery', express.static(path.join(__dirname, '..', 'node_modules', 'jquery', 'dist')))
+app.use('/bootstrap', express.static(path.join(__dirname, '..', 'node_modules', 'bootstrap', 'dist')))
+app.use('/bootstrap-icons', express.static(path.join(__dirname, '..', 'node_modules', 'bootstrap-icons', 'font')))
+app.use('/nosleep.js', express.static(path.join(__dirname, '..', 'node_modules', 'nosleep.js', 'dist')))
 
 app.use(function (req, res, next) {
   if (!process.env.FAKE_ROWER && !S4.rower.connected) {
@@ -72,7 +74,7 @@ app.get('/', routes.rower.home)
 
 app.use(express.static(path.join(__dirname, 'public')))
 
-const run = async function (app) {
+const run = async function () {
   if (!process.env.FAKE_ROWER) {
     S4.init()
   }
@@ -82,8 +84,15 @@ const run = async function (app) {
 
   websocket.init(server, sessionParser)
 
-  server.listen(process.env.PORT || 8080, function () {
-    debug(`Listening on http://localhost:${process.env.PORT || 8080}`)
+  const port = await getPort({port: process.env.PORT || 8080})
+  server.listen(port, function () {
+    debug(`Listening on http://localhost:${port}`)
   })
+  return port
 }
-run(app)
+
+if (require.main === module) {
+  run()
+} else {
+  module.exports = run
+}
