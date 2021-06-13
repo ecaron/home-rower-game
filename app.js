@@ -55,12 +55,13 @@ app.use(express.urlencoded({
   extended: true
 }))
 
-app.use('/animate.css', express.static(path.join(__dirname, 'node_modules', 'animate.css')))
-app.use('/chart', express.static(path.join(__dirname, 'node_modules', 'chart.js', 'dist')))
-app.use('/jquery', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
-app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')))
-app.use('/bootstrap-icons', express.static(path.join(__dirname, 'node_modules', 'bootstrap-icons', 'font')))
-app.use('/nosleep.js', express.static(path.join(__dirname, 'node_modules', 'nosleep.js', 'dist')))
+const modulesPath = global.appRoot || __dirname
+app.use('/animate.css', express.static(path.join(modulesPath, 'node_modules', 'animate.css')))
+app.use('/chart', express.static(path.join(modulesPath, 'node_modules', 'chart.js', 'dist')))
+app.use('/jquery', express.static(path.join(modulesPath, 'node_modules', 'jquery', 'dist')))
+app.use('/bootstrap', express.static(path.join(modulesPath, 'node_modules', 'bootstrap', 'dist')))
+app.use('/bootstrap-icons', express.static(path.join(modulesPath, 'node_modules', 'bootstrap-icons', 'font')))
+app.use('/nosleep.js', express.static(path.join(modulesPath, 'node_modules', 'nosleep.js', 'dist')))
 
 app.use(function (req, res, next) {
   if (!process.env.FAKE_ROWER && !S4.rower.connected) {
