@@ -1,6 +1,6 @@
 {
   "name": "home-rower-game",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A rowing machine webapp for friendly in-house competitions",
   "scripts": {
     "start": "node app",
@@ -27,6 +27,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "get-port": "^5.1.1",
     "jquery": "^3.6.0",
     "luxon": "^1.27.0",
     "nosleep.js": "^0.12.0",

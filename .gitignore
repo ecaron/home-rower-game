@@ -12,3 +12,4 @@ build/Release
 node_modules/
 ecosystem.config.js
 test.js
+.vscode

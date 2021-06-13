@@ -85,6 +85,8 @@ If you follow the [Installing SerialPort](https://serialport.io/docs/guide-insta
 
 You'll also want to make sure the user running this app has read & write permissions to the rowing machine's USB port (such as /dev/ttyACM0).
 
+The app is also capable of being imported as a `node_module`, which is because I'm hoping this can work as an Electron standalone eventually.
+
 ### Running On Startup
 
 The decision was made to exclude any "just add this service" scripts to this project. There are many great articles that tell you how

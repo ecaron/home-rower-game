@@ -1,5 +1,6 @@
 require('dotenv').config()
 const debug = require('debug')('home-rower-game:main')
+const getPort = require('get-port')
 const express = require('express')
 const session = require('express-session')
 const Sequelize = require('sequelize')
@@ -11,18 +12,25 @@ const routes = require('./routes')
 const websocket = require('./lib/websocket')
 const S4 = require('./s4')
 
+let userDataPath
+if (process.versions.electron) {
+  const electron = require('electron')
+  userDataPath = (electron.app || electron.remote.app).getPath('userData')
+} else {
+  userDataPath = path.join(__dirname, 'db')
+}
+
 const app = express()
 
 const SequelizeStore = require('connect-session-sequelize')(session.Store)
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: path.join(__dirname, 'db', 'session.sqlite3'),
+  storage: path.join(userDataPath, 'session.sqlite3'),
   logging: require('debug')('sequelize:session')
 })
 
-app.set('views', path.join(__dirname, 'views'))
-nunjucks.configure('views', {
+nunjucks.configure(path.join(__dirname, 'views'), {
   express: app,
   autoescape: true
 })
@@ -72,7 +80,7 @@ app.get('/', routes.rower.home)
 
 app.use(express.static(path.join(__dirname, 'public')))
 
-const run = async function (app) {
+const run = async function () {
   if (!process.env.FAKE_ROWER) {
     S4.init()
   }
@@ -82,8 +90,15 @@ const run = async function (app) {
 
   websocket.init(server, sessionParser)
 
-  server.listen(process.env.PORT || 8080, function () {
-    debug(`Listening on http://localhost:${process.env.PORT || 8080}`)
+  const port = await getPort({ port: process.env.PORT || 8080 })
+  server.listen(port, function () {
+    debug(`Listening on http://localhost:${port}`)
   })
+  return port
 }
-run(app)
+
+if (require.main === module) {
+  run()
+} else {
+  module.exports = run
+}

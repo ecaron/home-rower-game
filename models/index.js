@@ -2,17 +2,22 @@ const fs = require('fs')
 const path = require('path')
 const Sequelize = require('sequelize')
 const basename = path.basename(__filename)
-const env = process.env.NODE_ENV || 'development'
-const config = require(path.join(__dirname, '..', 'config', 'config.json'))[env]
 const migrations = require('./_migrations')
 const db = {}
 
-let sequelize
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config)
+let dbPath
+if (process.versions.electron) {
+  const electron = require('electron')
+  dbPath = (electron.app || electron.remote.app).getPath('userData')
 } else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config)
+  dbPath = path.join(__dirname, '..', 'db')
 }
+
+const sequelize = new Sequelize('', '', '', {
+  dialect: 'sqlite',
+  storage: path.join(dbPath, 'data.sqlite3'),
+  logging: false
+})
 
 db.init = async function () {
   await migrations(sequelize)
