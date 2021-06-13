@@ -95,7 +95,7 @@ to configure your script to run automatically at boot. Some recommendations are:
 * https://www.linuxuprising.com/2018/04/how-to-install-and-configure-nodejs-and.html
 
 ## Troubleshooting
-See the (page on the wiki)[https://github.com/ecaron/home-rower-game/wiki/Troubleshooting).
+See the [page on the wiki](https://github.com/ecaron/home-rower-game/wiki/Troubleshooting).
 
 ## Related Projects
 * https://github.com/olympum/waterrower-ble/ (inspiration for this package)
