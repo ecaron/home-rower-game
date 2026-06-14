@@ -1,7 +1,7 @@
 /* eslint quote-props: ["error", "consistent-as-needed"] */
 const { EventEmitter } = require('events')
-const SerialPort = require('serialport')
-const Readline = require('@serialport/parser-readline')
+const { SerialPort } = require('serialport')
+const { ReadlineParser } = require('@serialport/parser-readline')
 const debug = require('debug')('home-rower-game:S4')
 
 function S4 (memoryMap) {
@@ -218,8 +218,8 @@ S4.prototype.startRower = function (comName) {
     return false
   }
   const self = this
-  this.port = new SerialPort(comName, { baudRate: 19600, autoOpen: false, lock: false })
-  const parser = this.port.pipe(new Readline({ delimiter: '\r\n' }))
+  this.port = new SerialPort({ path: comName, baudRate: 19600, autoOpen: false, lock: false })
+  const parser = this.port.pipe(new ReadlineParser({ delimiter: '\r\n' }))
   parser.on('data', this.readAndDispatch)
   this.open()
   this.port.on('error', function (err) {

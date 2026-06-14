@@ -11,7 +11,7 @@
   "license": "MIT",
   "repository": "ecaron/home-rower-game",
   "engines": {
-    "node": ">=12"
+    "node": ">=22"
   },
   "author": {
     "name": "Eric Caron",
@@ -19,28 +19,31 @@
   },
   "dependencies": {
     "animate.css": "^4.1.1",
-    "bootstrap": "^5.0.1",
-    "bootstrap-icons": "^1.5.0",
-    "chart.js": "^3.0.2",
-    "connect-session-sequelize": "^7.1.1",
-    "debug": "^4.3.1",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-session": "^1.17.1",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.11.3",
+    "chart.js": "^3.9.1",
+    "connect-session-sequelize": "^7.1.7",
+    "debug": "^4.4.0",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.2",
+    "express-session": "^1.18.1",
     "get-port": "^5.1.1",
-    "jquery": "^3.6.0",
-    "luxon": "^1.27.0",
+    "jquery": "^3.7.1",
+    "luxon": "^1.28.1",
     "nosleep.js": "^0.12.0",
-    "nunjucks": "^3.2.3",
-    "sequelize": "^6.6.2",
-    "serialport": "^9.0.7",
-    "sqlite3": "^5.0.2",
-    "umzug": "^2.3.0",
-    "ws": "^7.4.4"
+    "nunjucks": "^3.2.4",
+    "sequelize": "^6.37.8",
+    "serialport": "^13.0.0",
+    "sqlite3": "^6.0.1",
+    "umzug": "^3.8.3",
+    "ws": "^8.21.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7",
-    "sequelize-cli": "^6.2.0",
-    "standard": "^16.0.3"
+    "nodemon": "^3.1.14",
+    "sequelize-cli": "^6.6.2",
+    "standard": "^17.1.2"
+  },
+  "overrides": {
+    "uuid": ">=11.1.1"
   }
 }
